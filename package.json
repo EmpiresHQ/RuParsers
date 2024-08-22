@@ -2,9 +2,12 @@
   "name": "ru_parsers",
   "version": "0.0.1",
   "description": "html parsers for some russian shops",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src/",
+    "build": "npm run lint && tsc",
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,21 @@
   "bugs": {
     "url": "https://github.com/EmpiresHQ/RuParsers/issues"
   },
-  "homepage": "https://github.com/EmpiresHQ/RuParsers#readme"
+  "devDependencies": {
+    "@eslint/js": "^9.6.0",
+    "@tsconfig/recommended": "^1.0.7",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^20.14.10",
+    "eslint": "^8.57.0",
+    "prettier": "3.3.2",
+    "ts-node": "^10.9.2",
+    "type-fest": "^4.21.0",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.16.0",
+    "vitest": "^2.0.5"
+  },
+  "homepage": "https://github.com/EmpiresHQ/RuParsers#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
 }
