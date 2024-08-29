@@ -1,5 +1,6 @@
 export const HOST = "https://www.vseinstrumenti.ru";
 export const API_HOST = "https://bff.vseinstrumenti.ru";
+export const CDN_HOST = "https://cdn.vseinstrumenti.ru";
 export const restRequestOpts = (handler, page = 0) => {
     var _a;
     return ({

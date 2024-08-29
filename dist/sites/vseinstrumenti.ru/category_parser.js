@@ -11,6 +11,7 @@ import * as cheerio from "cheerio";
 import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
+import { CDN_HOST } from "./settings.js";
 export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {
     var _b, _c;
     if (!Buffer.isBuffer(html)) {
@@ -81,7 +82,7 @@ const _itemMapper = (item) => {
         title: name,
         skuId: code,
         stock: availabilityInfo.currentlyAvailable,
-        imageUrl: image,
+        imageUrl: `${CDN_HOST}${image}`,
         regularPrice: pricesV2.current.toString(),
         discountPrice: (_b = (_a = pricesV2.availableDiscountPrices
             .sort((a, b) => a.price - b.price)) === null || _a === void 0 ? void 0 : _a.shift()) === null || _b === void 0 ? void 0 : _b.price.toString(),

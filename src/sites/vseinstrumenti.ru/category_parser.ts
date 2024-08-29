@@ -4,6 +4,7 @@ import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
 import { CategoryParser } from "../../types/index.js";
+import { CDN_HOST } from "./settings.js";
 
 interface Item extends BaseItem {}
 
@@ -176,7 +177,7 @@ const _itemMapper = (item: NuxtProduct): Item => {
     title: name,
     skuId: code,
     stock: availabilityInfo.currentlyAvailable,
-    imageUrl: image,
+    imageUrl: `${CDN_HOST}${image}`,
     regularPrice: pricesV2.current.toString(),
     discountPrice: pricesV2.availableDiscountPrices
       .sort((a, b) => a.price - b.price)
