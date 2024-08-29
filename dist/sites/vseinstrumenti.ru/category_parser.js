@@ -11,14 +11,14 @@ import * as cheerio from "cheerio";
 import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
-export const htmlParser = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {
+    var _b, _c;
     if (!Buffer.isBuffer(html)) {
         throw new Error("not a buffer");
     }
     const $ = cheerio.load(html);
-    const currentPage = (_a = $(".pagination-container>a.-active").html()) === null || _a === void 0 ? void 0 : _a.trim();
-    const lastPage = (_b = $(".pagination-container>a:last-of-type").html()) === null || _b === void 0 ? void 0 : _b.trim();
+    const currentPage = (_b = $(".pagination-container>a.-active").html()) === null || _b === void 0 ? void 0 : _b.trim();
+    const lastPage = (_c = $(".pagination-container>a:last-of-type").html()) === null || _c === void 0 ? void 0 : _c.trim();
     const data = $.extract({
         items: [
             {
@@ -73,6 +73,7 @@ export const htmlParser = (html) => __awaiter(void 0, void 0, void 0, function* 
         hasNextPage: currentPage && lastPage ? currentPage < lastPage : false,
     };
 });
+;
 const _itemMapper = (item) => {
     var _a, _b;
     const { code, pricesV2, name, availabilityInfo, image } = item;
@@ -86,8 +87,8 @@ const _itemMapper = (item) => {
             .sort((a, b) => a.price - b.price)) === null || _a === void 0 ? void 0 : _a.shift()) === null || _b === void 0 ? void 0 : _b.price.toString(),
     };
 };
-export const jsParser = (html) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {
+    var _b, _c, _d, _e, _f, _g;
     if (!Buffer.isBuffer(html)) {
         throw new Error("not a buffer");
     }
@@ -95,26 +96,26 @@ export const jsParser = (html) => __awaiter(void 0, void 0, void 0, function* ()
     const src = $("script").filter((_, ele) => { var _a; return ((_a = $(ele).html()) !== null && _a !== void 0 ? _a : "").substring(0, 100).indexOf("NUXT") > -1; });
     const ctx = { window: {} };
     vm.createContext(ctx);
-    vm.runInContext((_a = src.html()) !== null && _a !== void 0 ? _a : "undefined", ctx);
-    const state = (_b = ctx.window.__NUXT__) === null || _b === void 0 ? void 0 : _b.state;
-    const products = (_c = state === null || state === void 0 ? void 0 : state.listing.products) !== null && _c !== void 0 ? _c : {};
+    vm.runInContext((_b = src.html()) !== null && _b !== void 0 ? _b : "undefined", ctx);
+    const state = (_c = ctx.window.__NUXT__) === null || _c === void 0 ? void 0 : _c.state;
+    const products = (_d = state === null || state === void 0 ? void 0 : state.listing.products) !== null && _d !== void 0 ? _d : {};
     const items = Object.values(products).map(_itemMapper);
     const { hasNextPage } = pagesParser({
-        pageNumber: (_d = state === null || state === void 0 ? void 0 : state.listing.pageNumber) !== null && _d !== void 0 ? _d : 0,
-        totalProducts: (_e = state === null || state === void 0 ? void 0 : state.listing.productsForPaginationCount) !== null && _e !== void 0 ? _e : 0,
-        perPage: (_f = state === null || state === void 0 ? void 0 : state.listing.perPage) !== null && _f !== void 0 ? _f : 40,
+        pageNumber: (_e = state === null || state === void 0 ? void 0 : state.listing.pageNumber) !== null && _e !== void 0 ? _e : 0,
+        totalProducts: (_f = state === null || state === void 0 ? void 0 : state.listing.productsForPaginationCount) !== null && _f !== void 0 ? _f : 0,
+        perPage: (_g = state === null || state === void 0 ? void 0 : state.listing.perPage) !== null && _g !== void 0 ? _g : 40,
     });
     return {
         items,
         hasNextPage,
     };
 });
-export const apiParser = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    if (Buffer.isBuffer(data)) {
+export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
+    if (!json) {
         throw new Error("data should not be buffer");
     }
-    const items = data.products.map(_itemMapper);
-    const hasNextPage = data.listingSettings.pages.current < data.listingSettings.pages.max;
+    const items = json.products.map(_itemMapper);
+    const hasNextPage = json.listingSettings.pages.current < json.listingSettings.pages.max;
     return {
         items,
         hasNextPage,

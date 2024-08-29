@@ -32,7 +32,8 @@ export const REST_SETTINGS: InitialSettings = {
     },
     waitUrl: "challenge-platform",
     waitAfterLoad: 5000,
-  }
+  },
+  perPage: 40,
 }
 
 export type ApiPayload = {
@@ -58,7 +59,7 @@ export const apiRequestOpts = (
     id: handler.data.remoteId,
     page: {
       number: page,
-      perPage: 40
+      perPage: REST_SETTINGS.perPage
     }
   }
 });

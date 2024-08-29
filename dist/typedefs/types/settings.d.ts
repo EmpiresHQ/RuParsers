@@ -66,6 +66,7 @@ export interface RequestParameters<T = unknown> {
 }
 export interface InitialSettings {
     antibotOpts?: BotDetectorParams;
+    perPage: number;
 }
 export type SettingsHandler = (input: RequestOpts, page?: number) => RequestParameters;
 export type RequiredCookies = string[];

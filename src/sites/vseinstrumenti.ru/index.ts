@@ -20,7 +20,8 @@ export const strategies: {
   },
   api: {
     parser: apiParser,
-    opts: apiRequestOpts
+    opts: apiRequestOpts,
+    settings: REST_SETTINGS,
   }
 };
 

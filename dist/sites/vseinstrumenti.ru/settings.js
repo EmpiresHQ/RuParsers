@@ -21,7 +21,8 @@ export const REST_SETTINGS = {
         },
         waitUrl: "challenge-platform",
         waitAfterLoad: 5000,
-    }
+    },
+    perPage: 40,
 };
 export const apiRequestOpts = (handler, page = 0) => {
     var _a;
@@ -36,7 +37,7 @@ export const apiRequestOpts = (handler, page = 0) => {
             id: handler.data.remoteId,
             page: {
                 number: page,
-                perPage: 40
+                perPage: REST_SETTINGS.perPage
             }
         }
     });

@@ -7,7 +7,7 @@ import { CategoryParser } from "../../types/index.js";
 
 interface Item extends BaseItem {}
 
-export const htmlParser: CategoryParser = async (html) => {
+export const htmlParser: CategoryParser = async ({html}) => {
   if (!Buffer.isBuffer(html)) {
     throw new Error("not a buffer");
   }
@@ -157,7 +157,7 @@ type WindowNUXT = {
   };
 };
 
-type Page = {
+interface Page {
   listingSettings: {
     limit: number;
     pages: {
@@ -184,7 +184,7 @@ const _itemMapper = (item: NuxtProduct): Item => {
       ?.price.toString(),
   };
 };
-export const jsParser: CategoryParser = async (html) => {
+export const jsParser: CategoryParser = async ({html}) => {
   if (!Buffer.isBuffer(html)) {
     throw new Error("not a buffer");
   }
@@ -209,13 +209,13 @@ export const jsParser: CategoryParser = async (html) => {
   };
 };
 
-export const apiParser: CategoryParser<Page> = async (data) => {
-  if (Buffer.isBuffer(data)) {
+export const apiParser: CategoryParser<Page> = async ({json}) => {
+  if (!json) {
     throw new Error("data should not be buffer");
   }
-  const items = data.products.map<Item>(_itemMapper);
+  const items = json.products.map<Item>(_itemMapper);
   const hasNextPage =
-    data.listingSettings.pages.current < data.listingSettings.pages.max;
+    json.listingSettings.pages.current < json.listingSettings.pages.max;
   return {
     items,
     hasNextPage,

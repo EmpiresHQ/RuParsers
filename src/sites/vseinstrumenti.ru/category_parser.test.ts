@@ -10,7 +10,7 @@ describe("Vseinstrumenti.ru category parser", () => {
     data = fs.readFileSync(path.join(__dirname, "fixtures", "category.html"));
   });
   test("load js", async () => {
-    const parsed = await jsParser(data);
+    const parsed = await jsParser({html: data});
     if (parsed && parsed.items) {
       expect(parsed.items[0].regularPrice).toBe("24970");
       expect(parsed.items[0].stock).toBe(330);
@@ -18,7 +18,7 @@ describe("Vseinstrumenti.ru category parser", () => {
     console.log(parsed.hasNextPage)
   });
   test("load html", async () => {
-    const parsed = await htmlParser(data);
+    const parsed = await htmlParser({html: data});
     if (parsed && parsed.items) {
       expect(parsed.items[0].regularPrice).toBe("24 970 р.");
       expect(parsed.items[0].stock).toBe(Infinity);

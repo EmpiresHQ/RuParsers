@@ -62,7 +62,7 @@ type NuxtProduct = {
         link: string;
     };
 };
-type Page = {
+interface Page {
     listingSettings: {
         limit: number;
         pages: {
@@ -73,7 +73,7 @@ type Page = {
     products: NuxtProduct[];
     productsCount: number;
     productsForPaginationCount: number;
-};
+}
 export declare const jsParser: CategoryParser;
 export declare const apiParser: CategoryParser<Page>;
 export {};
