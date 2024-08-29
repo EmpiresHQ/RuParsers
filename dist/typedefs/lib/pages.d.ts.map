@@ -1,0 +1,1 @@
+{"version":3,"file":"pages.d.ts","sourceRoot":"","sources":["../../../src/lib/pages.ts"],"names":[],"mappings":"AAAA,eAAO,MAAM,WAAW,4CAIrB;IACD,UAAU,EAAE,MAAM,CAAC;IACnB,aAAa,EAAE,MAAM,CAAC;IACtB,OAAO,EAAE,MAAM,CAAC;CACjB,KAAG;IAAC,WAAW,EAAE,OAAO,CAAC;IAAC,QAAQ,EAAE,MAAM,GAAG,SAAS,CAAA;CAOtD,CAAC"}
