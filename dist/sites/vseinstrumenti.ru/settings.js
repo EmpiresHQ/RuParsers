@@ -24,12 +24,24 @@ export const REST_SETTINGS = {
     },
     perPage: 40,
 };
+export const API_SETTINGS = {
+    antibotOpts: {
+        url: API_HOST,
+        fetchCookies: {
+            domains: ["https://vseinstrumenti.ru"],
+            cookieNames: ["acctoken", "cf_clearance"],
+        },
+        waitUrl: "challenge-platform",
+        waitAfterLoad: 5000,
+    },
+    perPage: 40,
+};
 export const apiRequestOpts = (handler, page = 0) => {
     var _a;
     return ({
         urlPath: `/api/category/load?short=true`,
         host: API_HOST,
-        method: "GET",
+        method: "POST",
         remoteCategoryId: (_a = handler.data.remoteId) !== null && _a !== void 0 ? _a : 1,
         page,
         payload: {
@@ -37,7 +49,7 @@ export const apiRequestOpts = (handler, page = 0) => {
             id: handler.data.remoteId,
             page: {
                 number: page,
-                perPage: REST_SETTINGS.perPage
+                perPage: API_SETTINGS.perPage
             }
         }
     });

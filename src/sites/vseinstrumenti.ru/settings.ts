@@ -36,6 +36,19 @@ export const REST_SETTINGS: InitialSettings = {
   perPage: 40,
 }
 
+export const API_SETTINGS: InitialSettings = {
+  antibotOpts: {
+    url: API_HOST,
+    fetchCookies: {
+      domains: ["https://vseinstrumenti.ru"],
+      cookieNames: ["acctoken", "cf_clearance"],
+    },
+    waitUrl: "challenge-platform",
+    waitAfterLoad: 5000,
+  },
+  perPage: 40,
+}
+
 export type ApiPayload = {
   listingType: string;
   id: number;
@@ -51,7 +64,7 @@ export const apiRequestOpts = (
 ): RequestParameters<ApiPayload> => ({
   urlPath: `/api/category/load?short=true`,
   host: API_HOST,
-  method: "GET",
+  method: "POST",
   remoteCategoryId: handler.data.remoteId ?? 1,
   page,
   payload: {
@@ -59,7 +72,7 @@ export const apiRequestOpts = (
     id: handler.data.remoteId,
     page: {
       number: page,
-      perPage: REST_SETTINGS.perPage
+      perPage: API_SETTINGS.perPage
     }
   }
 });

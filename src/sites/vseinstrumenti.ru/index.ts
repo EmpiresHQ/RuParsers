@@ -25,4 +25,4 @@ export const strategies: {
   }
 };
 
-export const preferredStrategy = "js";
+export const preferredStrategy = "api";

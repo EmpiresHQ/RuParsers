@@ -19,4 +19,4 @@ export const strategies = {
         settings: REST_SETTINGS,
     }
 };
-export const preferredStrategy = "js";
+export const preferredStrategy = "api";
