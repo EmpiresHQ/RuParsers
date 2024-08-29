@@ -1,8 +1,7 @@
 export type AvailablePlatforms = "vseinstrumenti.ru" | string;
 
-export interface RequestOpts<
-  T extends Record<string, unknown> = Record<string, unknown>,
-> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface RequestOpts<T extends Record<string, unknown> = any> {
   data: {
     meta?: T;
     remoteId: number;
@@ -75,6 +74,7 @@ export interface RequestParameters<T = unknown> {
   method: "POST" | "GET";
   payload?: T;
   host: string;
+  headers?: string[];
 }
 
 export interface InitialSettings {

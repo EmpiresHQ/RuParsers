@@ -1,5 +1,5 @@
 export type AvailablePlatforms = "vseinstrumenti.ru" | string;
-export interface RequestOpts<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface RequestOpts<T extends Record<string, unknown> = any> {
     data: {
         meta?: T;
         remoteId: number;
@@ -63,6 +63,7 @@ export interface RequestParameters<T = unknown> {
     method: "POST" | "GET";
     payload?: T;
     host: string;
+    headers?: string[];
 }
 export interface InitialSettings {
     antibotOpts?: BotDetectorParams;

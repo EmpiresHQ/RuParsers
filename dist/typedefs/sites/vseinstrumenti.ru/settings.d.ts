@@ -1,4 +1,4 @@
-import { InitialSettings, RequestOpts, RequestParameters, RequiredCookies, RequiredHeaders } from "../../types/index.js";
+import { InitialSettings, RequestOpts, RequestParameters, RequiredCookies, RequiredHeaders, SimpleCookie } from "../../types/index.js";
 export declare const HOST = "https://www.vseinstrumenti.ru";
 export declare const API_HOST = "https://bff.vseinstrumenti.ru";
 export declare const restRequestOpts: (handler: RequestOpts, page?: number) => RequestParameters;
@@ -12,7 +12,9 @@ export type ApiPayload = {
         perPage: number;
     };
 };
-export declare const apiRequestOpts: (handler: RequestOpts, page?: number) => RequestParameters<ApiPayload>;
+export declare const apiRequestOpts: (handler: RequestOpts<{
+    cookies: SimpleCookie[];
+}>, page?: number) => RequestParameters<ApiPayload>;
 export declare const requiredCookies: RequiredCookies;
 export declare const requiredHeaders: RequiredHeaders;
 //# sourceMappingURL=settings.d.ts.map

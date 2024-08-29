@@ -4,6 +4,7 @@ import {
   RequestParameters,
   RequiredCookies,
   RequiredHeaders,
+  SimpleCookie,
 } from "../../types/index.js";
 
 export const HOST = "https://www.vseinstrumenti.ru";
@@ -34,7 +35,7 @@ export const REST_SETTINGS: InitialSettings = {
     waitAfterLoad: 5000,
   },
   perPage: 40,
-}
+};
 
 export const API_SETTINGS: InitialSettings = {
   antibotOpts: {
@@ -47,7 +48,7 @@ export const API_SETTINGS: InitialSettings = {
     waitAfterLoad: 5000,
   },
   perPage: 40,
-}
+};
 
 export type ApiPayload = {
   listingType: string;
@@ -59,22 +60,30 @@ export type ApiPayload = {
 };
 
 export const apiRequestOpts = (
-  handler: RequestOpts,
+  handler: RequestOpts<{ cookies: SimpleCookie[] }>,
   page: number = 0
 ): RequestParameters<ApiPayload> => ({
   urlPath: `/api/category/load?short=true`,
   host: API_HOST,
   method: "POST",
+  headers: [
+    "Content-Type: application/json",
+    ...(handler.data.meta?.cookies
+      ? [
+          `Token: ${handler.data.meta?.cookies.find((c) => c.name == `acctoken`)?.value}`,
+        ]
+      : []),
+  ],
   remoteCategoryId: handler.data.remoteId ?? 1,
   page,
   payload: {
-    listingType: 'category',
+    listingType: "category",
     id: handler.data.remoteId,
     page: {
       number: page,
-      perPage: API_SETTINGS.perPage
-    }
-  }
+      perPage: API_SETTINGS.perPage,
+    },
+  },
 });
 
 export const requiredCookies: RequiredCookies = ["acctoken", "cf_clearance"];

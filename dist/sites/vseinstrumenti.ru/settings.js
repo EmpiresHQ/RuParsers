@@ -37,21 +37,29 @@ export const API_SETTINGS = {
     perPage: 40,
 };
 export const apiRequestOpts = (handler, page = 0) => {
-    var _a;
+    var _a, _b, _c, _d;
     return ({
         urlPath: `/api/category/load?short=true`,
         host: API_HOST,
         method: "POST",
-        remoteCategoryId: (_a = handler.data.remoteId) !== null && _a !== void 0 ? _a : 1,
+        headers: [
+            "Content-Type: application/json",
+            ...(((_a = handler.data.meta) === null || _a === void 0 ? void 0 : _a.cookies)
+                ? [
+                    `Token: ${(_c = (_b = handler.data.meta) === null || _b === void 0 ? void 0 : _b.cookies.find((c) => c.name == `acctoken`)) === null || _c === void 0 ? void 0 : _c.value}`,
+                ]
+                : []),
+        ],
+        remoteCategoryId: (_d = handler.data.remoteId) !== null && _d !== void 0 ? _d : 1,
         page,
         payload: {
-            listingType: 'category',
+            listingType: "category",
             id: handler.data.remoteId,
             page: {
                 number: page,
-                perPage: API_SETTINGS.perPage
-            }
-        }
+                perPage: API_SETTINGS.perPage,
+            },
+        },
     });
 };
 export const requiredCookies = ["acctoken", "cf_clearance"];

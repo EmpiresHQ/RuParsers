@@ -2,6 +2,7 @@ import { BaseItem } from "./item.js";
 import { InitialSettings, SettingsHandler } from "./settings.js";
 export * from "./item.js";
 export * from "./settings.js";
+export * from "./base.js";
 export type CategoryParser<T extends Object = any> = (args: {
     html?: Buffer;
     json?: T;
