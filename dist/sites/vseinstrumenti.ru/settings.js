@@ -54,7 +54,7 @@ export const apiRequestOpts = (handler, page = 0) => {
         page,
         payload: {
             listingType: "category",
-            id: handler.data.remoteId,
+            id: _idFromUrl(handler.data.text),
             page: {
                 number: page,
                 perPage: API_SETTINGS.perPage,
@@ -62,5 +62,6 @@ export const apiRequestOpts = (handler, page = 0) => {
         },
     });
 };
+const _idFromUrl = (text) => { var _a; return +((_a = text.split("-").pop()) !== null && _a !== void 0 ? _a : -1); };
 export const requiredCookies = ["acctoken", "cf_clearance"];
 export const requiredHeaders = ["Token"];
