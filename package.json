@@ -1,9 +1,10 @@
 {
-  "name": "ru_parsers",
+  "name": "ru-parsers",
   "version": "0.0.1",
   "description": "html parsers for some russian shops",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/typedefs/index.d.ts",
   "scripts": {
     "lint": "eslint ./src/",
     "build": "npm run lint && tsc",

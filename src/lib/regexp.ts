@@ -1,4 +1,4 @@
-const _digitRegexp = new RegExp(/.*?(\d+)/);
+const _digitRegexp = new RegExp(/(\d+)/);
 
 export const digitMatcher = (text: string) => {
   const matches = text.match(_digitRegexp)
