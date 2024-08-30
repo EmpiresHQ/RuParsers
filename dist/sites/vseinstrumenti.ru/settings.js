@@ -37,6 +37,24 @@ export const API_SETTINGS = {
     },
     perPage: 40,
 };
+export const treeRootOpts = () => ({
+    urlPath: `/api/catalog/topics`,
+    host: API_HOST,
+    method: "GET",
+    headers: ["Content-Type: application/json"],
+});
+export const treeLeafOpts = ({ remoteCategoryId, }) => ({
+    urlPath: `/api/catalog/categories?id=${remoteCategoryId}&activeRegionId=-1`,
+    host: API_HOST,
+    method: "GET",
+    headers: ["Content-Type: application/json"],
+});
+export const treeChildOpts = ({ left, right, }) => ({
+    urlPath: `/api/catalog/child-categories?leftBorder=${left}&rightBorder=${right}&activeRegionId=-1`,
+    host: API_HOST,
+    method: "GET",
+    headers: ["Content-Type: application/json"],
+});
 export const apiRequestOpts = (handler, page = 0) => {
     var _a, _b, _c, _d;
     return ({
