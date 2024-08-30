@@ -4,6 +4,7 @@ import { apiRequestOpts, REST_SETTINGS, restRequestOpts } from "./settings.js";
 
 export * from "./category_parser.js";
 export * from "./settings.js";
+export * from "./types.js";
 
 export const strategies: {
   [key in string]: StrategyHandler;

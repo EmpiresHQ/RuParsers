@@ -2,6 +2,7 @@ import { apiParser, htmlParser, jsParser } from "./category_parser.js";
 import { apiRequestOpts, REST_SETTINGS, restRequestOpts } from "./settings.js";
 export * from "./category_parser.js";
 export * from "./settings.js";
+export * from "./types.js";
 export const strategies = {
     html: {
         parser: htmlParser,

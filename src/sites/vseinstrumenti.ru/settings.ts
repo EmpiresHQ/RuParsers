@@ -6,6 +6,7 @@ import {
   RequiredHeaders,
   SimpleCookie,
 } from "../../types/index.js";
+import { ApiPayload } from "./index.js";
 
 export const HOST = "https://www.vseinstrumenti.ru";
 export const API_HOST = "https://bff.vseinstrumenti.ru";
@@ -51,14 +52,6 @@ export const API_SETTINGS: InitialSettings = {
   perPage: 40,
 };
 
-export type ApiPayload = {
-  listingType: string;
-  id: number;
-  page: {
-    number: number;
-    perPage: number;
-  };
-};
 
 export const apiRequestOpts = (
   handler: RequestOpts<{ cookies: SimpleCookie[] }>,

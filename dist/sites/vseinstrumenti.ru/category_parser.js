@@ -74,7 +74,6 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
         hasNextPage: currentPage && lastPage ? currentPage < lastPage : false,
     };
 });
-;
 const _itemMapper = (item) => {
     var _a, _b;
     const { code, pricesV2, name, availabilityInfo, image } = item;

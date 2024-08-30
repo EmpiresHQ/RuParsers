@@ -1,12 +1,10 @@
 import * as cheerio from "cheerio";
-import { BaseItem } from "../../types/item.js";
 import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
 import { CategoryParser } from "../../types/index.js";
 import { CDN_HOST } from "./settings.js";
-
-interface Item extends BaseItem {}
+import { Item, NuxtProduct, Page, WindowNUXT } from "./index.js";
 
 export const htmlParser: CategoryParser = async ({html}) => {
   if (!Buffer.isBuffer(html)) {
@@ -75,101 +73,6 @@ export const htmlParser: CategoryParser = async ({html}) => {
   };
 };
 
-type NuxtProduct = {
-  USP: string;
-  adminInfo: {
-    canOutOstMainStore?: boolean;
-  };
-  availabilityInfo: {
-    countInStock: number;
-    courierPickupDate: string;
-    currentlyAvailable: number;
-    hasFreeDelivery: boolean;
-    inWarehouse: number;
-    isForPickupOnly: boolean;
-    isInStock: boolean;
-    isOnStockInCourierOffice: boolean;
-    officePickupMessage: string;
-    officePickupName: string;
-    selfPickupDate: string;
-  };
-  banDeliveryId: number;
-  canSubscribeAtAvailability: boolean;
-  characteristics: {
-    name: string;
-    unit: string;
-    value: string;
-  }[];
-  code: string; // sku
-  dimensions?: {
-    height: number;
-    length: number;
-    weight: number;
-    width: number;
-  };
-  discountPercent: number;
-  discountPrice: number;
-  discountPricePercent: number;
-  has3d: boolean;
-  hasAnalogs: boolean;
-  hasCourier: boolean;
-  hasVideos: boolean;
-  id: number; // internal id
-  image: string;
-  images: string[];
-  isAvailable: boolean;
-  isConsumable: boolean;
-  isLastPrice: boolean;
-  link: string;
-  makeId: number; // brand
-  name: string;
-  // nameplates: [[Object]];
-  note: string;
-  pricesV2: {
-    availableDiscountPrices: {
-      price: number;
-      type: string;
-    }[];
-    current: number;
-  };
-  responses: {
-    amount: number;
-    averageRatio: number; // stars
-    link: string;
-  };
-};
-
-type Listing = {
-  perPage: number;
-  pageNumber: number;
-  productsForPaginationCount: number;
-  products: {
-    [key in string]: NuxtProduct;
-  };
-};
-
-type WindowNUXT = {
-  window: {
-    __NUXT__?: {
-      state: {
-        listing: Listing;
-      };
-    };
-  };
-};
-
-interface Page {
-  listingSettings: {
-    limit: number;
-    pages: {
-      current: number;
-      max: number;
-    };
-  };
-  products: NuxtProduct[];
-  productsCount: number;
-  productsForPaginationCount: number;
-};
 
 const _itemMapper = (item: NuxtProduct): Item => {
   const { code, pricesV2, name, availabilityInfo, image } = item;
