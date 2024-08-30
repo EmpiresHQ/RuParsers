@@ -50,6 +50,10 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
                             }
                         },
                     },
+                    notAvailable: {
+                        selector: '[data-qa="product-subscribe-at-availability-button"]',
+                        value: 'href'
+                    },
                     imageUrl: {
                         selector: '[data-qa="product-photo-click"] img',
                         value: (el) => {
@@ -60,14 +64,14 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
             },
         ],
     });
-    const items = data.items.map(({ sku, regularPrice, discountPrice, stock, imageUrl }) => ({
+    const items = data.items.map(({ sku, regularPrice, discountPrice, stock, imageUrl, notAvailable }) => ({
         discountPrice,
         stock,
         imageUrl,
         skuId: sku !== null && sku !== void 0 ? sku : "",
         regularPrice: regularPrice !== null && regularPrice !== void 0 ? regularPrice : "",
         title: title !== null && title !== void 0 ? title : "",
-        isAvailable: !!stock,
+        isAvailable: !notAvailable,
     }));
     return {
         items,
@@ -75,16 +79,17 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
     };
 });
 const _itemMapper = (item) => {
-    var _a, _b;
-    const { code, pricesV2, name, availabilityInfo, image } = item;
+    var _a, _b, _c;
+    const { code, pricesV2, name, availabilityInfo, image, isAvailable } = item;
     return {
         title: name,
         skuId: code,
         stock: availabilityInfo.currentlyAvailable,
         imageUrl: `${CDN_HOST}${image}`,
-        regularPrice: pricesV2.current.toString(),
-        discountPrice: (_b = (_a = pricesV2.availableDiscountPrices
-            .sort((a, b) => a.price - b.price)) === null || _a === void 0 ? void 0 : _a.shift()) === null || _b === void 0 ? void 0 : _b.price.toString(),
+        isAvailable,
+        regularPrice: availabilityInfo.currentlyAvailable ? ((_a = pricesV2.current) !== null && _a !== void 0 ? _a : 0).toString() : "0",
+        discountPrice: (_c = (_b = pricesV2.availableDiscountPrices
+            .sort((a, b) => a.price - b.price)) === null || _b === void 0 ? void 0 : _b.shift()) === null || _c === void 0 ? void 0 : _c.price.toString(),
     };
 };
 export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {

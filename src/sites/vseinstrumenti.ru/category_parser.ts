@@ -45,6 +45,10 @@ export const htmlParser: CategoryParser = async ({html}) => {
               }
             },
           },
+          notAvailable: {
+            selector: '[data-qa="product-subscribe-at-availability-button"]',
+            value: 'href'
+          },
           imageUrl: {
             selector: '[data-qa="product-photo-click"] img',
             value: (el) => {
@@ -57,14 +61,14 @@ export const htmlParser: CategoryParser = async ({html}) => {
   });
 
   const items = data.items.map<Item>(
-    ({ sku, regularPrice, discountPrice, stock, imageUrl }) => ({
+    ({ sku, regularPrice, discountPrice, stock, imageUrl, notAvailable }) => ({
       discountPrice,
       stock,
       imageUrl,
       skuId: sku ?? "",
       regularPrice: regularPrice ?? "",
       title: title ?? "",
-      isAvailable: !!stock,
+      isAvailable: !notAvailable,
     })
   );
   return {
@@ -75,13 +79,14 @@ export const htmlParser: CategoryParser = async ({html}) => {
 
 
 const _itemMapper = (item: NuxtProduct): Item => {
-  const { code, pricesV2, name, availabilityInfo, image } = item;
+  const { code, pricesV2, name, availabilityInfo, image, isAvailable } = item;
   return {
     title: name,
     skuId: code,
     stock: availabilityInfo.currentlyAvailable,
     imageUrl: `${CDN_HOST}${image}`,
-    regularPrice: pricesV2.current.toString(),
+    isAvailable,
+    regularPrice: availabilityInfo.currentlyAvailable ? (pricesV2.current ?? 0).toString() : "0",
     discountPrice: pricesV2.availableDiscountPrices
       .sort((a, b) => a.price - b.price)
       ?.shift()
