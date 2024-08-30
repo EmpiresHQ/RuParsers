@@ -1,4 +1,5 @@
 import { apiParser, htmlParser, jsParser } from "./category_parser.js";
+import { treeParser } from "./category_tree.js";
 import { apiRequestOpts, REST_SETTINGS, restRequestOpts } from "./settings.js";
 export * from "./category_parser.js";
 export * from "./settings.js";
@@ -21,3 +22,4 @@ export const strategies = {
     }
 };
 export const preferredStrategy = "api";
+export const categoryParser = treeParser;
