@@ -1,11 +1,25 @@
 export type AvailablePlatforms = "vseinstrumenti.ru" | string;
-export interface RequestOpts<T extends Record<string, unknown> = any> {
+import type { Merge } from "type-fest";
+export interface RequestOpts<T = AntiBotKey> {
     data: {
         meta?: T;
         remoteId: number;
         text: string;
     };
 }
+export interface AntiBotKey {
+    antibotData?: AntibotData;
+}
+export type AntibotData = {
+    cookies?: {
+        name: string;
+        value: string;
+    }[];
+    evaluatedValue?: unknown;
+    screenshot?: string;
+    body?: string;
+    documentBody?: string;
+};
 export interface BotDetectorParams {
     url: string | string[];
     fetchCookies?: {
@@ -72,7 +86,7 @@ export interface InitialSettings {
     antibotOpts?: BotDetectorParams;
     perPage: number;
 }
-export type SettingsHandler = (input: RequestOpts, page?: number) => RequestParameters;
+export type SettingsHandler<T extends Merge<AntiBotKey, unknown> = Merge<AntiBotKey, unknown>> = (input: RequestOpts<T>, page?: number) => RequestParameters;
 export type RequiredCookies = string[];
 export type RequiredHeaders = string[];
 //# sourceMappingURL=settings.d.ts.map

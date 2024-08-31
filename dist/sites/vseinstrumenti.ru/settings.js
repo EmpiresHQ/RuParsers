@@ -56,20 +56,20 @@ export const treeChildOpts = ({ left, right, }) => ({
     headers: ["Content-Type: application/json"],
 });
 export const apiRequestOpts = (handler, page = 0) => {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     return ({
         urlPath: `/api/category/load?short=true`,
         host: API_HOST,
         method: "POST",
         headers: [
             "Content-Type: application/json",
-            ...(((_a = handler.data.meta) === null || _a === void 0 ? void 0 : _a.cookies)
+            ...(((_b = (_a = handler.data.meta) === null || _a === void 0 ? void 0 : _a.antibotData) === null || _b === void 0 ? void 0 : _b.cookies)
                 ? [
-                    `Token: ${(_c = (_b = handler.data.meta) === null || _b === void 0 ? void 0 : _b.cookies.find((c) => c.name == `acctoken`)) === null || _c === void 0 ? void 0 : _c.value}`,
+                    `Token: ${(_e = ((_d = (_c = handler.data.meta) === null || _c === void 0 ? void 0 : _c.antibotData.cookies) !== null && _d !== void 0 ? _d : []).find((c) => c.name == `acctoken`)) === null || _e === void 0 ? void 0 : _e.value}`,
                 ]
                 : []),
         ],
-        remoteCategoryId: (_d = handler.data.remoteId) !== null && _d !== void 0 ? _d : 1,
+        remoteCategoryId: (_f = handler.data.remoteId) !== null && _f !== void 0 ? _f : 1,
         page,
         payload: {
             listingType: "category",

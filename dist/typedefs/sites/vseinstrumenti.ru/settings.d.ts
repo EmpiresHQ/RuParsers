@@ -1,4 +1,4 @@
-import { BaseRequestParameters, InitialSettings, RequestOpts, RequestParameters, RequiredCookies, RequiredHeaders, SimpleCookie } from "../../types/index.js";
+import { AntiBotKey, BaseRequestParameters, InitialSettings, RequestOpts, RequestParameters, RequiredCookies, RequiredHeaders } from "../../types/index.js";
 import { ApiPayload } from "./index.js";
 export declare const HOST = "https://www.vseinstrumenti.ru";
 export declare const API_HOST = "https://bff.vseinstrumenti.ru";
@@ -16,8 +16,8 @@ export type TreeChildArgs = {
     right: number;
 };
 export declare const treeChildOpts: ({ left, right, }: TreeChildArgs) => BaseRequestParameters;
-export declare const apiRequestOpts: (handler: RequestOpts<{
-    cookies: SimpleCookie[];
+export declare const apiRequestOpts: (handler: RequestOpts<AntiBotKey & {
+    key: string;
 }>, page?: number) => RequestParameters<ApiPayload>;
 export declare const requiredCookies: RequiredCookies;
 export declare const requiredHeaders: RequiredHeaders;

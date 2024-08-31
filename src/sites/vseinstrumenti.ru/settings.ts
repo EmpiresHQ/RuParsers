@@ -1,11 +1,12 @@
 import {
+  AntiBotKey,
   BaseRequestParameters,
   InitialSettings,
   RequestOpts,
   RequestParameters,
   RequiredCookies,
   RequiredHeaders,
-  SimpleCookie,
+  // SimpleCookie,
 } from "../../types/index.js";
 import { ApiPayload } from "./index.js";
 
@@ -61,8 +62,8 @@ export const treeRootOpts = (): BaseRequestParameters => ({
 });
 
 export type TreeLeafOptsArgs = {
-  remoteCategoryId: number
-}
+  remoteCategoryId: number;
+};
 export const treeLeafOpts = ({
   remoteCategoryId,
 }: TreeLeafOptsArgs): BaseRequestParameters => ({
@@ -75,7 +76,7 @@ export const treeLeafOpts = ({
 export type TreeChildArgs = {
   left: number;
   right: number;
-}
+};
 
 export const treeChildOpts = ({
   left,
@@ -88,7 +89,7 @@ export const treeChildOpts = ({
 });
 
 export const apiRequestOpts = (
-  handler: RequestOpts<{ cookies: SimpleCookie[] }>,
+  handler: RequestOpts<AntiBotKey & {key: string}>,
   page: number = 0
 ): RequestParameters<ApiPayload> => ({
   urlPath: `/api/category/load?short=true`,
@@ -96,9 +97,9 @@ export const apiRequestOpts = (
   method: "POST",
   headers: [
     "Content-Type: application/json",
-    ...(handler.data.meta?.cookies
+    ...(handler.data.meta?.antibotData?.cookies
       ? [
-          `Token: ${handler.data.meta?.cookies.find((c) => c.name == `acctoken`)?.value}`,
+          `Token: ${(handler.data.meta?.antibotData.cookies ?? []).find((c) => c.name == `acctoken`)?.value}`,
         ]
       : []),
   ],

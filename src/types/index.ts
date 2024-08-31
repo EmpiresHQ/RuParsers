@@ -16,8 +16,9 @@ export type CategoryParser<T extends Object = any> = (args: {
   err?: unknown;
 }>;
 
-export type StrategyHandler = {
+// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
+export type StrategyHandler<T extends Object = any> = {
   parser: CategoryParser;
-  opts: SettingsHandler;
+  opts: SettingsHandler<T>;
   settings: InitialSettings;
 };
