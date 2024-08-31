@@ -47,8 +47,8 @@ export const API_SETTINGS: InitialSettings = {
       domains: ["https://vseinstrumenti.ru"],
       cookieNames: ["acctoken", "cf_clearance"],
     },
-    waitUrl: "challenge-platform",
-    waitAfterLoad: 6000,
+    // waitUrl: "challenge-platform",
+    waitAfterLoad: 3000,
   },
   perPage: 40,
 };
