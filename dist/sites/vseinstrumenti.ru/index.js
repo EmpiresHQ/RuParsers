@@ -1,6 +1,6 @@
 import { apiParser, htmlParser, jsParser } from "./category_parser.js";
 import { treeParser } from "./category_tree.js";
-import { API_SETTINGS, apiRequestOpts, REST_SETTINGS, restRequestOpts } from "./settings.js";
+import { apiRequestOpts, REST_SETTINGS, API_SETTINGS, restRequestOpts } from "./settings.js";
 export * from "./category_parser.js";
 export * from "./settings.js";
 export * from "./types.js";
