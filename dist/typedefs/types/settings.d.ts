@@ -56,14 +56,17 @@ export interface BotDetectorParams {
         };
     };
 }
-export interface RequestParameters<T = unknown> {
+export interface BaseRequestParameters<T = unknown> {
+    method: "GET" | "POST";
     urlPath: string;
+    host?: string;
+    payload?: T;
+    cookies?: string;
+    headers?: string[];
+}
+export interface RequestParameters<T = unknown> extends Pick<BaseRequestParameters<T>, "method" | "headers" | "payload" | "host" | "urlPath"> {
     remoteCategoryId: number;
     page?: number;
-    method: "POST" | "GET";
-    payload?: T;
-    host: string;
-    headers?: string[];
 }
 export interface InitialSettings {
     antibotOpts?: BotDetectorParams;

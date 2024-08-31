@@ -33,10 +33,28 @@ export const API_SETTINGS = {
             cookieNames: ["acctoken", "cf_clearance"],
         },
         waitUrl: "challenge-platform",
-        waitAfterLoad: 5000,
+        waitAfterLoad: 6000,
     },
     perPage: 40,
 };
+export const treeRootOpts = () => ({
+    urlPath: `/api/catalog/topics`,
+    host: API_HOST,
+    method: "GET",
+    headers: ["Content-Type: application/json"],
+});
+export const treeLeafOpts = ({ remoteCategoryId, }) => ({
+    urlPath: `/api/catalog/categories?id=${remoteCategoryId}&activeRegionId=-1`,
+    host: API_HOST,
+    method: "GET",
+    headers: ["Content-Type: application/json"],
+});
+export const treeChildOpts = ({ left, right, }) => ({
+    urlPath: `/api/catalog/child-categories?leftBorder=${left}&rightBorder=${right}&activeRegionId=-1`,
+    host: API_HOST,
+    method: "GET",
+    headers: ["Content-Type: application/json"],
+});
 export const apiRequestOpts = (handler, page = 0) => {
     var _a, _b, _c, _d;
     return ({
@@ -55,7 +73,7 @@ export const apiRequestOpts = (handler, page = 0) => {
         page,
         payload: {
             listingType: "category",
-            id: _idFromUrl(handler.data.text),
+            id: handler.data.remoteId,
             page: {
                 number: page,
                 perPage: API_SETTINGS.perPage,
@@ -63,6 +81,5 @@ export const apiRequestOpts = (handler, page = 0) => {
         },
     });
 };
-const _idFromUrl = (text) => { var _a; return +((_a = text.split("-").pop()) !== null && _a !== void 0 ? _a : -1); };
 export const requiredCookies = ["acctoken", "cf_clearance"];
 export const requiredHeaders = ["Token"];

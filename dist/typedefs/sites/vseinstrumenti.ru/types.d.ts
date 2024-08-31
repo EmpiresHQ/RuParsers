@@ -1,6 +1,42 @@
-import { BaseItem } from "../../types/index.js";
+import { BaseCategory, BaseItem, BaseRequestParameters } from "../../types/index.js";
 export interface Item extends BaseItem {
 }
+export type TreeParser = (args: {
+    rootLoader: (args: BaseRequestParameters) => Promise<CategoryRootPayload>;
+    leafLoader: (args: BaseRequestParameters) => Promise<CategoryLeafPayload[]>;
+    childLoader: (args: BaseRequestParameters) => Promise<CategoryChildren[]>;
+}) => Promise<BaseCategory[]>;
+export type CategoryRootPayload = {
+    data: CategoryRootItem[];
+};
+export type CategoryRootItem = {
+    count: number;
+    groupId: number;
+    id: string;
+    name: string;
+};
+export type CategoryLeafPayload = {
+    children: CategoryLeafChildren[];
+    id: string;
+    name: string;
+    url: string;
+};
+type CategoryLeafChildren = {
+    count: number;
+    id: number;
+    isForceShow: boolean;
+    isSubcategoriesExist: boolean;
+    leftBorder: number;
+    name: string;
+    rightBorder: number;
+    url: string;
+};
+export type CategoryChildren = {
+    count: number;
+    id: number;
+    name: string;
+    url: string;
+};
 export type ApiPayload = {
     listingType: string;
     id: number;
@@ -100,4 +136,5 @@ export interface Page {
     productsCount: number;
     productsForPaginationCount: number;
 }
+export {};
 //# sourceMappingURL=types.d.ts.map

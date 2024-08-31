@@ -6,4 +6,5 @@ export declare const strategies: {
     [key in string]: StrategyHandler;
 };
 export declare const preferredStrategy = "api";
+export declare const categoryParser: import("./types.js").TreeParser;
 //# sourceMappingURL=index.d.ts.map

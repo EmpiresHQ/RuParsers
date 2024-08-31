@@ -1,4 +1,4 @@
-import { InitialSettings, RequestOpts, RequestParameters, RequiredCookies, RequiredHeaders, SimpleCookie } from "../../types/index.js";
+import { BaseRequestParameters, InitialSettings, RequestOpts, RequestParameters, RequiredCookies, RequiredHeaders, SimpleCookie } from "../../types/index.js";
 import { ApiPayload } from "./index.js";
 export declare const HOST = "https://www.vseinstrumenti.ru";
 export declare const API_HOST = "https://bff.vseinstrumenti.ru";
@@ -6,6 +6,16 @@ export declare const CDN_HOST = "https://cdn.vseinstrumenti.ru";
 export declare const restRequestOpts: (handler: RequestOpts, page?: number) => RequestParameters;
 export declare const REST_SETTINGS: InitialSettings;
 export declare const API_SETTINGS: InitialSettings;
+export declare const treeRootOpts: () => BaseRequestParameters;
+export type TreeLeafOptsArgs = {
+    remoteCategoryId: number;
+};
+export declare const treeLeafOpts: ({ remoteCategoryId, }: TreeLeafOptsArgs) => BaseRequestParameters;
+export type TreeChildArgs = {
+    left: number;
+    right: number;
+};
+export declare const treeChildOpts: ({ left, right, }: TreeChildArgs) => BaseRequestParameters;
 export declare const apiRequestOpts: (handler: RequestOpts<{
     cookies: SimpleCookie[];
 }>, page?: number) => RequestParameters<ApiPayload>;

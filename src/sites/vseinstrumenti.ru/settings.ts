@@ -1,4 +1,5 @@
 import {
+  BaseRequestParameters,
   InitialSettings,
   RequestOpts,
   RequestParameters,
@@ -10,7 +11,7 @@ import { ApiPayload } from "./index.js";
 
 export const HOST = "https://www.vseinstrumenti.ru";
 export const API_HOST = "https://bff.vseinstrumenti.ru";
-export const CDN_HOST = "https://cdn.vseinstrumenti.ru"
+export const CDN_HOST = "https://cdn.vseinstrumenti.ru";
 
 export const restRequestOpts = (
   handler: RequestOpts,
@@ -46,12 +47,45 @@ export const API_SETTINGS: InitialSettings = {
       domains: ["https://vseinstrumenti.ru"],
       cookieNames: ["acctoken", "cf_clearance"],
     },
-    // waitUrl: "challenge-platform",
-    waitAfterLoad: 3000,
+    waitUrl: "challenge-platform",
+    waitAfterLoad: 6000,
   },
   perPage: 40,
 };
 
+export const treeRootOpts = (): BaseRequestParameters => ({
+  urlPath: `/api/catalog/topics`,
+  host: API_HOST,
+  method: "GET",
+  headers: ["Content-Type: application/json"],
+});
+
+export type TreeLeafOptsArgs = {
+  remoteCategoryId: number
+}
+export const treeLeafOpts = ({
+  remoteCategoryId,
+}: TreeLeafOptsArgs): BaseRequestParameters => ({
+  urlPath: `/api/catalog/categories?id=${remoteCategoryId}&activeRegionId=-1`,
+  host: API_HOST,
+  method: "GET",
+  headers: ["Content-Type: application/json"],
+});
+
+export type TreeChildArgs = {
+  left: number;
+  right: number;
+}
+
+export const treeChildOpts = ({
+  left,
+  right,
+}: TreeChildArgs): BaseRequestParameters => ({
+  urlPath: `/api/catalog/child-categories?leftBorder=${left}&rightBorder=${right}&activeRegionId=-1`,
+  host: API_HOST,
+  method: "GET",
+  headers: ["Content-Type: application/json"],
+});
 
 export const apiRequestOpts = (
   handler: RequestOpts<{ cookies: SimpleCookie[] }>,
@@ -72,15 +106,13 @@ export const apiRequestOpts = (
   page,
   payload: {
     listingType: "category",
-    id: _idFromUrl(handler.data.text),
+    id: handler.data.remoteId,
     page: {
       number: page,
       perPage: API_SETTINGS.perPage,
     },
   },
 });
-
-const _idFromUrl = (text: string): number => +(text.split("-").pop() ?? -1)
 
 export const requiredCookies: RequiredCookies = ["acctoken", "cf_clearance"];
 
