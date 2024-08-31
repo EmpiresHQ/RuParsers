@@ -106,15 +106,13 @@ export const apiRequestOpts = (
   page,
   payload: {
     listingType: "category",
-    id: _idFromUrl(handler.data.text),
+    id: handler.data.remoteId,
     page: {
       number: page,
       perPage: API_SETTINGS.perPage,
     },
   },
 });
-
-const _idFromUrl = (text: string): number => +(text.split("-").pop() ?? -1);
 
 export const requiredCookies: RequiredCookies = ["acctoken", "cf_clearance"];
 
