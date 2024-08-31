@@ -17,7 +17,7 @@ export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
         const leafOpts = treeLeafOpts({ remoteCategoryId: data.groupId });
         const leafs = yield leafLoader(leafOpts);
         for (const leaf of leafs) {
-            const id = digitMatcher(leaf.name);
+            const id = digitMatcher(leaf.url);
             if (id) {
                 holder.push({
                     title: leaf.name,
@@ -52,4 +52,5 @@ export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
             }
         }
     }
+    return holder;
 });

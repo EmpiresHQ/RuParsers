@@ -11,7 +11,7 @@ export const treeParser: TreeParser = async ({
   rootLoader,
   leafLoader,
   childLoader,
-}) => {
+}): Promise<BaseCategory[]> => {
   const rootRequestParameters = treeRootOpts();
   const root = await rootLoader(rootRequestParameters);
   const holder: BaseCategory[] = [];
@@ -19,7 +19,7 @@ export const treeParser: TreeParser = async ({
     const leafOpts = treeLeafOpts({ remoteCategoryId: data.groupId });
     const leafs = await leafLoader(leafOpts);
     for (const leaf of leafs) {
-      const id = digitMatcher(leaf.name);
+      const id = digitMatcher(leaf.url);
       if (id) {
         holder.push({
           title: leaf.name,
@@ -54,4 +54,5 @@ export const treeParser: TreeParser = async ({
       }
     }
   }
+  return holder;
 };

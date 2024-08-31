@@ -1,4 +1,4 @@
-import { BaseItem, BaseRequestParameters } from "../../types/index.js";
+import { BaseCategory, BaseItem, BaseRequestParameters } from "../../types/index.js";
 
 export interface Item extends BaseItem {}
 
@@ -7,7 +7,7 @@ export type TreeParser = (args: {
   rootLoader: (args: BaseRequestParameters) => Promise<CategoryRootPayload>;
   leafLoader: (args: BaseRequestParameters) => Promise<CategoryLeafPayload[]>;
   childLoader: (args: BaseRequestParameters) => Promise<CategoryChildren[]>;
-}) => Promise<void>
+}) => Promise<BaseCategory[]>
   
 
 export type CategoryRootPayload = {
