@@ -27,13 +27,13 @@ export const REST_SETTINGS = {
 };
 export const API_SETTINGS = {
     antibotOpts: {
-        url: API_HOST,
+        url: HOST,
         fetchCookies: {
             domains: ["https://vseinstrumenti.ru"],
             cookieNames: ["acctoken", "cf_clearance"],
         },
-        waitUrl: "challenge-platform",
-        waitAfterLoad: 6000,
+        // waitUrl: "challenge-platform",
+        waitAfterLoad: 3000,
     },
     perPage: 40,
 };
