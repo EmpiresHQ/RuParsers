@@ -41,13 +41,13 @@ export const REST_SETTINGS: InitialSettings = {
 
 export const API_SETTINGS: InitialSettings = {
   antibotOpts: {
-    url: API_HOST,
+    url: HOST,
     fetchCookies: {
       domains: ["https://vseinstrumenti.ru"],
       cookieNames: ["acctoken", "cf_clearance"],
     },
-    waitUrl: "challenge-platform",
-    waitAfterLoad: 5000,
+    // waitUrl: "challenge-platform",
+    waitAfterLoad: 3000,
   },
   perPage: 40,
 };
