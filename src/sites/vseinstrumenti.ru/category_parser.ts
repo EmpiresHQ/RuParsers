@@ -87,10 +87,10 @@ const _itemMapper = (item: NuxtProduct): Item => {
     imageUrl: `${CDN_HOST}${image}`,
     isAvailable,
     regularPrice: availabilityInfo.currentlyAvailable ? (pricesV2.current ?? 0).toString() : "0",
-    discountPrice: pricesV2.availableDiscountPrices
+    discountPrice: availabilityInfo.currentlyAvailable ? (pricesV2.availableDiscountPrices
       .sort((a, b) => a.price - b.price)
       ?.shift()
-      ?.price.toString(),
+      ?.price.toString()) : undefined
   };
 };
 export const jsParser: CategoryParser = async ({html}) => {

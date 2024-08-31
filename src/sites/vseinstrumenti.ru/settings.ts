@@ -48,7 +48,7 @@ export const API_SETTINGS: InitialSettings = {
       cookieNames: ["acctoken", "cf_clearance"],
     },
     waitUrl: "challenge-platform",
-    waitAfterLoad: 5000,
+    waitAfterLoad: 6000,
   },
   perPage: 40,
 };

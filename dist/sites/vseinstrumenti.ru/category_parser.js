@@ -88,8 +88,8 @@ const _itemMapper = (item) => {
         imageUrl: `${CDN_HOST}${image}`,
         isAvailable,
         regularPrice: availabilityInfo.currentlyAvailable ? ((_a = pricesV2.current) !== null && _a !== void 0 ? _a : 0).toString() : "0",
-        discountPrice: (_c = (_b = pricesV2.availableDiscountPrices
-            .sort((a, b) => a.price - b.price)) === null || _b === void 0 ? void 0 : _b.shift()) === null || _c === void 0 ? void 0 : _c.price.toString(),
+        discountPrice: availabilityInfo.currentlyAvailable ? ((_c = (_b = pricesV2.availableDiscountPrices
+            .sort((a, b) => a.price - b.price)) === null || _b === void 0 ? void 0 : _b.shift()) === null || _c === void 0 ? void 0 : _c.price.toString()) : undefined
     };
 };
 export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {
