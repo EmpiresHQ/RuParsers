@@ -6,7 +6,7 @@ import { CategoryParser } from "../../types/index.js";
 import { CDN_HOST } from "./settings.js";
 import { Item, NuxtProduct, Page, WindowNUXT } from "./index.js";
 
-export const htmlParser: CategoryParser = async ({html}) => {
+export const htmlParser: CategoryParser = async ({ html }) => {
   if (!Buffer.isBuffer(html)) {
     throw new Error("not a buffer");
   }
@@ -47,7 +47,7 @@ export const htmlParser: CategoryParser = async ({html}) => {
           },
           notAvailable: {
             selector: '[data-qa="product-subscribe-at-availability-button"]',
-            value: 'href'
+            value: "href",
           },
           imageUrl: {
             selector: '[data-qa="product-photo-click"] img',
@@ -77,7 +77,6 @@ export const htmlParser: CategoryParser = async ({html}) => {
   };
 };
 
-
 const _itemMapper = (item: NuxtProduct): Item => {
   const { code, pricesV2, name, availabilityInfo, image, isAvailable } = item;
   return {
@@ -86,14 +85,19 @@ const _itemMapper = (item: NuxtProduct): Item => {
     stock: availabilityInfo.currentlyAvailable,
     imageUrl: `${CDN_HOST}${image}`,
     isAvailable,
-    regularPrice: availabilityInfo.currentlyAvailable ? (pricesV2.current ?? 0).toString() : "0",
-    discountPrice: availabilityInfo.currentlyAvailable ? (pricesV2.availableDiscountPrices
-      .sort((a, b) => a.price - b.price)
-      ?.shift()
-      ?.price.toString()) : undefined
+    regularPrice: availabilityInfo.currentlyAvailable
+      ? ((pricesV2.current ?? 0) * 100).toString() //should be in cents/kopeykas
+      : "0",
+    discountPrice: availabilityInfo.currentlyAvailable
+      ? (
+          (pricesV2.availableDiscountPrices
+            .sort((a, b) => a.price - b.price)
+            ?.shift()?.price ?? 0) * 100
+        ).toString()
+      : undefined,
   };
 };
-export const jsParser: CategoryParser = async ({html}) => {
+export const jsParser: CategoryParser = async ({ html }) => {
   if (!Buffer.isBuffer(html)) {
     throw new Error("not a buffer");
   }
@@ -118,7 +122,7 @@ export const jsParser: CategoryParser = async ({html}) => {
   };
 };
 
-export const apiParser: CategoryParser<Page> = async ({json}) => {
+export const apiParser: CategoryParser<Page> = async ({ json }) => {
   if (!json) {
     throw new Error("data should not be buffer");
   }
