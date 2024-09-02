@@ -52,7 +52,7 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
                     },
                     notAvailable: {
                         selector: '[data-qa="product-subscribe-at-availability-button"]',
-                        value: 'href'
+                        value: "href",
                     },
                     imageUrl: {
                         selector: '[data-qa="product-photo-click"] img',
@@ -79,7 +79,7 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
     };
 });
 const _itemMapper = (item) => {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const { code, pricesV2, name, availabilityInfo, image, isAvailable } = item;
     return {
         title: name,
@@ -87,9 +87,13 @@ const _itemMapper = (item) => {
         stock: availabilityInfo.currentlyAvailable,
         imageUrl: `${CDN_HOST}${image}`,
         isAvailable,
-        regularPrice: availabilityInfo.currentlyAvailable ? ((_a = pricesV2.current) !== null && _a !== void 0 ? _a : 0).toString() : "0",
-        discountPrice: availabilityInfo.currentlyAvailable ? ((_c = (_b = pricesV2.availableDiscountPrices
-            .sort((a, b) => a.price - b.price)) === null || _b === void 0 ? void 0 : _b.shift()) === null || _c === void 0 ? void 0 : _c.price.toString()) : undefined
+        regularPrice: availabilityInfo.currentlyAvailable
+            ? (((_a = pricesV2.current) !== null && _a !== void 0 ? _a : 0) * 100).toString() //should be in cents/kopeykas
+            : "0",
+        discountPrice: availabilityInfo.currentlyAvailable
+            ? (((_d = (_c = (_b = pricesV2.availableDiscountPrices
+                .sort((a, b) => a.price - b.price)) === null || _b === void 0 ? void 0 : _b.shift()) === null || _c === void 0 ? void 0 : _c.price) !== null && _d !== void 0 ? _d : 0) * 100).toString()
+            : undefined,
     };
 };
 export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {
