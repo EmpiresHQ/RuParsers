@@ -78,10 +78,10 @@ export const htmlParser: CategoryParser = async ({ html }) => {
 };
 
 const _itemMapper = (item: NuxtProduct): Item => {
-  const { code, pricesV2, name, availabilityInfo, image, isAvailable } = item;
+  const { code, pricesV2, name, availabilityInfo, image, isAvailable, id } = item;
   return {
-    title: name,
-    skuId: code,
+    title: `${name} ${code}`,
+    skuId: id.toString(),
     stock: availabilityInfo.currentlyAvailable,
     imageUrl: `${CDN_HOST}${image}`,
     isAvailable,

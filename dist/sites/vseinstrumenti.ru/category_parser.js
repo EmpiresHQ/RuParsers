@@ -80,10 +80,10 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
 });
 const _itemMapper = (item) => {
     var _a, _b, _c, _d;
-    const { code, pricesV2, name, availabilityInfo, image, isAvailable } = item;
+    const { code, pricesV2, name, availabilityInfo, image, isAvailable, id } = item;
     return {
-        title: name,
-        skuId: code,
+        title: `${name} ${code}`,
+        skuId: id.toString(),
         stock: availabilityInfo.currentlyAvailable,
         imageUrl: `${CDN_HOST}${image}`,
         isAvailable,
