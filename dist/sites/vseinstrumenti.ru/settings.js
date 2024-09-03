@@ -30,7 +30,7 @@ export const API_SETTINGS = {
         url: HOST,
         fetchCookies: {
             domains: ["https://vseinstrumenti.ru"],
-            cookieNames: ["acctoken", "cf_clearance"],
+            cookieNames: ["acctoken", "cf_clearance", "__cf_bm", "_cfuvid", "reftoken"],
         },
         waitUrl: "challenge-platform",
         waitAfterLoad: 3000,
