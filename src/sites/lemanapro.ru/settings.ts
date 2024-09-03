@@ -58,7 +58,7 @@ export const apiRequestOpts = (
       regionId: "34",
       suggest: true,
       limit: 30,
-      offset: page > 1 ? page-1 * 30 : 0
+      offset: page * 30
     },
   };
 };
