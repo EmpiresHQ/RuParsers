@@ -47,7 +47,7 @@ export const apiRequestOpts = (
       "Content-Type: application/json",
       `x-api-key: ${token}`
     ],
-    remoteCategoryId: handler.data.remoteId ?? 1,
+    remoteCategoryId: handler.data.remoteId ?? "",
     page,
     payload: {
       familyIds: [handler.data.meta?.key ?? ""],

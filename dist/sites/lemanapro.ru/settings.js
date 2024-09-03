@@ -33,7 +33,7 @@ export const apiRequestOpts = (handler, page = 0) => {
             "Content-Type: application/json",
             `x-api-key: ${token}`
         ],
-        remoteCategoryId: (_e = handler.data.remoteId) !== null && _e !== void 0 ? _e : 1,
+        remoteCategoryId: (_e = handler.data.remoteId) !== null && _e !== void 0 ? _e : "",
         page,
         payload: {
             familyIds: [(_g = (_f = handler.data.meta) === null || _f === void 0 ? void 0 : _f.key) !== null && _g !== void 0 ? _g : ""],
