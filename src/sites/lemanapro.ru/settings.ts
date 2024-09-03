@@ -54,7 +54,7 @@ export const apiRequestOpts = (
     remoteCategoryId: handler.data.remoteId ?? "",
     page,
     payload: {
-      familyIds: [handler.data.meta?.key ?? ""],
+      familyIds: [handler.data.remoteId ?? ""],
       regionId: "34",
       suggest: true,
       limit: 30,
