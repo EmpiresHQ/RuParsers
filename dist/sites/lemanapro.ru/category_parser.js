@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const _itemMapper = ({ productId, displayedName, price: { main_price }, mediaMainPhoto: { desktop }, eligibility, }) => ({
     skuId: productId,
     title: displayedName,
-    regularPrice: (main_price || 0).toString(),
+    regularPrice: ((main_price || 0) * 100).toString(),
     imageUrl: desktop,
     isAvailable: !!(eligibility &&
         (eligibility.homeDeliveryEligible ||
