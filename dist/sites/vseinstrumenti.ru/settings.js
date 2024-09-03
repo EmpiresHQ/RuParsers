@@ -32,7 +32,7 @@ export const API_SETTINGS = {
             domains: ["https://vseinstrumenti.ru"],
             cookieNames: ["acctoken", "cf_clearance"],
         },
-        // waitUrl: "challenge-platform",
+        waitUrl: "challenge-platform",
         waitAfterLoad: 3000,
     },
     perPage: 40,
