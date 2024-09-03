@@ -7,16 +7,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { treeRootSettings } from "./settings.js";
-export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ rootLoader }) {
+import { HOST, treeRootSettings } from "./settings.js";
+export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ rootLoader, childLoader, }) {
     const holder = [];
-    const initialData = yield rootLoader(treeRootSettings);
-    for (const rootCat of initialData.catalogue.catalogue.catalogue.data) {
+    const { data, cookies } = yield rootLoader(treeRootSettings);
+    console.log(cookies);
+    const treeParser = (parent, node) => {
+        holder.push({
+            title: node.label,
+            id: node.familyId,
+            url: node.sitePath.split("/")[2],
+            parent_id: parent.familyId,
+        });
+        if (node.children) {
+            for (const child of node.children) {
+                treeParser(node, child);
+            }
+        }
+    };
+    for (const rootCat of data.catalogue.catalogue.catalogue.data) {
         holder.push({
             title: rootCat.label,
             id: rootCat.familyId,
             url: rootCat.sitePath.split("/")[2],
         });
+        const child = yield childLoader({
+            method: "GET",
+            host: HOST,
+            urlPath: rootCat.navigationChunk,
+        }, cookies);
+        console.log('child: ', child.familyId, 'children: ', child.children.length);
+        if (child.children) {
+            for (const ch of child.children) {
+                treeParser(rootCat, ch);
+            }
+        }
     }
     return holder;
 });

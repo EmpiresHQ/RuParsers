@@ -7,7 +7,7 @@ import {
 import { ApiPayload, PLPModel } from "./index.js";
 
 const API_HOST = "https://api.lemanapro.ru";
-const HOST = "https://lemanapro.ru"
+export const HOST = "https://lemanapro.ru"
 
 export const API_SETTINGS: InitialSettings = {
   antibotOpts: {
@@ -27,7 +27,11 @@ export const treeRootSettings: InitialSettings = {
   antibotOpts:{
     url: `${HOST}/catalogue`,
     waitAfterLoad: 4000,
-    evaluateRuntime: "window.INITIAL_STATE"
+    evaluateRuntime: "window.INITIAL_STATE",
+    fetchCookies: {
+      domains: ["https://lemanapro.ru"],
+      cookieNames: ["qrator_jsid2", "_ym_uid", "qrator_jsr", "_regionID"],
+    },
   },
   perPage: -1
 }
@@ -54,7 +58,7 @@ export const apiRequestOpts = (
       regionId: "34",
       suggest: true,
       limit: 30,
-      offset: page * 30
+      offset: page > 0 ? page * 30 : 0
     },
   };
 };

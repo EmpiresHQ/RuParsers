@@ -1,5 +1,6 @@
 import { AntiBotKey, InitialSettings, RequestOpts, RequestParameters } from "../../types/index.js";
 import { ApiPayload } from "./index.js";
+export declare const HOST = "https://lemanapro.ru";
 export declare const API_SETTINGS: InitialSettings;
 export declare const treeRootSettings: InitialSettings;
 export declare const apiRequestOpts: (handler: RequestOpts<AntiBotKey & {

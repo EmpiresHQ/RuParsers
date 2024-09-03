@@ -1,9 +1,13 @@
-import { BaseCategory, InitialSettings } from "../../types/index.js";
+import { BaseCategory, BaseRequestParameters, InitialSettings, SimpleCookie } from "../../types/index.js";
 import { BaseItem } from "../../types/item.js";
 export interface Item extends BaseItem {
 }
 export type TreeParser = (args: {
-    rootLoader: (args: InitialSettings) => Promise<CategoriesPath>;
+    rootLoader: (args: InitialSettings) => Promise<{
+        data: CategoriesPath;
+        cookies: SimpleCookie[];
+    }>;
+    childLoader: (args: BaseRequestParameters, cookies: SimpleCookie[]) => Promise<CatalogueItem>;
 }) => Promise<BaseCategory[]>;
 export type CategoriesPath = {
     catalogue: {
@@ -14,7 +18,7 @@ export type CategoriesPath = {
         };
     };
 };
-type CatalogueItem = {
+export type CatalogueItem = {
     familyId: string;
     navigationChunk: string;
     sitePath: string;
@@ -95,5 +99,4 @@ export interface PLPModel {
         requestID: string;
     };
 }
-export {};
 //# sourceMappingURL=types.d.ts.map

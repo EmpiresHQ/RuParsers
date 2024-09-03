@@ -1,5 +1,5 @@
 const API_HOST = "https://api.lemanapro.ru";
-const HOST = "https://lemanapro.ru";
+export const HOST = "https://lemanapro.ru";
 export const API_SETTINGS = {
     antibotOpts: {
         url: HOST,
@@ -17,7 +17,11 @@ export const treeRootSettings = {
     antibotOpts: {
         url: `${HOST}/catalogue`,
         waitAfterLoad: 4000,
-        evaluateRuntime: "window.INITIAL_STATE"
+        evaluateRuntime: "window.INITIAL_STATE",
+        fetchCookies: {
+            domains: ["https://lemanapro.ru"],
+            cookieNames: ["qrator_jsid2", "_ym_uid", "qrator_jsr", "_regionID"],
+        },
     },
     perPage: -1
 };
@@ -40,7 +44,7 @@ export const apiRequestOpts = (handler, page = 0) => {
             regionId: "34",
             suggest: true,
             limit: 30,
-            offset: page * 30
+            offset: page > 0 ? page * 30 : 0
         },
     };
 };
