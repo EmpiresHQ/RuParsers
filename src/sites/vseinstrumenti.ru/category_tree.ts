@@ -45,7 +45,7 @@ export const treeParser: TreeParser = async ({
                   id: subChild.id,
                   title: subChild.name,
                   url: subChild.url,
-                  parent_id: child.id
+                  parent_id: child.id.toString()
                 })
               }
             }

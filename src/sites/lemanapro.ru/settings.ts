@@ -23,6 +23,16 @@ export const API_SETTINGS: InitialSettings = {
   perPage: 40,
 };
 
+export const treeRootSettings: InitialSettings = {
+  antibotOpts:{
+    url: `${HOST}/catalogue`,
+    waitAfterLoad: 4000,
+    evaluateRuntime: "window.INITIAL_STATE"
+  },
+  perPage: -1
+}
+
+
 export const apiRequestOpts = (
   handler: RequestOpts<AntiBotKey & {key: string}>,
   page: number = 0

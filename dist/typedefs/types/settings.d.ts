@@ -3,7 +3,7 @@ import type { Merge } from "type-fest";
 export interface RequestOpts<T = AntiBotKey> {
     data: {
         meta?: T;
-        remoteId: number;
+        remoteId: string;
         text: string;
     };
 }
@@ -79,7 +79,7 @@ export interface BaseRequestParameters<T = unknown> {
     headers?: string[];
 }
 export interface RequestParameters<T = unknown> extends Pick<BaseRequestParameters<T>, "method" | "headers" | "payload" | "host" | "urlPath"> {
-    remoteCategoryId: number;
+    remoteCategoryId: string;
     page?: number;
 }
 export interface InitialSettings {

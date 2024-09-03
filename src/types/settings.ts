@@ -5,7 +5,7 @@ import type { Merge } from "type-fest";
 export interface RequestOpts<T = AntiBotKey> {
   data: {
     meta?: T;
-    remoteId: number;
+    remoteId: string;
     text: string;
   };
 }
@@ -94,7 +94,7 @@ export interface RequestParameters<T = unknown>
     BaseRequestParameters<T>,
     "method" | "headers" | "payload" | "host" | "urlPath"
   > {
-  remoteCategoryId: number; // used to link between parser category id
+  remoteCategoryId: string; // used to link between parser category id
   page?: number;
 }
 

@@ -1,6 +1,27 @@
+import { BaseCategory, InitialSettings } from "../../types/index.js";
 import { BaseItem } from "../../types/item.js";
 export interface Item extends BaseItem {
 }
+export type TreeParser = (args: {
+    rootLoader: (args: InitialSettings) => Promise<CategoriesPath>;
+}) => Promise<BaseCategory[]>;
+export type CategoriesPath = {
+    catalogue: {
+        catalogue: {
+            catalogue: {
+                data: CatalogueItem[];
+            };
+        };
+    };
+};
+type CatalogueItem = {
+    familyId: string;
+    navigationChunk: string;
+    sitePath: string;
+    label: string;
+    level: number;
+    children: CatalogueItem[];
+};
 export type LemanaItem = {
     productPriceCategory: string;
     isFromParentFamily: boolean;
@@ -74,4 +95,5 @@ export interface PLPModel {
         requestID: string;
     };
 }
+export {};
 //# sourceMappingURL=types.d.ts.map

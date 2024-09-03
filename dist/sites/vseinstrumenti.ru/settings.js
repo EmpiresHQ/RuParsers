@@ -9,7 +9,7 @@ export const restRequestOpts = (handler, page = 0) => {
             : `/category/${handler.data.text}/`,
         method: "GET",
         host: HOST,
-        remoteCategoryId: (_a = handler.data.remoteId) !== null && _a !== void 0 ? _a : 1,
+        remoteCategoryId: (_a = handler.data.remoteId) !== null && _a !== void 0 ? _a : "1",
         page,
     });
 };
@@ -69,11 +69,11 @@ export const apiRequestOpts = (handler, page = 0) => {
                 ]
                 : []),
         ],
-        remoteCategoryId: (_f = handler.data.remoteId) !== null && _f !== void 0 ? _f : 1,
+        remoteCategoryId: (_f = handler.data.remoteId) !== null && _f !== void 0 ? _f : "",
         page,
         payload: {
             listingType: "category",
-            id: handler.data.remoteId,
+            id: +handler.data.remoteId,
             page: {
                 number: page,
                 perPage: API_SETTINGS.perPage,

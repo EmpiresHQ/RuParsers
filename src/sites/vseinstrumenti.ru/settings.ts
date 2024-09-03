@@ -24,7 +24,7 @@ export const restRequestOpts = (
       : `/category/${handler.data.text}/`,
   method: "GET",
   host: HOST,
-  remoteCategoryId: handler.data.remoteId ?? 1,
+  remoteCategoryId: handler.data.remoteId ?? "1",
   page,
 });
 
@@ -103,11 +103,11 @@ export const apiRequestOpts = (
         ]
       : []),
   ],
-  remoteCategoryId: handler.data.remoteId ?? 1,
+  remoteCategoryId: handler.data.remoteId ?? "",
   page,
   payload: {
     listingType: "category",
-    id: handler.data.remoteId,
+    id: +handler.data.remoteId,
     page: {
       number: page,
       perPage: API_SETTINGS.perPage,

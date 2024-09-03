@@ -13,6 +13,14 @@ export const API_SETTINGS = {
     },
     perPage: 40,
 };
+export const treeRootSettings = {
+    antibotOpts: {
+        url: `${HOST}/catalogue`,
+        waitAfterLoad: 4000,
+        evaluateRuntime: "window.INITIAL_STATE"
+    },
+    perPage: -1
+};
 export const apiRequestOpts = (handler, page = 0) => {
     var _a, _b, _c, _d, _e, _f, _g;
     const token = ((_b = (_a = handler.data.meta) === null || _a === void 0 ? void 0 : _a.antibotData) === null || _b === void 0 ? void 0 : _b.evaluatedValue) ?

@@ -43,7 +43,7 @@ export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
                                     id: subChild.id,
                                     title: subChild.name,
                                     url: subChild.url,
-                                    parent_id: child.id
+                                    parent_id: child.id.toString()
                                 });
                             }
                         }
