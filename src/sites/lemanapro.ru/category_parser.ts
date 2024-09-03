@@ -10,7 +10,7 @@ const _itemMapper = ({
 }: LemanaItem): Item => ({
   skuId: productId,
   title: displayedName,
-  regularPrice: (main_price || 0).toString(),
+  regularPrice: ((main_price || 0) * 100).toString(),
   imageUrl: desktop,
   isAvailable: !!(
     eligibility &&
