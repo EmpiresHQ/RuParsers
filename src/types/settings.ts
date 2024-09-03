@@ -87,12 +87,13 @@ export interface BaseRequestParameters<T = unknown> {
   payload?: T;
   cookies?: string;
   headers?: string[];
+  timeout?: number;
 }
 
 export interface RequestParameters<T = unknown>
   extends Pick<
     BaseRequestParameters<T>,
-    "method" | "headers" | "payload" | "host" | "urlPath"
+    "method" | "headers" | "payload" | "host" | "urlPath" | "timeout"
   > {
   remoteCategoryId: string; // used to link between parser category id
   page?: number;

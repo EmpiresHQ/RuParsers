@@ -77,8 +77,9 @@ export interface BaseRequestParameters<T = unknown> {
     payload?: T;
     cookies?: string;
     headers?: string[];
+    timeout?: number;
 }
-export interface RequestParameters<T = unknown> extends Pick<BaseRequestParameters<T>, "method" | "headers" | "payload" | "host" | "urlPath"> {
+export interface RequestParameters<T = unknown> extends Pick<BaseRequestParameters<T>, "method" | "headers" | "payload" | "host" | "urlPath" | "timeout"> {
     remoteCategoryId: string;
     page?: number;
 }

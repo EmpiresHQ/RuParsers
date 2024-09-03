@@ -95,6 +95,7 @@ export const apiRequestOpts = (
   urlPath: `/api/category/load?short=true`,
   host: API_HOST,
   method: "POST",
+  timeout: 10,
   headers: [
     "Content-Type: application/json",
     ...(handler.data.meta?.antibotData?.cookies
