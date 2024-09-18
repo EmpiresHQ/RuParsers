@@ -36,6 +36,7 @@ export const REST_SETTINGS: InitialSettings = {
       cookieNames: ["acctoken", "cf_clearance"],
     },
     waitUrl: "challenge-platform",
+    waitUrlFallback: true,
     waitAfterLoad: 5000,
   },
   perPage: 40,
