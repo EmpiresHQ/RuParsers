@@ -35,6 +35,7 @@ export interface BotDetectorParams {
     takeScreenshot?: boolean;
     onlyFailed?: boolean;
     waitUrl?: string;
+    waitUrlFallback?: boolean;
     waitNetworkCookie?: {
         domain: string;
         name: string;
