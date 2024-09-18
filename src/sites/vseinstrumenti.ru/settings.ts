@@ -50,6 +50,7 @@ export const API_SETTINGS: InitialSettings = {
       cookieNames: ["acctoken", "cf_clearance", "__cf_bm", "_cfuvid", "reftoken"],
     },
     waitUrl: "challenge-platform",
+    waitUrlFallback: true,
     waitAfterLoad: 3000,
   },
   perPage: 40,
