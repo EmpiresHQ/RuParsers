@@ -1,3 +1,4 @@
+import { ErrorType } from "./error.js";
 import { BaseItem } from "./item.js";
 import { InitialSettings, SettingsHandler } from "./settings.js";
 
@@ -11,9 +12,9 @@ export type CategoryParser<T extends Object = any> = (args: {
   html?: Buffer;
   json?: T;
 }) => Promise<{
-  items: BaseItem[] | undefined;
-  hasNextPage: boolean;
-  err?: unknown;
+  items?: BaseItem[];
+  hasNextPage?: boolean;
+  err?: ErrorType;
 }>;
 
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any

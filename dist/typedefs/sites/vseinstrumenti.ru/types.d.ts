@@ -132,6 +132,7 @@ export interface Page {
             max: number;
         };
     };
+    code?: number;
     products: NuxtProduct[];
     productsCount: number;
     productsForPaginationCount: number;

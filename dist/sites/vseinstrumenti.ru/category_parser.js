@@ -121,7 +121,14 @@ export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ htm
 });
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
     if (!json) {
-        throw new Error("data should not be buffer");
+        return {
+            err: "parse_error",
+        };
+    }
+    if (json.code && json.code === 40401) {
+        return {
+            err: "category_error",
+        };
     }
     const items = json.products.map(_itemMapper);
     const hasNextPage = json.listingSettings.pages.current < json.listingSettings.pages.max;

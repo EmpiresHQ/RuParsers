@@ -78,7 +78,8 @@ export const htmlParser: CategoryParser = async ({ html }) => {
 };
 
 const _itemMapper = (item: NuxtProduct): Item => {
-  const { code, pricesV2, name, availabilityInfo, image, isAvailable, id } = item;
+  const { code, pricesV2, name, availabilityInfo, image, isAvailable, id } =
+    item;
   return {
     title: `${name} ${code}`,
     skuId: id.toString(),
@@ -124,7 +125,14 @@ export const jsParser: CategoryParser = async ({ html }) => {
 
 export const apiParser: CategoryParser<Page> = async ({ json }) => {
   if (!json) {
-    throw new Error("data should not be buffer");
+    return {
+      err: "parse_error",
+    };
+  }
+  if (json.code && json.code === 40401) {
+    return {
+      err: "category_error",
+    };
   }
   const items = json.products.map<Item>(_itemMapper);
   const hasNextPage =
