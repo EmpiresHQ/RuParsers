@@ -12,6 +12,7 @@ import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
 import { CDN_HOST } from "./settings.js";
+import { BaseProcessorError } from "../../types/error.js";
 export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ html }) {
     var _b, _c;
     if (!Buffer.isBuffer(html)) {
@@ -122,12 +123,12 @@ export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ htm
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
     if (!json) {
         return {
-            err: "parse_error",
+            err: BaseProcessorError.Crawler,
         };
     }
     if (json.code && json.code === 40401) {
         return {
-            err: "category_error",
+            err: BaseProcessorError.NotFound,
         };
     }
     const items = json.products.map(_itemMapper);

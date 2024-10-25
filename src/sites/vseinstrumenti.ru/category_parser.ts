@@ -5,6 +5,7 @@ import * as vm from "node:vm";
 import { CategoryParser } from "../../types/index.js";
 import { CDN_HOST } from "./settings.js";
 import { Item, NuxtProduct, Page, WindowNUXT } from "./index.js";
+import { BaseProcessorError } from "../../types/error.js";
 
 export const htmlParser: CategoryParser = async ({ html }) => {
   if (!Buffer.isBuffer(html)) {
@@ -126,12 +127,12 @@ export const jsParser: CategoryParser = async ({ html }) => {
 export const apiParser: CategoryParser<Page> = async ({ json }) => {
   if (!json) {
     return {
-      err: "parse_error",
+      err: BaseProcessorError.Crawler,
     };
   }
   if (json.code && json.code === 40401) {
     return {
-      err: "category_error",
+      err: BaseProcessorError.NotFound,
     };
   }
   const items = json.products.map<Item>(_itemMapper);

@@ -1,4 +1,4 @@
-import { ErrorType } from "./error.js";
+import { BaseProcessorError } from "./error.js";
 import { BaseItem } from "./item.js";
 import { InitialSettings, SettingsHandler } from "./settings.js";
 export * from "./item.js";
@@ -11,7 +11,7 @@ export type CategoryParser<T extends Object = any> = (args: {
 }) => Promise<{
     items?: BaseItem[];
     hasNextPage?: boolean;
-    err?: ErrorType;
+    err?: BaseProcessorError;
 }>;
 export type StrategyHandler<T extends Object = any> = {
     parser: CategoryParser;
