@@ -126,7 +126,7 @@ export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ js
             err: BaseProcessorError.Crawler,
         };
     }
-    if (json.code && json.code === 40401) {
+    if (json.code && [40401, 40403].includes(json.code)) {
         return {
             err: BaseProcessorError.NotFound,
         };

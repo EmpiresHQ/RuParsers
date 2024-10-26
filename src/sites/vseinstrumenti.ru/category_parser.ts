@@ -130,11 +130,12 @@ export const apiParser: CategoryParser<Page> = async ({ json }) => {
       err: BaseProcessorError.Crawler,
     };
   }
-  if (json.code && json.code === 40401) {
+  if (json.code && [40401, 40403].includes(json.code)) {
     return {
       err: BaseProcessorError.NotFound,
     };
   }
+
   const items = json.products.map<Item>(_itemMapper);
   const hasNextPage =
     json.listingSettings.pages.current < json.listingSettings.pages.max;
