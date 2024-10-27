@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as cheerio from "cheerio";
-import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
 import { CDN_HOST } from "./settings.js";
@@ -65,7 +64,7 @@ export const htmlParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ h
             },
         ],
     });
-    const items = data.items.map(({ sku, regularPrice, discountPrice, stock, imageUrl, notAvailable }) => ({
+    const items = data.items.map(({ sku, regularPrice, discountPrice, stock, imageUrl, notAvailable, title }) => ({
         discountPrice,
         stock,
         imageUrl,

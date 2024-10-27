@@ -91,7 +91,7 @@ export const treeChildOpts = ({
 });
 
 export const apiRequestOpts = (
-  handler: RequestOpts<AntiBotKey & {key: string}>,
+  handler: RequestOpts<AntiBotKey & {key?: string}>,
   page: number = 0
 ): RequestParameters<ApiPayload> => ({
   urlPath: `/api/category/load?short=true`,

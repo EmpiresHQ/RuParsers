@@ -17,7 +17,7 @@ export type TreeChildArgs = {
 };
 export declare const treeChildOpts: ({ left, right, }: TreeChildArgs) => BaseRequestParameters;
 export declare const apiRequestOpts: (handler: RequestOpts<AntiBotKey & {
-    key: string;
+    key?: string;
 }>, page?: number) => RequestParameters<ApiPayload>;
 export declare const requiredCookies: RequiredCookies;
 export declare const requiredHeaders: RequiredHeaders;

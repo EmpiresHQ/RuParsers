@@ -1,5 +1,4 @@
 import * as cheerio from "cheerio";
-import { title } from "process";
 import { digitMatcher, pagesParser } from "../../lib/index.js";
 import * as vm from "node:vm";
 import { CategoryParser } from "../../types/index.js";
@@ -62,7 +61,7 @@ export const htmlParser: CategoryParser = async ({ html }) => {
   });
 
   const items = data.items.map<Item>(
-    ({ sku, regularPrice, discountPrice, stock, imageUrl, notAvailable }) => ({
+    ({ sku, regularPrice, discountPrice, stock, imageUrl, notAvailable, title }) => ({
       discountPrice,
       stock,
       imageUrl,

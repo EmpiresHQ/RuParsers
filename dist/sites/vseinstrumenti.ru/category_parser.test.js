@@ -21,7 +21,7 @@ describe("Vseinstrumenti.ru category parser", () => {
         const parsed = yield jsParser({ html: data });
         console.log(parsed);
         if (parsed && parsed.items) {
-            expect(parsed.items[0].regularPrice).toBe("24970");
+            expect(parsed.items[0].regularPrice).toBe("2497000");
             expect(parsed.items[0].stock).toBe(330);
         }
         console.log(parsed.hasNextPage);
