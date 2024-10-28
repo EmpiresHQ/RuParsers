@@ -29,7 +29,6 @@ export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ htm
     vm.createContext(ctx);
     vm.runInContext((_b = src.html()) !== null && _b !== void 0 ? _b : "undefined", ctx);
     const products = (_c = ctx.window.b_productList) !== null && _c !== void 0 ? _c : [];
-    console.log(JSON.stringify(products, null, 2));
     const items = products.map(_itemMapper);
     const hasNextPage = items.length > 0;
     return {

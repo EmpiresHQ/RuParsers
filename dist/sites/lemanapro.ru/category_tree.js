@@ -12,7 +12,7 @@ export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
     const holder = [];
     const { data, cookies } = yield rootLoader(treeRootSettings);
     console.log(cookies);
-    const treeParser = (parent, node) => {
+    const tp = (parent, node) => {
         holder.push({
             title: node.label,
             id: node.familyId,
@@ -21,7 +21,7 @@ export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
         });
         if (node.children) {
             for (const child of node.children) {
-                treeParser(node, child);
+                tp(node, child);
             }
         }
     };
@@ -39,7 +39,7 @@ export const treeParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ r
         console.log('child: ', child.familyId, 'children: ', child.children.length);
         if (child.children) {
             for (const ch of child.children) {
-                treeParser(rootCat, ch);
+                tp(rootCat, ch);
             }
         }
     }

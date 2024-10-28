@@ -10,7 +10,7 @@ export const treeParser: TreeParser = async ({
   const { data, cookies } = await rootLoader(treeRootSettings);
   console.log(cookies);
 
-  const treeParser = (parent: CatalogueItem, node: CatalogueItem) => {
+  const tp = (parent: CatalogueItem, node: CatalogueItem) => {
     holder.push({
       title: node.label,
       id: node.familyId,
@@ -19,7 +19,7 @@ export const treeParser: TreeParser = async ({
     })
     if (node.children) {
       for (const child of node.children) {
-        treeParser(node, child);
+        tp(node, child);
       }
     }
   }
@@ -40,7 +40,7 @@ export const treeParser: TreeParser = async ({
     console.log('child: ', child.familyId, 'children: ', child.children.length)
     if (child.children) {
       for (const ch of child.children) {
-        treeParser(rootCat, ch)
+        tp(rootCat, ch)
       }
     }
   }

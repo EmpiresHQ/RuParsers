@@ -25,7 +25,6 @@ export const jsParser: CategoryParser = async ({ html }) => {
   vm.createContext(ctx);
   vm.runInContext(src.html() ?? "undefined", ctx);
   const products = ctx.window.b_productList ?? [];
-  console.log(JSON.stringify(products, null, 2));
 
   const items = products.map<Item>(_itemMapper);
   const hasNextPage = items.length > 0;

@@ -1,4 +1,4 @@
-import { BaseItem } from "../../types/index.js";
+import { BaseCategory, BaseItem } from "../../types/index.js";
 export type WindowCTX = {
     window: {
         b_productList?: BarboraItem[];
@@ -59,6 +59,22 @@ export type BarboraItem = {
     is_made_in_Eu: boolean;
     is_made_in_Home_Country: boolean;
     is_available_for_donations: boolean;
+};
+export type TreeParser = (args: {
+    loader: CategoryLoader;
+}) => Promise<BaseCategory[]>;
+export type CategoryLoader = (url: string) => Promise<Category[]>;
+export type Category = {
+    id: string;
+    parentId: string;
+    fullUrl: string;
+    position: 0;
+    name: string;
+    hasEcoProducts: boolean;
+    hasNewProducts: boolean;
+    hasOfferProducts: boolean;
+    hasOfferLoggedInProducts: boolean;
+    children: Category[];
 };
 export {};
 //# sourceMappingURL=types.d.ts.map

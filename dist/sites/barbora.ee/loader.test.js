@@ -11,7 +11,8 @@ import { describe, expect, test } from "vitest";
 import { HOST, restRequestOpts } from "./settings.js";
 import { curlFetch } from "../../helpers/curl.js";
 import { jsParser } from "./category_parser.js";
-describe("Barbora.ee loader", () => {
+import { treeParser } from "./category_tree.js";
+describe("Barbora.ee", () => {
     test("barbora:load products", () => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const data = restRequestOpts({
@@ -27,8 +28,28 @@ describe("Barbora.ee loader", () => {
                 auth: process.env.TEST_PROXY_AUTH,
             } }), "text");
         expect(reply).toBeDefined();
+        // console.log(JSON.stringify(reply, null, 2));
         const parsed = yield jsParser({ html: Buffer.from(reply) });
         expect(parsed).toBeDefined();
         // console.log(JSON.stringify(parsed, null, 2));
+    }));
+    test("barbora:load categories", () => __awaiter(void 0, void 0, void 0, function* () {
+        const loader = (url) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a;
+            console.log(url);
+            const data = yield curlFetch({
+                url,
+                method: "GET",
+                proxy: {
+                    url: (_a = process.env.TEST_PROXY_URL) !== null && _a !== void 0 ? _a : "",
+                    auth: process.env.TEST_PROXY_AUTH,
+                },
+            }, 'json');
+            console.log(data);
+            return data;
+        });
+        const categories = yield treeParser({ loader });
+        console.log(categories);
+        expect(categories).toBeDefined();
     }));
 }, 50000);
