@@ -108,7 +108,7 @@ export const jsParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ htm
     vm.runInContext((_b = src.html()) !== null && _b !== void 0 ? _b : "undefined", ctx);
     const state = (_c = ctx.window.__NUXT__) === null || _c === void 0 ? void 0 : _c.state;
     const products = (_d = state === null || state === void 0 ? void 0 : state.listing.products) !== null && _d !== void 0 ? _d : {};
-    const items = Object.values(products).map(_itemMapper);
+    const items = Object.values(products).filter(i => !!i.id).map(_itemMapper);
     const { hasNextPage } = pagesParser({
         pageNumber: (_e = state === null || state === void 0 ? void 0 : state.listing.pageNumber) !== null && _e !== void 0 ? _e : 0,
         totalProducts: (_f = state === null || state === void 0 ? void 0 : state.listing.productsForPaginationCount) !== null && _f !== void 0 ? _f : 0,

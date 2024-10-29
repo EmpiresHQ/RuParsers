@@ -111,7 +111,7 @@ export const jsParser: CategoryParser = async ({ html }) => {
   vm.runInContext(src.html() ?? "undefined", ctx);
   const state = ctx.window.__NUXT__?.state;
   const products = state?.listing.products ?? {};
-  const items = Object.values(products).map<Item>(_itemMapper);
+  const items = Object.values(products).filter(i => !!i.id).map<Item>(_itemMapper);
   const { hasNextPage } = pagesParser({
     pageNumber: state?.listing.pageNumber ?? 0,
     totalProducts: state?.listing.productsForPaginationCount ?? 0,
