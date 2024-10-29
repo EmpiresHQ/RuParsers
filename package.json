@@ -24,16 +24,17 @@
     "@tsconfig/recommended": "^1.0.7",
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^20.17.1",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "prettier": "3.3.2",
     "ts-node": "^10.9.2",
     "type-fest": "^4.21.0",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.0",
+    "typescript-eslint": "^7.18.0",
     "vitest": "^2.0.5"
   },
   "homepage": "https://github.com/EmpiresHQ/RuParsers#readme",
   "dependencies": {
+    "@opensearch-project/opensearch": "^2.12.0",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.5"
   }

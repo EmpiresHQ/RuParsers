@@ -17,9 +17,14 @@ export type CategoryParser<T extends Object = any> = (args: {
   err?: BaseProcessorError;
 }>;
 
+
+export type StrategyHandler<
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
-export type StrategyHandler<T extends Object = any> = {
+  T extends Object = any,
+  C extends Map<unknown, unknown> = Map<unknown, unknown>,
+> = {
   parser: CategoryParser;
   opts: SettingsHandler<T>;
   settings: InitialSettings;
+  ctx?: C;
 };

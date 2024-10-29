@@ -11,13 +11,12 @@ describe("Barbora.ee", () => {
     const data = restRequestOpts(
       {
         data: {
-          text: "piimatooted-ja-munad",
+          text: "kodukaubad-ja-vaba-aeg/ajalehed-ajakirjad-ristsonad",
           remoteId: "-1",
         },
       },
-      1
+      7
     );
-    console.log(data);
     expect(data).toBeDefined();
     const reply = await curlFetch(
       {
@@ -31,10 +30,10 @@ describe("Barbora.ee", () => {
       "text"
     );
     expect(reply).toBeDefined();
-    // console.log(JSON.stringify(reply, null, 2));
+    console.log(JSON.stringify(reply, null, 2));
     const parsed = await jsParser({ html: Buffer.from(reply as ArrayBuffer) });
     expect(parsed).toBeDefined();
-    // console.log(JSON.stringify(parsed, null, 2));
+    console.log(JSON.stringify(parsed, null, 2));
   });
   test("barbora:load categories", async () => {
     const loader = async (url: string) => {

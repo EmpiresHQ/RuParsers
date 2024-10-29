@@ -13,9 +13,10 @@ export type CategoryParser<T extends Object = any> = (args: {
     hasNextPage?: boolean;
     err?: BaseProcessorError;
 }>;
-export type StrategyHandler<T extends Object = any> = {
+export type StrategyHandler<T extends Object = any, C extends Map<unknown, unknown> = Map<unknown, unknown>> = {
     parser: CategoryParser;
     opts: SettingsHandler<T>;
     settings: InitialSettings;
+    ctx?: C;
 };
 //# sourceMappingURL=index.d.ts.map
