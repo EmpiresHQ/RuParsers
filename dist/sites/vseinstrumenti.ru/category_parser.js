@@ -130,7 +130,7 @@ export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ js
             err: BaseProcessorError.NotFound,
         };
     }
-    const items = json.products.map(_itemMapper);
+    const items = json.products.filter(i => !!i.id).map(_itemMapper);
     const hasNextPage = json.listingSettings.pages.current < json.listingSettings.pages.max;
     return {
         items,

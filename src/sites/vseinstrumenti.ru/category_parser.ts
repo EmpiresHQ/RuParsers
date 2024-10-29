@@ -135,7 +135,7 @@ export const apiParser: CategoryParser<Page> = async ({ json }) => {
     };
   }
 
-  const items = json.products.map<Item>(_itemMapper);
+  const items = json.products.filter(i => !!i.id).map<Item>(_itemMapper);
   const hasNextPage =
     json.listingSettings.pages.current < json.listingSettings.pages.max;
   return {
