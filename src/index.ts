@@ -1,5 +1,6 @@
 import * as vi from "./sites/vseinstrumenti.ru/index.js";
 import * as lp from "./sites/lemanapro.ru/index.js";
+import * as bb from "./sites/barbora.ee/index.js";
 import {
   AvailablePlatforms,
   StrategyHandler,
@@ -21,5 +22,9 @@ export const availablePlatforms: {
   "lemanapro.ru": {
     strategies: lp.strategies,
     preferredStrategy: lp.preferredStrategy
+  },
+  "barbora.ee": {
+    strategies: bb.strategies,
+    preferredStrategy: bb.preferredStrategy
   }
 };
