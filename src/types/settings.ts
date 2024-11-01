@@ -108,7 +108,7 @@ export interface InitialSettings {
 export type SettingsHandler<T extends Merge<AntiBotKey, unknown> = Merge<AntiBotKey, unknown> > = (
   input: RequestOpts<T>,
   page?: number
-) => RequestParameters;
+) => RequestParameters | Promise<RequestParameters>;
 
 export type RequiredCookies = string[];
 export type RequiredHeaders = string[];

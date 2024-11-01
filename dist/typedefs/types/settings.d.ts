@@ -88,7 +88,7 @@ export interface InitialSettings {
     antibotOpts?: BotDetectorParams;
     perPage: number;
 }
-export type SettingsHandler<T extends Merge<AntiBotKey, unknown> = Merge<AntiBotKey, unknown>> = (input: RequestOpts<T>, page?: number) => RequestParameters;
+export type SettingsHandler<T extends Merge<AntiBotKey, unknown> = Merge<AntiBotKey, unknown>> = (input: RequestOpts<T>, page?: number) => RequestParameters | Promise<RequestParameters>;
 export type RequiredCookies = string[];
 export type RequiredHeaders = string[];
 //# sourceMappingURL=settings.d.ts.map

@@ -17,21 +17,20 @@ describe("Barbora.ee", () => {
         var _a;
         const data = restRequestOpts({
             data: {
-                text: "piimatooted-ja-munad",
+                text: "kodukaubad-ja-vaba-aeg/ajalehed-ajakirjad-ristsonad",
                 remoteId: "-1",
             },
-        }, 1);
-        console.log(data);
+        }, 7);
         expect(data).toBeDefined();
         const reply = yield curlFetch(Object.assign(Object.assign({}, data), { url: `${HOST}${data.urlPath}`, proxy: {
                 url: (_a = process.env.TEST_PROXY_URL) !== null && _a !== void 0 ? _a : "",
                 auth: process.env.TEST_PROXY_AUTH,
             } }), "text");
         expect(reply).toBeDefined();
-        // console.log(JSON.stringify(reply, null, 2));
+        console.log(JSON.stringify(reply, null, 2));
         const parsed = yield jsParser({ html: Buffer.from(reply) });
         expect(parsed).toBeDefined();
-        // console.log(JSON.stringify(parsed, null, 2));
+        console.log(JSON.stringify(parsed, null, 2));
     }));
     test("barbora:load categories", () => __awaiter(void 0, void 0, void 0, function* () {
         const loader = (url) => __awaiter(void 0, void 0, void 0, function* () {
