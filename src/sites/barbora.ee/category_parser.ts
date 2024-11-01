@@ -9,7 +9,7 @@ const _itemMapper = (item: BarboraItem): Item => ({
   skuId: item.Url,
   imageUrl: item.big_image,
   isAvailable: item.status === 'active',
-  regularPrice: item.price.toString(),
+  regularPrice: (item.price * 100).toString(),
   units: item.units,
 });
 export const jsParser: CategoryParser = async ({ html }) => {
