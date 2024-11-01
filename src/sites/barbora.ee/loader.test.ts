@@ -6,6 +6,9 @@ import { jsParser } from "./category_parser.js";
 import { Category } from "./index.js";
 import { treeParser } from "./category_tree.js";
 
+import * as dotenv from "dotenv";
+dotenv.config();
+
 describe("Barbora.ee", () => {
   test("barbora:load products", async () => {
     const data = restRequestOpts(

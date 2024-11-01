@@ -1,3 +1,4 @@
+import { BaseProcessorError } from "../../types/error.js";
 import { CategoryParser } from "../../types/index.js";
 import { Item, LemanaItem, Page } from "./index.js";
 
@@ -23,7 +24,9 @@ const _itemMapper = ({
 
 export const apiParser: CategoryParser<Page> = async ({ json }) => {
   if (!json) {
-    throw new Error("data should not be buffer");
+    return {
+      err: BaseProcessorError.Crawler
+    }
   }
   const items = json.content.map<Item>(_itemMapper);
   const hasNextPage = items.length > 0;

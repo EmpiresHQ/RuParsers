@@ -81,20 +81,32 @@ export interface BotDetectorParams {
   };
 }
 
+export type ProxyType = {
+  url: string;
+  auth?: string;
+};
+
 export interface BaseRequestParameters<T = unknown> {
   method: "GET" | "POST";
-  urlPath: string;
+  urlPath?: string;
   host?: string;
   payload?: T;
   cookies?: string;
   headers?: string[];
   timeout?: number;
+  proxy?: ProxyType;
 }
 
 export interface RequestParameters<T = unknown>
   extends Pick<
     BaseRequestParameters<T>,
-    "method" | "headers" | "payload" | "host" | "urlPath" | "timeout"
+    | "method"
+    | "headers"
+    | "payload"
+    | "host"
+    | "urlPath"
+    | "timeout"
+    | "proxy"
   > {
   remoteCategoryId: string; // used to link between parser category id
   page?: number;
@@ -105,7 +117,9 @@ export interface InitialSettings {
   perPage: number;
 }
 
-export type SettingsHandler<T extends Merge<AntiBotKey, unknown> = Merge<AntiBotKey, unknown> > = (
+export type SettingsHandler<
+  T extends Merge<AntiBotKey, unknown> = Merge<AntiBotKey, unknown>,
+> = (
   input: RequestOpts<T>,
   page?: number
 ) => RequestParameters | Promise<RequestParameters>;

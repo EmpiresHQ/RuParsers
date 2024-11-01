@@ -7,23 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-export const curlFetch = (params_1, ...args_1) => __awaiter(void 0, [params_1, ...args_1], void 0, function* (params, load = "json") {
-    if (!process.env.CURL_URL) {
-        throw new Error("not curl url");
-    }
-    const data = yield fetch(process.env.CURL_URL, {
-        method: "POST",
-        headers: {
-            "content-type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify(params),
+export const API_HOST = "https://www.selver.ee/api/catalog/";
+export const MEDIA_HOST = "https://www.selver.ee/img/800/800/resize";
+export const apiRequestOpts = (handler_1, ...args_1) => __awaiter(void 0, [handler_1, ...args_1], void 0, function* (handler, page = 0) {
+    var _a;
+    return ({
+        urlPath: "",
+        method: "GET",
+        host: API_HOST,
+        remoteCategoryId: (_a = handler.data.remoteId) !== null && _a !== void 0 ? _a : "1",
+        page,
     });
-    switch (load) {
-        case 'text':
-            return data.text();
-        case 'json':
-            return data.json();
-        default:
-            return data.arrayBuffer();
-    }
 });

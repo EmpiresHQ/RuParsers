@@ -1,4 +1,3 @@
-import * as vi from "./sites/vseinstrumenti.ru/index.js";
 import { AvailablePlatforms, StrategyHandler } from "./types/index.js";
 export * from "./lib/index.js";
 export * from "./sites/index.js";
@@ -7,7 +6,7 @@ export declare const availablePlatforms: {
         strategies: {
             [strategy in string]: StrategyHandler;
         };
-        preferredStrategy: keyof typeof vi.strategies;
+        preferredStrategy: "api" | "js";
     };
 };
 //# sourceMappingURL=index.d.ts.map

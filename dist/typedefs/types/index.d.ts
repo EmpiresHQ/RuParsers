@@ -1,22 +1,23 @@
 import { BaseProcessorError } from "./error.js";
 import { BaseItem } from "./item.js";
-import { InitialSettings, SettingsHandler } from "./settings.js";
+import { InitialSettings, RequestParameters, SettingsHandler } from "./settings.js";
 export * from "./item.js";
 export * from "./settings.js";
 export * from "./base.js";
 export * from "./category.js";
-export type CategoryParser<T extends Object = any> = (args: {
+export type ParserResponseType<T extends Object = any> = {
     html?: Buffer;
     json?: T;
-}) => Promise<{
+};
+export type CategoryParser<T extends Object = any> = (args: ParserResponseType<T>) => Promise<{
     items?: BaseItem[];
     hasNextPage?: boolean;
     err?: BaseProcessorError;
 }>;
-export type StrategyHandler<T extends Object = any, C extends Map<unknown, unknown> = Map<unknown, unknown>> = {
+export type StrategyHandler<T extends Object = any, C extends Object = any> = {
     parser: CategoryParser;
     opts: SettingsHandler<T>;
     settings: InitialSettings;
-    ctx?: C;
+    fetcher?: (params: RequestParameters) => Promise<ParserResponseType<C>>;
 };
 //# sourceMappingURL=index.d.ts.map

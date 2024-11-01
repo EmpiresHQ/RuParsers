@@ -31,6 +31,7 @@ export type ProcessBodyParams = {
   onlyFailed?: boolean;
   waitUrl?: string;
   waitUrlFallback?: boolean;
+  setPageContent?: string;
   waitNetworkCookie?: {
     domain: string;
     name: string;

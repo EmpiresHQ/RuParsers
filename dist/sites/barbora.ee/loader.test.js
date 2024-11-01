@@ -12,6 +12,8 @@ import { HOST, restRequestOpts } from "./settings.js";
 import { curlFetch } from "../../helpers/curl.js";
 import { jsParser } from "./category_parser.js";
 import { treeParser } from "./category_tree.js";
+import * as dotenv from "dotenv";
+dotenv.config();
 describe("Barbora.ee", () => {
     test("barbora:load products", () => __awaiter(void 0, void 0, void 0, function* () {
         var _a;

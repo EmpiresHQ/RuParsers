@@ -1,19 +1,21 @@
-import * as vi from "./sites/vseinstrumenti.ru/index.js";
-import * as lp from "./sites/lemanapro.ru/index.js";
-import * as bb from "./sites/barbora.ee/index.js";
+import { selver_ee, barbora_ee, lemanapro_ru, vseinstrumenti_ru } from "./sites/index.js";
 export * from "./lib/index.js";
 export * from "./sites/index.js";
 export const availablePlatforms = {
     "vseinstrumenti.ru": {
-        strategies: vi.strategies,
-        preferredStrategy: vi.preferredStrategy,
+        strategies: vseinstrumenti_ru.strategies,
+        preferredStrategy: vseinstrumenti_ru.preferredStrategy,
     },
     "lemanapro.ru": {
-        strategies: lp.strategies,
-        preferredStrategy: lp.preferredStrategy
+        strategies: lemanapro_ru.strategies,
+        preferredStrategy: lemanapro_ru.preferredStrategy
     },
     "barbora.ee": {
-        strategies: bb.strategies,
-        preferredStrategy: bb.preferredStrategy
+        strategies: barbora_ee.strategies,
+        preferredStrategy: barbora_ee.preferredStrategy
+    },
+    "selver.ee": {
+        strategies: selver_ee.strategies,
+        preferredStrategy: selver_ee.preferredStrategy
     }
 };

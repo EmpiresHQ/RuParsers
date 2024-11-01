@@ -7,6 +7,7 @@ export * from "./settings.js";
 export * from "./base.js";
 export * from "./category.js";
 
+// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
 export type ParserResponseType<T extends Object = any> = {
   html?: Buffer;
   json?: T;
@@ -23,10 +24,12 @@ export type CategoryParser<T extends Object = any> = (args: ParserResponseType<T
 export type StrategyHandler<
 // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
   T extends Object = any,
-  C extends Map<unknown, unknown> = Map<unknown, unknown>,
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
+  C extends Object = any,
 > = {
   parser: CategoryParser;
   opts: SettingsHandler<T>;
   settings: InitialSettings;
-  fetcher?: <T extends Object = any>(params: RequestParameters) => ParserResponseType<T>
+  // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
+  fetcher?: (params: RequestParameters) => Promise<ParserResponseType<C>>
 };

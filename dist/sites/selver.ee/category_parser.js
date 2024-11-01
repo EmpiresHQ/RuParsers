@@ -8,27 +8,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BaseProcessorError } from "../../types/error.js";
-const _itemMapper = ({ productId, displayedName, price: { main_price }, mediaMainPhoto: { desktop }, eligibility, }) => ({
-    skuId: productId,
-    title: displayedName,
-    regularPrice: ((main_price || 0) * 100).toString(),
-    imageUrl: desktop,
-    isAvailable: !!(eligibility &&
-        (eligibility.homeDeliveryEligible ||
-            eligibility.relayPointEligible ||
-            eligibility.storeDeliveryEligible ||
-            eligibility.webEligible)),
-});
+import { MEDIA_HOST } from "./settings.js";
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
     if (!json) {
         return {
             err: BaseProcessorError.Crawler
         };
     }
-    const items = json.content.map(_itemMapper);
-    const hasNextPage = items.length > 0;
+    if (Buffer.isBuffer(json)) {
+        throw new Error("is a buffer");
+    }
+    if ('error' in json) {
+        throw new Error(JSON.stringify(json.error));
+    }
+    console.log(json);
+    const items = json.json.map(({ _source: item }) => ({
+        skuId: item.url_path,
+        title: item.name,
+        regularPrice: (item.final_price_incl_tax * 100).toString(),
+        imageUrl: `${MEDIA_HOST}${item.image}`,
+        isAvailable: item.stock.is_in_stock
+    }));
     return {
         items,
-        hasNextPage,
+        hasNextPage: !!items && items.length > 0
     };
 });

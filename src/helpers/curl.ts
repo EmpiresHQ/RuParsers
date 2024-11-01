@@ -1,6 +1,3 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-
 type CurlFetchParams = {
   method: "GET" | "POST";
   url: string;
