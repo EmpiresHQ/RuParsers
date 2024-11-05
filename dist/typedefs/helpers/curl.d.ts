@@ -1,6 +1,8 @@
 type CurlFetchParams = {
     method: "GET" | "POST";
-    url: string;
+    url?: string;
+    urlPath?: string;
+    host?: string;
     proxy?: {
         url: string;
         auth?: string;
@@ -16,6 +18,6 @@ type CurlFetchParams = {
     timeout?: number;
     verbose?: boolean;
 };
-export declare const curlFetch: (params: CurlFetchParams, load?: "json" | "text" | "buffer") => Promise<unknown>;
+export declare const curlFetch: <T>(params: CurlFetchParams, load?: "json" | "text" | "buffer") => Promise<T>;
 export {};
 //# sourceMappingURL=curl.d.ts.map
