@@ -18,10 +18,10 @@ const _itemMapper = ({
 });
 
 export const apiParser: CategoryParser<
-  DNSItem[] | { error: string }
+  DNSItem[] | { error: string } 
 > = async ({ json }) => {
   if (!json || "error" in json) {
-    if (json?.error && ["notfound", "notparsed"].includes(json.error)) {
+    if (json?.error && ["notfound", "notparsed", "noproducts"].includes(json.error)) {
       return {
         items: [],
         hasNextPage: false
