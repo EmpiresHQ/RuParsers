@@ -29,9 +29,10 @@ export const fetcher = async (
     }
   );
   if (!productContainer) {
-    return {
-      error: "notfound",
-    };
+    // return {
+      // error: "notfound",
+    // };
+    return []
   }
   const productsString = data.assets.inlineJs[productContainer[0]];
 
@@ -49,15 +50,17 @@ export const fetcher = async (
   vm.runInContext(productsString, ctx);
 
   if (!store || !store.length) {
-    return {
-      error: "notparsed",
-    };
+    // return {
+    //   error: "notparsed",
+    // };
+    return []
   }
   const chunk = store.find((chunk) => chunk[0].type === "product-buy");
   if (!chunk || chunk.length < 2) {
-    return {
-      error: "noproducts",
-    };
+    // return {
+    //   error: "noproducts",
+    // };
+    return []
   }
   const pricePayload = chunk[1].map(({ id, data: { id: dId } }) => ({
     id,
