@@ -12,9 +12,12 @@ import * as dotenv from "dotenv";
 import { treeLoader } from "./category_tree.js";
 import { renderer } from "../../helpers/renderer.js";
 import { curlFetch } from "../../helpers/curl.js";
+import { API_SETTINGS, apiRequestOpts } from "./settings.js";
+import { fetcher } from "./fetcher.js";
+import { apiParser } from "./category_parser.js";
 dotenv.config();
 describe("DNS", () => {
-    test("dns:load products", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("dns:load categories", () => __awaiter(void 0, void 0, void 0, function* () {
         const cats = yield treeLoader({
             preloader: (args) => __awaiter(void 0, void 0, void 0, function* () {
                 if (args.antibotOpts) {
@@ -25,8 +28,26 @@ describe("DNS", () => {
             loader: (rp, cookies) => __awaiter(void 0, void 0, void 0, function* () {
                 const data = yield curlFetch(Object.assign(Object.assign({}, rp), { cookies }));
                 return data;
-            })
+            }),
         });
         expect(cats).toBeDefined();
+    }));
+    test("dns:load products", () => __awaiter(void 0, void 0, void 0, function* () {
+        if (!API_SETTINGS.antibotOpts) {
+            throw new Error("no bot params");
+        }
+        const { cookies } = yield renderer(API_SETTINGS.antibotOpts);
+        const opts = apiRequestOpts({
+            data: {
+                remoteId: "17a8d26216404e77",
+                text: "",
+            },
+        });
+        const data = yield fetcher(opts, (opts) => __awaiter(void 0, void 0, void 0, function* () {
+            return curlFetch(Object.assign(Object.assign({}, opts), { cookies }));
+        }));
+        const ready = yield apiParser({ json: data });
+        console.log(ready);
+        // console.log(data.json?.assets.inlineJs)
     }));
 }, 5000000);

@@ -3,6 +3,7 @@ import { apiRequestOpts } from "./settings.js";
 import { fetcher } from "./fetcher.js";
 import * as dotenv from "dotenv";
 import { treeParser } from "./category_tree.js";
+import { apiParser } from "./category_parser.js";
 dotenv.config();
 
 describe("Selver.ee", () => {
@@ -18,17 +19,18 @@ describe("Selver.ee", () => {
       auth: process.env.TEST_PROXY_AUTH,
     };
     const data = await fetcher(opts);
-    if (data.json && "error" in data.json) {
-      console.log(data.json.error);
+    if ("error" in data) {
+      console.log(data.error);
     } else {
       console.log(
         JSON.stringify(
-          data.json?.map((p) => p._source.url_path),
+          data.map((p) => p._source.url_path),
           null,
           2
         )
       );
     }
+    apiParser({json: data})
 
     expect(data).toBeDefined();
   });

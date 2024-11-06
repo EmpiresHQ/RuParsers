@@ -3,7 +3,7 @@ import { CategoryParser } from "../../types/index.js";
 import { MEDIA_HOST } from "./settings.js";
 import { Item, ProductContainer } from "./types.js";
 
-export const apiParser: CategoryParser<{json: ProductContainer[]} | { error: unknown }> = async ({ json }) => {
+export const apiParser: CategoryParser<ProductContainer[] | { error: unknown }> = async ({ json }) => {
   if (!json) {
     return {
       err: BaseProcessorError.Crawler
@@ -15,8 +15,7 @@ export const apiParser: CategoryParser<{json: ProductContainer[]} | { error: unk
   if ('error' in json) {
     throw new Error(JSON.stringify(json.error))
   }
-  console.log(json)
-  const items = json.json.map<Item>( ({_source: item}) => ({
+  const items = json.map<Item>( ({_source: item}) => ({
     skuId: item.url_path,
     title: item.name,
     regularPrice: (item.final_price_incl_tax * 100).toString(),

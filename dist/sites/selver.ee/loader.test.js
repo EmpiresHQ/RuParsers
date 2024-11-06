@@ -12,10 +12,11 @@ import { apiRequestOpts } from "./settings.js";
 import { fetcher } from "./fetcher.js";
 import * as dotenv from "dotenv";
 import { treeParser } from "./category_tree.js";
+import { apiParser } from "./category_parser.js";
 dotenv.config();
 describe("Selver.ee", () => {
     test("selver:load products", () => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
+        var _a;
         const opts = yield apiRequestOpts({
             data: {
                 remoteId: "210",
@@ -27,12 +28,13 @@ describe("Selver.ee", () => {
             auth: process.env.TEST_PROXY_AUTH,
         };
         const data = yield fetcher(opts);
-        if (data.json && "error" in data.json) {
-            console.log(data.json.error);
+        if ("error" in data) {
+            console.log(data.error);
         }
         else {
-            console.log(JSON.stringify((_b = data.json) === null || _b === void 0 ? void 0 : _b.map((p) => p._source.url_path), null, 2));
+            console.log(JSON.stringify(data.map((p) => p._source.url_path), null, 2));
         }
+        apiParser({ json: data });
         expect(data).toBeDefined();
     }));
     test("selver:load categories", () => __awaiter(void 0, void 0, void 0, function* () {

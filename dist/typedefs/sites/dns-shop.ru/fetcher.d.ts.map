@@ -1,1 +1,1 @@
-{"version":3,"file":"fetcher.d.ts","sourceRoot":"","sources":["../../../../src/sites/dns-shop.ru/fetcher.ts"],"names":[],"mappings":""}
+{"version":3,"file":"fetcher.d.ts","sourceRoot":"","sources":["../../../../src/sites/dns-shop.ru/fetcher.ts"],"names":[],"mappings":"AAAA,OAAO,EACL,qBAAqB,EACrB,iBAAiB,EAClB,MAAM,sBAAsB,CAAC;AAE9B,OAAO,EAGL,OAAO,EAIR,MAAM,YAAY,CAAC;AAGpB,eAAO,MAAM,OAAO,kBACH,iBAAiB,WACvB,CAAC,IAAI,EAAE,qBAAqB,KAAK,OAAO,KAChD,OAAO,CAAC,OAAO,EAAE,GAAG;IAAE,KAAK,EAAE,MAAM,CAAA;CAAE,CA8DvC,CAAC"}

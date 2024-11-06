@@ -91,6 +91,7 @@ export interface BaseRequestParameters<T = unknown> {
   urlPath?: string;
   host?: string;
   payload?: T;
+  raw?: string;
   cookies?: string;
   headers?: string[];
   timeout?: number;
@@ -103,6 +104,7 @@ export interface RequestParameters<T = unknown>
     | "method"
     | "headers"
     | "payload"
+    | "raw"
     | "host"
     | "urlPath"
     | "timeout"

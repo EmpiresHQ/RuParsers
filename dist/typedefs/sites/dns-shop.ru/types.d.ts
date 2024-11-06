@@ -1,5 +1,7 @@
-import { BaseCategory, SimpleCookie } from "../../types/index.js";
+import { BaseCategory, BaseItem, SimpleCookie } from "../../types/index.js";
 import { BaseRequestParameters, InitialSettings } from "../../types/settings.js";
+export interface Item extends BaseItem {
+}
 export type TreeParser = (args: {
     preloader: (s: InitialSettings) => Promise<{
         cookies?: SimpleCookie[];
@@ -22,4 +24,70 @@ export type Category = {
     childs: Category[];
     onlyVirtualChildren: boolean;
 };
+export type CategoryResponse = {
+    assets: {
+        inlineJs: {
+            [key in string]: string;
+        };
+    };
+};
+export type WindowDNS = {
+    window: {
+        AjaxState?: {
+            register: (data: unknown) => void;
+        };
+    };
+};
+export type PricePayload = {
+    id: string;
+    data: {
+        id: string;
+    };
+};
+type AjaxPartial = [
+    {
+        type: string;
+        timeout: number;
+    },
+    {
+        id: string;
+        data: {
+            id: string;
+            type: number;
+        };
+    }[],
+    boolean
+];
+export type AjaxState = AjaxPartial[];
+export type PriceResponse = {
+    result: boolean;
+    data: {
+        states: DNSItem[];
+    };
+};
+export type DNSItem = {
+    id: string;
+    images?: string[];
+    data: {
+        id: string;
+        name: string;
+        price: {
+            current: number;
+        };
+        credit: {
+            amount: number;
+            period: number;
+        };
+        primaryButton: string;
+        wishlist: string;
+        hasHistory: boolean;
+        maxPeriodPrice: unknown;
+    };
+};
+export type ImageResponse = {
+    data: {
+        [key in string]: string[];
+    };
+};
+export {};
 //# sourceMappingURL=types.d.ts.map

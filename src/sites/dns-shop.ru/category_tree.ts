@@ -1,10 +1,10 @@
 import { BaseCategory } from "../../types/index.js";
-import { categoryRequestOpts, loaderSettings } from "./settings.js";
+import { categoryRequestOpts, API_SETTINGS } from "./settings.js";
 import { Category, TreeParser } from "./types.js";
 
 export const treeLoader: TreeParser = async ({ loader, preloader }) => {
   const holder: BaseCategory[] = [];
-  const { cookies } = await preloader(loaderSettings);
+  const { cookies } = await preloader(API_SETTINGS);
   if (cookies) {
     const opts = categoryRequestOpts();
     cookies.push({ name: "city_path", value: "moscow" });

@@ -9,6 +9,7 @@ type CurlFetchParams = {
     os?: string;
   };
   payload?: unknown;
+  raw?: string;
   cookies?: { name: string; value: string }[];
   headers?: string[];
   jar?: string;
@@ -25,11 +26,14 @@ export const curlFetch = async <T>(
   }
   if (params.urlPath && params.host) {
     params.url = `${params.host}${params.urlPath}`
+    delete params.urlPath;
+    delete params.host;
   }
   if (!params.url) {
     throw new Error('no URL')
   }
-  console.log('sending: ', JSON.stringify(params, null ,2))
+  // console.log('sending: ', JSON.stringify(params, null ,2))
+  console.log('sending: ', params)
   const data = await fetch(process.env.CURL_URL, {
     method: "POST",
     headers: {

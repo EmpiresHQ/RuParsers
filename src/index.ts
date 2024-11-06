@@ -1,4 +1,4 @@
-import {selver_ee, barbora_ee, lemanapro_ru, vseinstrumenti_ru} from "./sites/index.js";
+import {selver_ee, barbora_ee, lemanapro_ru, vseinstrumenti_ru, dns_shop_ru} from "./sites/index.js";
 import {
   AvailablePlatforms,
   StrategyHandler,
@@ -28,5 +28,9 @@ export const availablePlatforms: {
   "selver.ee": {
     strategies: selver_ee.strategies,
     preferredStrategy: selver_ee.preferredStrategy
+  },
+  "dns-shop.ru": {
+    strategies: dns_shop_ru.strategies,
+    preferredStrategy: dns_shop_ru.preferredStrategy
   }
 };

@@ -1,0 +1,34 @@
+import { BaseProcessorError } from "../../types/error.js";
+import { CategoryParser } from "../../types/index.js";
+import { DNSItem, Item } from "./types.js";
+
+const _itemMapper = ({
+  data: {
+    id,
+    name,
+    price: { current },
+  },
+  images,
+}: DNSItem): Item => ({
+  skuId: id,
+  title: name,
+  regularPrice: ((current || 0) * 100).toString(),
+  imageUrl: images && images[0],
+  isAvailable: true,
+});
+
+export const apiParser: CategoryParser<
+  DNSItem[] | { error: string }
+> = async ({ json }) => {
+  if (!json || "error" in json) {
+    return {
+      err: BaseProcessorError.Crawler,
+    };
+  }
+  const items = json.map<Item>(_itemMapper);
+  const hasNextPage = items.length > 0;
+  return {
+    items,
+    hasNextPage,
+  };
+};

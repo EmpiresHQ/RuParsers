@@ -7,10 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { categoryRequestOpts, loaderSettings } from "./settings.js";
+import { categoryRequestOpts, API_SETTINGS } from "./settings.js";
 export const treeLoader = (_a) => __awaiter(void 0, [_a], void 0, function* ({ loader, preloader }) {
     const holder = [];
-    const { cookies } = yield preloader(loaderSettings);
+    const { cookies } = yield preloader(API_SETTINGS);
     if (cookies) {
         const opts = categoryRequestOpts();
         cookies.push({ name: "city_path", value: "moscow" });

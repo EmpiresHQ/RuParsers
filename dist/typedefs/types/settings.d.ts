@@ -80,12 +80,13 @@ export interface BaseRequestParameters<T = unknown> {
     urlPath?: string;
     host?: string;
     payload?: T;
+    raw?: string;
     cookies?: string;
     headers?: string[];
     timeout?: number;
     proxy?: ProxyType;
 }
-export interface RequestParameters<T = unknown> extends Pick<BaseRequestParameters<T>, "method" | "headers" | "payload" | "host" | "urlPath" | "timeout" | "proxy"> {
+export interface RequestParameters<T = unknown> extends Pick<BaseRequestParameters<T>, "method" | "headers" | "payload" | "raw" | "host" | "urlPath" | "timeout" | "proxy"> {
     remoteCategoryId: string;
     page?: number;
 }

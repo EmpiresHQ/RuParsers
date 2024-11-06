@@ -12,7 +12,7 @@ import { API_HOST } from "./settings.js";
 import { proxyUrl } from "../../helpers/proxy.js";
 export const fetcher = (requestParams) => __awaiter(void 0, void 0, void 0, function* () {
     let retries = 5;
-    console.log("req params: ", JSON.stringify(requestParams, null, 2));
+    // console.log("req params: ", JSON.stringify(requestParams, null, 2));
     const _internal = () => __awaiter(void 0, void 0, void 0, function* () {
         const { data, error } = yield fetcherCore(requestParams);
         if (data) {
@@ -31,9 +31,7 @@ export const fetcher = (requestParams) => __awaiter(void 0, void 0, void 0, func
         }
     });
     const data = yield _internal();
-    return {
-        json: data,
-    };
+    return data;
 });
 const fetcherCore = (requestParams) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -91,7 +89,7 @@ const fetcherCore = (requestParams) => __awaiter(void 0, void 0, void 0, functio
 });
 export const openSearchClient = ({ idx = "vue_storefront_catalog_et", proxyParam, }) => {
     const proxy = proxyParam && proxyUrl(proxyParam);
-    console.log("proxy: ", proxy);
+    // console.log("proxy: ", proxy);
     const node = `${API_HOST}/${idx}`;
     const client = new Client(Object.assign({ ssl: {
             rejectUnauthorized: false,

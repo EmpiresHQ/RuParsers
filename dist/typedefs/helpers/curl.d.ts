@@ -9,6 +9,7 @@ type CurlFetchParams = {
         os?: string;
     };
     payload?: unknown;
+    raw?: string;
     cookies?: {
         name: string;
         value: string;

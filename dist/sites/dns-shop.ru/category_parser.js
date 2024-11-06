@@ -8,28 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BaseProcessorError } from "../../types/error.js";
-import { MEDIA_HOST } from "./settings.js";
+const _itemMapper = ({ data: { id, name, price: { current }, }, images, }) => ({
+    skuId: id,
+    title: name,
+    regularPrice: ((current || 0) * 100).toString(),
+    imageUrl: images && images[0],
+    isAvailable: true,
+});
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
-    if (!json) {
+    if (!json || "error" in json) {
         return {
-            err: BaseProcessorError.Crawler
+            err: BaseProcessorError.Crawler,
         };
     }
-    if (Buffer.isBuffer(json)) {
-        throw new Error("is a buffer");
-    }
-    if ('error' in json) {
-        throw new Error(JSON.stringify(json.error));
-    }
-    const items = json.map(({ _source: item }) => ({
-        skuId: item.url_path,
-        title: item.name,
-        regularPrice: (item.final_price_incl_tax * 100).toString(),
-        imageUrl: `${MEDIA_HOST}${item.image}`,
-        isAvailable: item.stock.is_in_stock
-    }));
+    const items = json.map(_itemMapper);
+    const hasNextPage = items.length > 0;
     return {
         items,
-        hasNextPage: !!items && items.length > 0
+        hasNextPage,
     };
 });

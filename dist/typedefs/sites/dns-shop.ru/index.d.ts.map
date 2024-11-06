@@ -1,1 +1,1 @@
-{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/sites/dns-shop.ru/index.ts"],"names":[],"mappings":""}
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/sites/dns-shop.ru/index.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,eAAe,EAAE,MAAM,sBAAsB,CAAC;AAKvD,OAAO,EAAE,OAAO,EAAE,MAAM,YAAY,CAAC;AAGrC,cAAc,YAAY,CAAC;AAE3B,eAAO,MAAM,UAAU,EAAE;KAEtB,GAAG,IAAI,MAAM,GAAG,eAAe,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG;QAAC,KAAK,EAAE,OAAO,CAAA;KAAC,CAAC;CAQpE,CAAC;AACF,eAAO,MAAM,iBAAiB,QAAQ,CAAC;AACvC,eAAO,MAAM,cAAc,iCAAa,CAAC"}

@@ -1,6 +1,6 @@
 import { BaseProcessorError } from "./error.js";
 import { BaseItem } from "./item.js";
-import { InitialSettings, RequestParameters, SettingsHandler } from "./settings.js";
+import { BaseRequestParameters, InitialSettings, RequestParameters, SettingsHandler } from "./settings.js";
 export * from "./item.js";
 export * from "./settings.js";
 export * from "./base.js";
@@ -18,6 +18,6 @@ export type StrategyHandler<T extends Object = any, C extends Object = any> = {
     parser: CategoryParser;
     opts: SettingsHandler<T>;
     settings: InitialSettings;
-    fetcher?: (params: RequestParameters) => Promise<ParserResponseType<C>>;
+    fetcher?: (params: RequestParameters, loader?: (opts: BaseRequestParameters) => unknown) => Promise<C>;
 };
 //# sourceMappingURL=index.d.ts.map

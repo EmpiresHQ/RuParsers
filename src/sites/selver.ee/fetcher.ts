@@ -1,4 +1,3 @@
-import { ParserResponseType } from "../../types/index.js";
 import { ProxyType, RequestParameters } from "../../types/settings.js";
 import { Client } from "@opensearch-project/opensearch";
 import { API_HOST } from "./settings.js";
@@ -7,9 +6,9 @@ import { ProductContainer } from "./types.js";
 
 export const fetcher = async (
   requestParams: RequestParameters
-): Promise<ParserResponseType<ProductContainer[] | { error: unknown }>> => {
+): Promise<ProductContainer[] | { error: unknown }> => {
   let retries = 5;
-  console.log("req params: ", JSON.stringify(requestParams, null, 2));
+  // console.log("req params: ", JSON.stringify(requestParams, null, 2));
   const _internal = async () => {
     const { data, error } = await fetcherCore(requestParams);
     if (data) {
@@ -28,9 +27,7 @@ export const fetcher = async (
   };
   const data = await _internal();
 
-  return {
-    json: data,
-  };
+  return data;
 };
 
 const fetcherCore = async (requestParams: RequestParameters) => {
@@ -94,7 +91,7 @@ export const openSearchClient = ({
   proxyParam?: ProxyType;
 }) => {
   const proxy = proxyParam && proxyUrl(proxyParam);
-  console.log("proxy: ", proxy);
+  // console.log("proxy: ", proxy);
   const node = `${API_HOST}/${idx}`;
   const client = new Client({
     ssl: {
