@@ -21,6 +21,12 @@ export const apiParser: CategoryParser<
   DNSItem[] | { error: string }
 > = async ({ json }) => {
   if (!json || "error" in json) {
+    if (json?.error && ["notfound", "notparsed"].includes(json.error)) {
+      return {
+        items: [],
+        hasNextPage: false
+      }
+    }
     return {
       err: BaseProcessorError.Crawler,
     };
