@@ -20,9 +20,10 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         return value.includes("AjaxState.register");
     });
     if (!productContainer) {
-        return {
-            error: "notfound",
-        };
+        // return {
+        // error: "notfound",
+        // };
+        return [];
     }
     const productsString = data.assets.inlineJs[productContainer[0]];
     let store = [];
@@ -38,15 +39,17 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
     vm.createContext(ctx);
     vm.runInContext(productsString, ctx);
     if (!store || !store.length) {
-        return {
-            error: "notparsed",
-        };
+        // return {
+        //   error: "notparsed",
+        // };
+        return [];
     }
     const chunk = store.find((chunk) => chunk[0].type === "product-buy");
     if (!chunk || chunk.length < 2) {
-        return {
-            error: "noproducts",
-        };
+        // return {
+        //   error: "noproducts",
+        // };
+        return [];
     }
     const pricePayload = chunk[1].map(({ id, data: { id: dId } }) => ({
         id,

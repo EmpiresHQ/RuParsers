@@ -17,6 +17,12 @@ const _itemMapper = ({ data: { id, name, price: { current }, }, images, }) => ({
 });
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
     if (!json || "error" in json) {
+        if ((json === null || json === void 0 ? void 0 : json.error) && ["notfound", "notparsed", "noproducts"].includes(json.error)) {
+            return {
+                items: [],
+                hasNextPage: false
+            };
+        }
         return {
             err: BaseProcessorError.Crawler,
         };
