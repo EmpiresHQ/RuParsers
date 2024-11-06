@@ -30,6 +30,7 @@ describe("DNS", () => {
                 return data;
             }),
         });
+        console.log(cats);
         expect(cats).toBeDefined();
     }));
     test("dns:load products", () => __awaiter(void 0, void 0, void 0, function* () {

@@ -12,13 +12,14 @@ export const treeLoader: TreeParser = async ({ loader, preloader }) => {
     const data = (await loader(opts, cookies)).data.filter(
       (c) => !c.onlyVirtualChildren
     );
+    console.log(JSON.stringify(data, null, 2))
 
     const tp = (parent: Category, node: Category) => {
       holder.push({
         title: node.title,
-        id: node.id,
+        id: node.searchUid,
         url: node.url,
-        parent_id: parent.id,
+        parent_id: parent.searchUid,
       })
       if (node.childs) {
         for (const child of node.childs.filter(c => !c.onlyVirtualChildren)) {
@@ -30,7 +31,7 @@ export const treeLoader: TreeParser = async ({ loader, preloader }) => {
     for (const category of data) {
       holder.push({
         title: category.title,
-        id: category.id,
+        id: category.searchUid,
         url: category.url,
       });
       if (category.childs) {
