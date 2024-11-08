@@ -25,6 +25,7 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         // };
         return [];
     }
+    console.log('assets: ', data === null || data === void 0 ? void 0 : data.assets);
     const productsString = data.assets.inlineJs[productContainer[0]];
     let store = [];
     const ctx = {

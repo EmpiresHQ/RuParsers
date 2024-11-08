@@ -34,6 +34,7 @@ export const fetcher = async (
     // };
     return []
   }
+  console.log('assets: ', data?.assets);
   const productsString = data.assets.inlineJs[productContainer[0]];
 
   let store: AjaxState | undefined = [];
