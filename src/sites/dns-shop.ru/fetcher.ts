@@ -23,6 +23,7 @@ export const fetcher = async (
     };
   }
   const data = (await loader(requestParams)) as CategoryResponse;
+  console.log('data: ', data);
   const productContainer = Object.entries(data.assets.inlineJs).find(
     ([, value]) => {
       return value.includes("AjaxState.register");
@@ -34,7 +35,7 @@ export const fetcher = async (
     // };
     return []
   }
-  console.log('assets: ', data?.assets);
+  
   const productsString = data.assets.inlineJs[productContainer[0]];
 
   let store: AjaxState | undefined = [];

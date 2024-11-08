@@ -16,6 +16,7 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         };
     }
     const data = (yield loader(requestParams));
+    console.log('data: ', data);
     const productContainer = Object.entries(data.assets.inlineJs).find(([, value]) => {
         return value.includes("AjaxState.register");
     });
@@ -25,7 +26,6 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         // };
         return [];
     }
-    console.log('assets: ', data === null || data === void 0 ? void 0 : data.assets);
     const productsString = data.assets.inlineJs[productContainer[0]];
     let store = [];
     const ctx = {
