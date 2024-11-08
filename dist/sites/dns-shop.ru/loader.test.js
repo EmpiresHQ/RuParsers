@@ -40,10 +40,10 @@ describe("DNS", () => {
         const { cookies } = yield renderer(API_SETTINGS.antibotOpts);
         const opts = apiRequestOpts({
             data: {
-                remoteId: "17a8d26216404e77",
-                text: "",
+                remoteId: "",
+                text: "/catalog/17a8aa1c16404e77/wi-fi-routery/?f%5Bj%5D=9mwt&virtual_category_uid=a5f7de6c3bf03e99",
             },
-        });
+        }, 1);
         const data = yield fetcher(opts, (opts) => __awaiter(void 0, void 0, void 0, function* () {
             return curlFetch(Object.assign(Object.assign({}, opts), { cookies }));
         }));

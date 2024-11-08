@@ -38,7 +38,10 @@ export const apiRequestOpts = (
   page: number = 0
 ): RequestParameters => {
   return {
-    urlPath: `/catalog/${handler.data.remoteId ?? ""}/?p=${page}`,
+    urlPath:
+      page > 0
+        ? `${handler.data.text ?? ""}&p=${page}`
+        : `${handler.data.text ?? ""}`,
     host: WEB_HOST,
     method: "GET",
     headers: [
