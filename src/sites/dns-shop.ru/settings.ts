@@ -39,9 +39,12 @@ export const apiRequestOpts = (
 ): RequestParameters => {
   return {
     urlPath:
-      page > 0
-        ? `${handler.data.text ?? ""}&p=${page}`
-        : `${handler.data.text ?? ""}`,
+      handler.data.text.indexOf("virtual_category_uid") > -1
+        ? page > 0
+          ? `${handler.data.text ?? ""}&p=${page}`
+          : `${handler.data.text ?? ""}`
+        : `${handler.data.text ?? ""}/?p=${page}`,
+
     host: WEB_HOST,
     method: "GET",
     headers: [

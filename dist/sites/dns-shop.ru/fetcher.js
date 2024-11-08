@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { BaseProcessorError } from "../../types/error.js";
 import { imageRequestOpts, priceRequestOpts } from "./settings.js";
 import * as vm from "node:vm";
 export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void 0, function* () {
@@ -16,7 +17,7 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         };
     }
     const data = (yield loader(requestParams));
-    console.log('data: ', data);
+    // console.log('data: ', data);
     const productContainer = Object.entries(data.assets.inlineJs).find(([, value]) => {
         return value.includes("AjaxState.register");
     });
@@ -46,6 +47,11 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         return [];
     }
     const chunk = store.find((chunk) => chunk[0].type === "product-buy");
+    if (!chunk && (!requestParams.page || requestParams.page == 0)) {
+        return {
+            error: BaseProcessorError.NotFound
+        };
+    }
     if (!chunk || chunk.length < 2) {
         // return {
         //   error: "noproducts",

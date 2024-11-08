@@ -41,14 +41,22 @@ describe("DNS", () => {
       return curlFetch({...opts, cookies})
     });
     const ready = await apiParser({json: data})
+    console.log(ready)
     expect(ready).toBeDefined()
-    opts.page = 2
-    const data2  = await fetcher(opts, async (opts) => {
+
+    const opts2 = apiRequestOpts({
+      data: {
+        remoteId: "234c1343852e5710",
+        text: "/catalog/recipe/234c1343852e5710/akkumulatornye-batarei/",
+      },
+    }, 1);
+    const data2  = await fetcher(opts2, async (opts) => {
       return curlFetch({...opts, cookies})
     });
     const ready2 = await apiParser({json: data2})
-    console.log(ready2)
     expect(ready2).toBeDefined()
+    console.log(ready2)
+    
     // console.log(data.json?.assets.inlineJs)
   });
 }, 5000000);

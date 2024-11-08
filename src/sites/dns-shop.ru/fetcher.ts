@@ -1,3 +1,4 @@
+import { BaseProcessorError } from "../../types/error.js";
 import {
   BaseRequestParameters,
   RequestParameters,
@@ -23,7 +24,7 @@ export const fetcher = async (
     };
   }
   const data = (await loader(requestParams)) as CategoryResponse;
-  console.log('data: ', data);
+  // console.log('data: ', data);
   const productContainer = Object.entries(data.assets.inlineJs).find(
     ([, value]) => {
       return value.includes("AjaxState.register");
@@ -58,6 +59,11 @@ export const fetcher = async (
     return []
   }
   const chunk = store.find((chunk) => chunk[0].type === "product-buy");
+  if (!chunk && (!requestParams.page || requestParams.page == 0)) {
+    return {
+      error: BaseProcessorError.NotFound
+    }
+  }
   if (!chunk || chunk.length < 2) {
     // return {
     //   error: "noproducts",

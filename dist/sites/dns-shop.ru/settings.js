@@ -21,11 +21,13 @@ export const categoryRequestOpts = () => {
     };
 };
 export const apiRequestOpts = (handler, page = 0) => {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     return {
-        urlPath: page > 0
-            ? `${(_a = handler.data.text) !== null && _a !== void 0 ? _a : ""}&p=${page}`
-            : `${(_b = handler.data.text) !== null && _b !== void 0 ? _b : ""}`,
+        urlPath: handler.data.text.indexOf("virtual_category_uid") > -1
+            ? page > 0
+                ? `${(_a = handler.data.text) !== null && _a !== void 0 ? _a : ""}&p=${page}`
+                : `${(_b = handler.data.text) !== null && _b !== void 0 ? _b : ""}`
+            : `${(_c = handler.data.text) !== null && _c !== void 0 ? _c : ""}/?p=${page}`,
         host: WEB_HOST,
         method: "GET",
         headers: [
@@ -33,7 +35,7 @@ export const apiRequestOpts = (handler, page = 0) => {
             `cityid: 30b7c1f3-03fb-11dc-95ee-00151716f9f5`,
             `x-requested-with: XMLHttpRequest`,
         ],
-        remoteCategoryId: (_c = handler.data.remoteId) !== null && _c !== void 0 ? _c : "",
+        remoteCategoryId: (_d = handler.data.remoteId) !== null && _d !== void 0 ? _d : "",
         page,
     };
 };
