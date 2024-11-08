@@ -6,7 +6,7 @@ export const API_SETTINGS = {
         waitAfterLoad: 4000,
         fetchCookies: {
             domains: ["https://dns-shop.ru"],
-            cookieNames: ["qrator_jsid"],
+            cookieNames: ["qrator_jsid", "qrator_jsr", "qrator_ssid"],
         },
     },
     perPage: 17,

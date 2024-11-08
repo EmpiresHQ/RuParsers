@@ -41,7 +41,14 @@ describe("DNS", () => {
       return curlFetch({...opts, cookies})
     });
     const ready = await apiParser({json: data})
-    console.log(ready)
+    expect(ready).toBeDefined()
+    opts.page = 2
+    const data2  = await fetcher(opts, async (opts) => {
+      return curlFetch({...opts, cookies})
+    });
+    const ready2 = await apiParser({json: data2})
+    console.log(ready2)
+    expect(ready2).toBeDefined()
     // console.log(data.json?.assets.inlineJs)
   });
 }, 5000000);

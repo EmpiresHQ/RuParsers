@@ -48,7 +48,14 @@ describe("DNS", () => {
             return curlFetch(Object.assign(Object.assign({}, opts), { cookies }));
         }));
         const ready = yield apiParser({ json: data });
-        console.log(ready);
+        expect(ready).toBeDefined();
+        opts.page = 2;
+        const data2 = yield fetcher(opts, (opts) => __awaiter(void 0, void 0, void 0, function* () {
+            return curlFetch(Object.assign(Object.assign({}, opts), { cookies }));
+        }));
+        const ready2 = yield apiParser({ json: data2 });
+        console.log(ready2);
+        expect(ready2).toBeDefined();
         // console.log(data.json?.assets.inlineJs)
     }));
 }, 5000000);

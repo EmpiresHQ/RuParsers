@@ -28,6 +28,7 @@ export const curlFetch = (params_1, ...args_1) => __awaiter(void 0, [params_1, .
         },
         body: JSON.stringify(params),
     });
+    // console.log('resp: ', await data.text())
     switch (load) {
         case 'text':
             return data.text();

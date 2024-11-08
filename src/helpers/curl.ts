@@ -41,6 +41,7 @@ export const curlFetch = async <T>(
     },
     body: JSON.stringify(params),
   });
+  // console.log('resp: ', await data.text())
   switch (load) {
     case 'text':
       return data.text() as T
