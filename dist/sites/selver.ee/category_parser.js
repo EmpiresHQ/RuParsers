@@ -12,24 +12,26 @@ import { MEDIA_HOST } from "./settings.js";
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
     if (!json) {
         return {
-            err: BaseProcessorError.Crawler
+            err: BaseProcessorError.Crawler,
         };
     }
     if (Buffer.isBuffer(json)) {
         throw new Error("is a buffer");
     }
-    if ('error' in json) {
+    if ("error" in json) {
         throw new Error(JSON.stringify(json.error));
     }
-    const items = json.map(({ _source: item }) => ({
+    const items = json
+        .filter(({ _source }) => !!_source.url_path)
+        .map(({ _source: item }) => ({
         skuId: item.url_path,
         title: item.name,
         regularPrice: (item.final_price_incl_tax * 100).toString(),
         imageUrl: `${MEDIA_HOST}${item.image}`,
-        isAvailable: item.stock.is_in_stock
+        isAvailable: item.stock.is_in_stock,
     }));
     return {
         items,
-        hasNextPage: !!items && items.length > 0
+        hasNextPage: !!items && items.length > 0,
     };
 });
