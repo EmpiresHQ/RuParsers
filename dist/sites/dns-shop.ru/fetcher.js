@@ -18,6 +18,11 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
     }
     const data = (yield loader(requestParams));
     console.log('data: ', data);
+    if (typeof data !== 'object' || !data.assets || !data.assets.inlineJs) {
+        return {
+            error: BaseProcessorError.NotFound
+        };
+    }
     const productContainer = Object.entries(data.assets.inlineJs).find(([, value]) => {
         return value.includes("AjaxState.register");
     });
