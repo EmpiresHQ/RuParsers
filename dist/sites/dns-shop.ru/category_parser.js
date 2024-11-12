@@ -15,19 +15,25 @@ const _itemMapper = ({ data: { id, name, price: { current }, }, images, }) => ({
     imageUrl: images && images[0],
     isAvailable: true,
 });
-export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json }) {
+export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json, }) {
     if (!json || "error" in json) {
-        if ((json === null || json === void 0 ? void 0 : json.error) && ["notfound", "notparsed", "noproducts"].includes(json.error)) {
+        if ((json === null || json === void 0 ? void 0 : json.error) &&
+            ["notfound", "notparsed", "noproducts"].includes(json.error)) {
             return {
                 items: [],
-                hasNextPage: false
+                hasNextPage: false,
             };
+        }
+        if ((json === null || json === void 0 ? void 0 : json.error) === BaseProcessorError.NotFound) {
+            return { err: json.error };
         }
         return {
             err: BaseProcessorError.Crawler,
         };
     }
-    const items = json.filter(i => i.data.price && i.data.price.current).map(_itemMapper);
+    const items = json
+        .filter((i) => i.data.price && i.data.price.current)
+        .map(_itemMapper);
     const hasNextPage = items.length > 0;
     return {
         items,
