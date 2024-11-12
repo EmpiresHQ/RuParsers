@@ -17,7 +17,7 @@ export const fetcher = (requestParams, loader) => __awaiter(void 0, void 0, void
         };
     }
     const data = (yield loader(requestParams));
-    // console.log('data: ', data);
+    console.log('data: ', data);
     const productContainer = Object.entries(data.assets.inlineJs).find(([, value]) => {
         return value.includes("AjaxState.register");
     });
