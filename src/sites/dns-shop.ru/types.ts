@@ -79,6 +79,7 @@ export type DNSItem = {
   data: {
     id: string;
     name: string;
+    notAvail: boolean,
     price: {
       current: number; // in rubles
     };

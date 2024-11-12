@@ -8,13 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { BaseProcessorError } from "../../types/error.js";
-const _itemMapper = ({ data: { id, name, price: { current }, }, images, }) => ({
+const _itemMapper = ({ data: { id, name, price, notAvail }, images, }) => (Object.assign(Object.assign({
     skuId: id,
     title: name,
-    regularPrice: ((current || 0) * 100).toString(),
     imageUrl: images && images[0],
     isAvailable: true,
-});
+}, (price
+    ? { regularPrice: ((price.current || 0) * 100).toString() }
+    : { regularPrice: "0" })), (notAvail ? { isAvailable: false } : {})));
 export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ json, }) {
     if (!json || "error" in json) {
         if ((json === null || json === void 0 ? void 0 : json.error) &&

@@ -3,18 +3,19 @@ import { CategoryParser } from "../../types/index.js";
 import { DNSItem, Item } from "./types.js";
 
 const _itemMapper = ({
-  data: {
-    id,
-    name,
-    price: { current },
-  },
+  data: { id, name, price, notAvail },
   images,
 }: DNSItem): Item => ({
-  skuId: id,
-  title: name,
-  regularPrice: ((current || 0) * 100).toString(),
-  imageUrl: images && images[0],
-  isAvailable: true,
+  ...{
+    skuId: id,
+    title: name,
+    imageUrl: images && images[0],
+    isAvailable: true,
+  },
+  ...(price
+    ? { regularPrice: ((price.current || 0) * 100).toString() }
+    : { regularPrice: "0" }),
+  ...(notAvail ? { isAvailable: false } : {}),
 });
 
 export const apiParser: CategoryParser<DNSItem[] | { error: string }> = async ({
