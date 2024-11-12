@@ -27,7 +27,7 @@ export const apiParser = (_a) => __awaiter(void 0, [_a], void 0, function* ({ js
             err: BaseProcessorError.Crawler,
         };
     }
-    const items = json.map(_itemMapper);
+    const items = json.filter(i => i.data.price && i.data.price.current).map(_itemMapper);
     const hasNextPage = items.length > 0;
     return {
         items,

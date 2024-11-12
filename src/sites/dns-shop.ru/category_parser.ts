@@ -31,7 +31,7 @@ export const apiParser: CategoryParser<
       err: BaseProcessorError.Crawler,
     };
   }
-  const items = json.map<Item>(_itemMapper);
+  const items = json.filter(i => i.data.price && i.data.price.current).map<Item>(_itemMapper);
   const hasNextPage = items.length > 0;
   return {
     items,
