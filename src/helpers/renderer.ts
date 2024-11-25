@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+import { ProxyType } from "../types/index.js";
 dotenv.config();
 
 export interface Cookie {
@@ -68,6 +69,17 @@ export type ProcessBodyParams = {
     };
   };
 };
+
+export const proxyUrlFromType = ({url, auth}: ProxyType): string => {
+  const urlObj = new URL(url)
+  if (auth) {
+    const [username, password] = auth.split(":");
+    urlObj.username = username;
+    urlObj.password = password;
+  }
+  return urlObj.toString()
+  
+}
 
 export const renderer = async (params: ProcessBodyParams): Promise<RenderResult> => {
   if (!process.env.PARSERS_URL) {

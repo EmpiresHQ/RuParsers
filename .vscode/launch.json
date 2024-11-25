@@ -7,7 +7,7 @@
       "request": "launch",
       "name": "Debug Current Test File",
       "runtimeExecutable": "node",
-      "runtimeVersion": "20.11.1",
+      "runtimeVersion": "20.15.1",
       "autoAttachChildProcesses": true,
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",

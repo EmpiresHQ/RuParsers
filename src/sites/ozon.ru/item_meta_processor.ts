@@ -2,9 +2,9 @@ import { OzonItemProcessor } from "./item_processor.js";
 import { CharacteristicsOutput, ItemResponseData, OzonItemMetaData } from "./types.js";
 
 export class OzonItemMetaProcessor extends OzonItemProcessor {
-  public getPath(itemId: string) {
+  public getPath(...args: string[]) {
     return encodeURIComponent(
-      `/product/${itemId}?layout_container=pdpPage2column&layout_page_index=2`
+      `/product/${args[0]}?layout_container=pdpPage2column&layout_page_index=2`
     );
   }
 

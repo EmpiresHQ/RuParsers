@@ -1,27 +1,34 @@
 import { describe, expect, test } from "vitest";
 import * as dotenv from "dotenv";
 import { curlFetch } from "../../helpers/curl.js";
-import { Fetcher, OzonItemProcessor } from "./item_processor.js";
+import { OzonItemProcessor } from "./item_processor.js";
 import { ItemResponseData } from "./types.js";
-import { SimpleCookie } from "../../types/base.js";
 import { ProxyType } from "../../types/settings.js";
 import { OzonItemMetaProcessor } from "./item_meta_processor.js";
+import { Fetcher } from "./base.js";
+import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
 dotenv.config();
-const cookies: SimpleCookie[] = [
-  {
-    name: "abt_data",
-    value:
-      "xxx",
-  },
-  {
-    name: "__Secure-ETC",
-    value: "xxx",
-  },
-];
 
 const proxy: ProxyType = {
-  url: "xxx",
-  auth: "xxx",
+  url: process.env.TEST_OZON_PROXY_URL ?? "",
+  auth: process.env.TEST_OZON_PROXY_AUTH ?? "",
+};
+
+const cookieLoader = async () => {
+  const proxyUrl = proxyUrlFromType(proxy); 
+  const res = await renderer({
+    url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/product/1428983821`)})`,
+    waitAfterLoad: 4000,
+    getDocumentBody: true,
+    fetchCookies: {
+      domains: ["https://www.ozon.ru"],
+      cookieNames: ["abt_data", "__Secure-ETC"],
+    },
+    proxy:{
+      url: proxyUrl,
+    }
+  });
+  return (res.cookies ?? []).map(({name, value}) => ({name, value}));
 };
 
 const loader: Fetcher = async (opts) => {
@@ -37,10 +44,10 @@ const loader: Fetcher = async (opts) => {
 };
 
 describe("OZON", () => {
-  test("ozon:load item", async () => {
+  test.only("ozon:load item", async () => {
     const itemProcessor = new OzonItemProcessor({
       fetcher: loader,
-      cookieLoader: () => cookies,
+      cookieLoader,
     });
 
     const parsed = await itemProcessor.fetchItem({
@@ -52,10 +59,10 @@ describe("OZON", () => {
     expect(parsed).toBeDefined();
   });
 
-  test.only("ozon:load meta item", async () => {
+  test("ozon:load meta item", async () => {
     const itemProcessor = new OzonItemMetaProcessor({
       fetcher: loader,
-      cookieLoader: () => cookies,
+      cookieLoader,
     });
 
     const parsed = await itemProcessor.fetchItem({
