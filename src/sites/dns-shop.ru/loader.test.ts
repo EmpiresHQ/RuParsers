@@ -20,7 +20,7 @@ describe("DNS", () => {
       },
       loader: async (rp, cookies) => {
         const data = await curlFetch<CatResponse>({ ...rp, cookies });
-        return data;
+        return data as CatResponse;
       },
     });
     console.log(cats)

@@ -9,6 +9,7 @@ type CurlFetchParams = {
         os?: string;
     };
     payload?: unknown;
+    version?: 'V2Tls';
     raw?: string;
     cookies?: {
         name: string;
