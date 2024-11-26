@@ -1,4 +1,6 @@
-import { merge } from "lodash";
+// import { merge } from "lodash";
+import lodash from 'lodash';
+ const { merge } = lodash;
 import {
   BaseRequestParameters,
   ProxyType,

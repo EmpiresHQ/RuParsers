@@ -93,5 +93,6 @@ export const renderer = async (params: ProcessBodyParams): Promise<RenderResult>
     body: JSON.stringify(params)
   })
   const res = await data.json()
+  console.log('res: ', res)
   return res as RenderResult
 };

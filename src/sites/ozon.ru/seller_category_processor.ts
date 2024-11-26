@@ -1,4 +1,6 @@
-import { flatten } from "lodash";
+// import { flatten } from "lodash";
+import lodash from 'lodash';
+ const { flatten } = lodash;
 import {
   FetchCategoryArgs,
   OzonCategoryProcessor,
@@ -32,6 +34,7 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     sellerId,
   }: FetchSellerCategoryArgs) {
     const cookies = await this.getCookies({ preloadedCookies, proxy });
+    console.log('ccks:', cookies)
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
@@ -43,6 +46,7 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
         nextUrl: categoryUrl,
       }),
     });
+    console.log(data)
     const parsed = this.process(data);
     return {
       ...parsed,

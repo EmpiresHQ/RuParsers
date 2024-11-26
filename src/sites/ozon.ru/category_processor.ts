@@ -51,7 +51,7 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
   }
   public process(data: CategoryResponseData): {
     err?: unknown;
-    items?: unknown;
+    items?: ResponseOzonItem[];
     hasNextPage?: boolean;
     nextPage?: string;
   } {
