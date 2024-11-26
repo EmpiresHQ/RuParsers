@@ -20,7 +20,7 @@ export const curlFetch = (params_1, ...args_1) => __awaiter(void 0, [params_1, .
         throw new Error('no URL');
     }
     // console.log('sending: ', JSON.stringify(params, null ,2))
-    console.log('sending: ', params);
+    // console.log('sending: ', params)
     const data = yield fetch(process.env.CURL_URL, {
         method: "POST",
         headers: {

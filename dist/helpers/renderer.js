@@ -9,6 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import * as dotenv from "dotenv";
 dotenv.config();
+export const proxyUrlFromType = ({ url, auth }) => {
+    const urlObj = new URL(url);
+    if (auth) {
+        const [username, password] = auth.split(":");
+        urlObj.username = username;
+        urlObj.password = password;
+    }
+    return urlObj.toString();
+};
 export const renderer = (params) => __awaiter(void 0, void 0, void 0, function* () {
     if (!process.env.PARSERS_URL) {
         throw new Error("no parsers url");

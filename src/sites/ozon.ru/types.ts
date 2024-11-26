@@ -38,7 +38,26 @@ export type CategoryParsedData = {
   };
   searchResultsV2: SearchResults;
   tagList: unknown;
-}
+  filtersDesktop: FiltersDesktop;
+};
+
+export type FiltersDesktop = {
+  sections: {
+    filters: {
+      categoryFilter: {
+        title: string;
+        categories: {
+          title: string;
+          level: number;
+          urlValue: string;
+          isActive?: boolean;
+        }[];
+      };
+      key: string;
+      type: "categoryFilter" | "boolFilter";
+    }[];
+  }[];
+};
 
 export interface ResponseOzonItem extends BaseItem {
   reviews?: OzonReviews;
@@ -117,7 +136,7 @@ export type AtomTypes = "priceV2" | "stockBar" | "textAtom" | "labelList";
 
 export type SearchResults = {
   items: ItemsArray[];
-}
+};
 
 export interface SearchTileResults {
   items: TilesArray[];
@@ -181,13 +200,13 @@ type OzonItemShortCharacteristicsChunk = {
       textRs: {
         type: string;
         content: string;
-      }[]
-    }
+      }[];
+    };
     values: {
       id: string;
       text: string;
-    }[]
-  }[]
+    }[];
+  }[];
 };
 
 export type OzonItemCharacteristic = {

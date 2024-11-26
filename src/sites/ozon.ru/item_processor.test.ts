@@ -9,6 +9,7 @@ import { Fetcher } from "./base.js";
 import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
 import { OzonCategoryProcessor } from "./category_processor.js";
 import { SimpleCookie } from "../../types/index.js";
+import { OzonSellerCategoryProcessor } from "./seller_category_processor.js";
 dotenv.config();
 
 const proxy: ProxyType = {
@@ -99,6 +100,38 @@ describe("OZON", () => {
         })
       )
     );
+    console.log(parsed);
+    expect(parsed).toBeDefined();
+  });
+  test("ozon:seller category", async () => {
+    const itemProcessor = new OzonSellerCategoryProcessor({
+      fetcher: loader as Fetcher<CategoryResponseData>,
+      cookieLoader,
+    });
+
+    const parsed = await itemProcessor.fetchCategory({
+      sellerId: "1456889",
+      categoryId: "",
+      page: 1,
+      preloadedCookies,
+      proxy,
+    });
+    console.log(parsed);
+    expect(parsed).toBeDefined();
+  });
+
+  test.only("ozon:seller category subtree", async () => {
+    const itemProcessor = new OzonSellerCategoryProcessor({
+      fetcher: loader as Fetcher<CategoryResponseData>,
+      cookieLoader,
+    });
+
+    const parsed = await itemProcessor.fetchSubcategories({
+      sellerId: "1456889",
+      categoryId: "",
+      preloadedCookies,
+      proxy,
+    });
     console.log(parsed);
     expect(parsed).toBeDefined();
   });

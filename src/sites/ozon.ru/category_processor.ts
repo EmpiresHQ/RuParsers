@@ -6,7 +6,7 @@ import {
   ResponseOzonItem,
 } from "./types.js";
 
-interface FetchCategoryArgs extends BaseFetcherArgs {
+export interface FetchCategoryArgs extends BaseFetcherArgs {
   categoryId: string;
   categoryUrl?: string;
   page?: number;
@@ -78,6 +78,7 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
     return [
       "searchResultsV2",
       "tagList",
+      "filtersDesktop",
       "ResultsHeader",
       "tileGrid2",
       "skuGrid2",

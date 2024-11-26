@@ -1,3 +1,4 @@
+import { ProxyType } from "../types/index.js";
 export interface Cookie {
     name: string;
     value: string;
@@ -65,5 +66,6 @@ export type ProcessBodyParams = {
         };
     };
 };
+export declare const proxyUrlFromType: ({ url, auth }: ProxyType) => string;
 export declare const renderer: (params: ProcessBodyParams) => Promise<RenderResult>;
 //# sourceMappingURL=renderer.d.ts.map
