@@ -83,7 +83,13 @@ export abstract class OzonBase<T = BaseResponseData> {
     return parsed;
   }
 
-  public abstract getPath(...args: string[]): string;
+  public abstract getPath({
+    args,
+    nextUrl,
+  }: {
+    args: string[];
+    nextUrl?: string;
+  }): string;
 
   public abstract filterStates(): string[];
 
@@ -94,9 +100,9 @@ export abstract class OzonBase<T = BaseResponseData> {
   }: {
     opts: Omit<BaseFetcherArgs, "preloadedCookies">;
     cookies: SimpleCookie[];
-    pathLoader: () => string[];
+    pathLoader: () => { args: string[]; nextUrl?: string };
   }): Promise<T> {
-    const path = this.getPath(...pathLoader());
+    const path = this.getPath(pathLoader());
     const data = await this.fetcher({
       method: "GET",
       proxy,

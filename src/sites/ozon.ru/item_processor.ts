@@ -6,35 +6,32 @@ import {
 } from "./types.js";
 import { BaseFetcherArgs, OzonBase } from "./base.js";
 
-
-
 interface FetchItemArgs extends BaseFetcherArgs {
   itemId: string;
 }
 
 export class OzonItemProcessor extends OzonBase {
-  
   async fetchItem({ itemId, preloadedCookies, proxy }: FetchItemArgs) {
     const cookies = await this.getCookies({ preloadedCookies, proxy });
     if (!cookies) {
-      throw new Error('could not fetch cookies')
+      throw new Error("could not fetch cookies");
     }
     const data = await this.request({
       opts: { proxy },
       cookies,
-      pathLoader: () => [itemId]
+      pathLoader: () => ({ args: [itemId] }),
     });
     const parsed = this.process(data);
     return {
       ...parsed,
-      cookies
-    }
+      cookies,
+    };
   }
 
-  public getPath(...args: string[]) {
+  public getPath({ args }: { args: string[] }) {
     return encodeURIComponent(`/product/${args[0]}`);
   }
-  
+
   public process(data: BaseResponseData): { err?: unknown; item?: unknown } {
     const errChecker = this.checkError(data);
     if (errChecker.err) {
@@ -101,5 +98,4 @@ export class OzonItemProcessor extends OzonBase {
       "webAddToFavorite",
     ];
   }
-
 }

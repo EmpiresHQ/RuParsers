@@ -83,7 +83,7 @@ describe("OZON", () => {
     expect(parsed).toBeDefined();
   });
 
-  test.only("ozon:load category", async () => {
+  test("ozon:load category", async () => {
     const itemProcessor = new OzonCategoryProcessor({
       fetcher: loader as Fetcher<CategoryResponseData>,
       cookieLoader,

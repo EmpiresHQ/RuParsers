@@ -8,12 +8,14 @@ import {
 
 interface FetchCategoryArgs extends BaseFetcherArgs {
   categoryId: string;
+  categoryUrl?: string;
   page?: number;
 }
 
 export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
   async fetchCategory({
     categoryId,
+    categoryUrl,
     preloadedCookies,
     proxy,
     page = 1,
@@ -25,20 +27,25 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
     const data = await this.request({
       opts: { proxy },
       cookies,
-      pathLoader: () => [categoryId, page.toString()],
+      pathLoader: () => ({
+        args: [categoryId, page.toString()],
+        nextUrl: categoryUrl,
+      }),
     });
     const parsed = this.process(data);
     return {
       ...parsed,
-      cookies
+      cookies,
     };
   }
 
-  public getPath(...args: string[]) {
+  public getPath({ args, nextUrl }: { args: string[]; nextUrl?: string }) {
+    if (nextUrl) {
+      return encodeURIComponent(nextUrl);
+    }
     const pagePart =
       +args[1] > 1
-        ? 
-        `?layout_container=categorySearchMegapagination&layout_page_index=${args[1]}&page=${args[1]}`
+        ? `?layout_container=categorySearchMegapagination&layout_page_index=${args[1]}&page=${args[1]}`
         : "";
     return encodeURIComponent(`/category/${args[0]}/${pagePart}`);
   }
@@ -46,6 +53,7 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
     err?: unknown;
     items?: unknown;
     hasNextPage?: boolean;
+    nextPage?: string;
   } {
     const errChecker = this.checkError(data);
     if (errChecker.err) {
@@ -60,10 +68,9 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
 
     const nextPage = data?.nextPage ?? parsed?.megaPaginator?.nextPage;
     return {
-      hasNextPage: !!(
-        nextPage && nextPage.indexOf("sold_out_page") < 0
-      ),
+      hasNextPage: !!(nextPage && nextPage.indexOf("sold_out_page") < 0),
       items,
+      nextPage,
     };
   }
 

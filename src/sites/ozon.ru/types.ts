@@ -1,4 +1,3 @@
-import { title } from "process";
 import { BaseItem } from "../../types/index.js";
 
 export interface BaseResponseData {

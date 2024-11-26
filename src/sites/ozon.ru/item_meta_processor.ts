@@ -6,7 +6,7 @@ import {
 } from "./types.js";
 
 export class OzonItemMetaProcessor extends OzonItemProcessor {
-  public getPath(...args: string[]) {
+  public getPath({ args }: { args: string[] }) {
     return encodeURIComponent(
       `/product/${args[0]}?layout_container=pdpPage2column&layout_page_index=2`
     );
