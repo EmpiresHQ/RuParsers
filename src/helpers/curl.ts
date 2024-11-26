@@ -34,7 +34,7 @@ export const curlFetch = async <T>(
     throw new Error('no URL')
   }
   // console.log('sending: ', JSON.stringify(params, null ,2))
-  console.log('sending: ', params)
+  // console.log('sending: ', params)
   const data = await fetch(process.env.CURL_URL, {
     method: "POST",
     headers: {

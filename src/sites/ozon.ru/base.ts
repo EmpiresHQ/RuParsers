@@ -1,11 +1,17 @@
 import { merge } from "lodash";
-import { BaseRequestParameters, ProxyType, SimpleCookie } from "../../types/index.js";
-import { ItemResponseData } from "./types.js";
+import {
+  BaseRequestParameters,
+  ProxyType,
+  SimpleCookie,
+} from "../../types/index.js";
+import { BaseResponseData } from "./types.js";
 
-export type Fetcher<T = ItemResponseData> = (
+export type Fetcher<T = BaseResponseData> = (
   opts: Omit<BaseRequestParameters, "cookies"> & { cookies: SimpleCookie[] }
 ) => Promise<T>;
-export type CookieLoader = (proxy: ProxyType) => Promise<SimpleCookie[] | undefined>;
+export type CookieLoader = (
+  proxy: ProxyType
+) => Promise<SimpleCookie[] | undefined>;
 
 export interface ItemProcessorOpts<T> {
   fetcher: Fetcher<T>;
@@ -14,32 +20,28 @@ export interface ItemProcessorOpts<T> {
 
 export interface BaseFetcherArgs {
   preloadedCookies?: SimpleCookie[];
-  proxy: ProxyType; 
+  proxy: ProxyType;
 }
 
-export abstract class OzonBase {
-  public fetcher: Fetcher;
+export abstract class OzonBase<T = BaseResponseData> {
+  public fetcher: Fetcher<T>;
   public cookieLoader: CookieLoader;
   public endpoint =
     "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
 
-  
-  constructor({ fetcher, cookieLoader }: ItemProcessorOpts<ItemResponseData>) {
+  constructor({ fetcher, cookieLoader }: ItemProcessorOpts<T>) {
     this.fetcher = fetcher;
     this.cookieLoader = cookieLoader;
   }
 
-  public async getCookies({
-    proxy,
-    preloadedCookies,
-  }: BaseFetcherArgs) {
+  public async getCookies({ proxy, preloadedCookies }: BaseFetcherArgs) {
     if (preloadedCookies) {
       return preloadedCookies;
     }
     return this.cookieLoader(proxy);
   }
 
-  public checkError(data: ItemResponseData) {
+  public checkError(data: BaseResponseData) {
     if (
       !data ||
       data.incidentId ||
@@ -58,15 +60,15 @@ export abstract class OzonBase {
     }
     return { ok: true };
   }
-  public stateParser<T extends { [key in string]: unknown }>(
-    data: ItemResponseData
-  ): T {
+  public stateParser<C extends { [key in string]: unknown }>(
+    data: BaseResponseData
+  ): C {
     const keys = Object.keys(data.widgetStates).filter((k) =>
       this.filterStates().find((s) => k.indexOf(s) > -1)
     );
     // console.log(data.widgetStates)
 
-    const parsed = keys.reduce<T>((sum, k) => {
+    const parsed = keys.reduce<C>((sum, k) => {
       const key = this.filterStates().find((f) => k.indexOf(f) > -1) ?? "";
       return {
         ...sum,
@@ -76,7 +78,7 @@ export abstract class OzonBase {
             : JSON.parse(data.widgetStates[k]),
         },
       };
-    }, {} as T);
+    }, {} as C);
 
     return parsed;
   }
@@ -85,16 +87,16 @@ export abstract class OzonBase {
 
   public abstract filterStates(): string[];
 
-  public async itemRequest({
+  public async request({
     opts: { proxy },
     cookies,
-    pathLoader
+    pathLoader,
   }: {
     opts: Omit<BaseFetcherArgs, "preloadedCookies">;
     cookies: SimpleCookie[];
     pathLoader: () => string[];
-  }) {
-    const path = this.getPath(...pathLoader())
+  }): Promise<T> {
+    const path = this.getPath(...pathLoader());
     const data = await this.fetcher({
       method: "GET",
       proxy,
@@ -102,7 +104,6 @@ export abstract class OzonBase {
       host: this.endpoint,
       urlPath: path,
     });
-    return data;
-  } 
+    return data as T;
+  }
 }
-

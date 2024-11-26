@@ -1,6 +1,6 @@
 import {
   ItemParsedData,
-  ItemResponseData,
+  BaseResponseData,
   OzonItemPrice,
   ResponseOzonItem,
 } from "./types.js";
@@ -19,20 +19,23 @@ export class OzonItemProcessor extends OzonBase {
     if (!cookies) {
       throw new Error('could not fetch cookies')
     }
-    const data = await this.itemRequest({
+    const data = await this.request({
       opts: { proxy },
       cookies,
       pathLoader: () => [itemId]
     });
     const parsed = this.process(data);
-    return parsed;
+    return {
+      ...parsed,
+      cookies
+    }
   }
 
   public getPath(...args: string[]) {
     return encodeURIComponent(`/product/${args[0]}`);
   }
   
-  public process(data: ItemResponseData): { err?: unknown; item?: unknown } {
+  public process(data: BaseResponseData): { err?: unknown; item?: unknown } {
     const errChecker = this.checkError(data);
     if (errChecker.err) {
       return { err: errChecker.err };

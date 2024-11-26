@@ -1,6 +1,7 @@
+import { title } from "process";
 import { BaseItem } from "../../types/index.js";
 
-export interface ItemResponseData {
+export interface BaseResponseData {
   widgetStates: {
     [key in string]: string;
   };
@@ -26,6 +27,19 @@ export type ItemParsedData = {
     sku: string;
   };
 };
+
+export type CategoryResponseData = BaseResponseData & {
+  nextPage?: string;
+  no_results: unknown;
+};
+
+export type CategoryParsedData = {
+  megaPaginator: {
+    nextPage: string;
+  };
+  searchResultsV2: SearchResults;
+  tagList: unknown;
+}
 
 export interface ResponseOzonItem extends BaseItem {
   reviews?: OzonReviews;
@@ -63,7 +77,7 @@ type ItemsArray = {
   rightState?: Array<{
     atom: Atom;
   }>;
-  skuId?: string;
+  skuId: string;
   action?: {
     link: string;
   };
@@ -102,7 +116,7 @@ type SkuGridArray = {
 export interface OzonTag extends OzonCategory {}
 export type AtomTypes = "priceV2" | "stockBar" | "textAtom" | "labelList";
 
-export interface SearchResults {
+export type SearchResults = {
   items: ItemsArray[];
 }
 
@@ -140,6 +154,7 @@ export type SearchAtomTypes = "priceV2" | "textAtom" | "labelList" | "stockBar";
 export type OzonItemMetaData = {
   webCharacteristics: OzonItemWebCharacteristic;
   webDescription: OzonItemWebDescription;
+  webShortCharacteristics: OzonItemShortCharacteristicsChunk;
 };
 
 type OzonItemDescriptionCharacteristic = {
@@ -160,6 +175,22 @@ type OzonItemCharacteristicChunk = {
   }[];
 };
 
+type OzonItemShortCharacteristicsChunk = {
+  characteristics: {
+    id: string;
+    title: {
+      textRs: {
+        type: string;
+        content: string;
+      }[]
+    }
+    values: {
+      id: string;
+      text: string;
+    }[]
+  }[]
+};
+
 export type OzonItemCharacteristic = {
   title: string;
   short: OzonItemCharacteristicChunk[];
@@ -169,10 +200,10 @@ export type OzonItemCharacteristic = {
 export type OzonItemWebCharacteristic = {
   totalCount: number;
   productTitle: string;
-  characteristics: OzonItemCharacteristic[]
+  characteristics: OzonItemCharacteristic[];
 };
 
 export type CharacteristicsOutput = {
   key: string;
   text: string;
-}
+};
