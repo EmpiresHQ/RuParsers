@@ -56,6 +56,7 @@ export type FiltersDesktop = {
 export interface ResponseOzonItem extends BaseItem {
     reviews?: OzonReviews;
     cardPrice?: string;
+    filters?: CharacteristicsOutput[];
 }
 export interface OzonItemPrice {
     price: string;

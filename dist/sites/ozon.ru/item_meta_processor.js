@@ -1,7 +1,24 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { OzonItemProcessor } from "./item_processor.js";
 export class OzonItemMetaProcessor extends OzonItemProcessor {
     getPath({ args }) {
         return encodeURIComponent(`/product/${args[0]}?layout_container=pdpPage2column&layout_page_index=2`);
+    }
+    fetchItem(args) {
+        const _super = Object.create(null, {
+            fetchItem: { get: () => super.fetchItem }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            return _super.fetchItem.call(this, args);
+        });
     }
     process(data) {
         var _a, _b, _c, _d, _e;

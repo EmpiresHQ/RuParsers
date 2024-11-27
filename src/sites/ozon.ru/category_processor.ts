@@ -12,6 +12,13 @@ export interface FetchCategoryArgs extends BaseFetcherArgs {
   page?: number;
 }
 
+export interface ProcessCategoryResponse {
+  err?: unknown;
+  items?: ResponseOzonItem[];
+  hasNextPage?: boolean;
+  nextPage?: string;
+}
+
 export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
   async fetchCategory({
     categoryId,
@@ -49,12 +56,7 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
         : "";
     return encodeURIComponent(`/category/${args[0]}/${pagePart}`);
   }
-  public process(data: CategoryResponseData): {
-    err?: unknown;
-    items?: ResponseOzonItem[];
-    hasNextPage?: boolean;
-    nextPage?: string;
-  } {
+  public process(data: CategoryResponseData): ProcessCategoryResponse {
     const errChecker = this.checkError(data);
     if (errChecker.err) {
       return { err: errChecker.err };

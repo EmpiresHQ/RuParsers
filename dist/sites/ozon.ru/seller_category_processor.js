@@ -7,13 +7,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { flatten } from "lodash";
+// import { flatten } from "lodash";
+import lodash from 'lodash';
+const { flatten } = lodash;
 import { OzonCategoryProcessor, } from "./category_processor.js";
 import { sleeper } from "../../helpers/sleeper.js";
 export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     fetchCategory(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, categoryUrl, preloadedCookies, proxy, page = 1, sellerId, }) {
             const cookies = yield this.getCookies({ preloadedCookies, proxy });
+            // console.log('ccks:', cookies)
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
@@ -25,6 +28,7 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
                     nextUrl: categoryUrl,
                 }),
             });
+            // console.log(data)
             const parsed = this.process(data);
             return Object.assign(Object.assign({}, parsed), { cookies });
         });

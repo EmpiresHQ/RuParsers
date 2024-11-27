@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import fs from 'node:fs/promises';
 import path from "path";
 import * as dotenv from "dotenv";
 import { sheets_v4 } from "googleapis/build/src/apis/sheets";
@@ -6,9 +8,17 @@ import { google } from "googleapis";
 import { OzonSellerCategoryProcessor } from "./seller_category_processor.js";
 import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
 import { Fetcher } from "./base.js";
-import { BaseResponseData, CategoryResponseData } from "./types.js";
+import {
+  BaseResponseData,
+  CategoryResponseData,
+  CharacteristicsOutput,
+  ResponseOzonItem,
+} from "./types.js";
 import { curlFetch } from "../../helpers/curl.js";
-import { ProxyType } from "../../types/index.js";
+import { ProxyType, SimpleCookie } from "../../types/index.js";
+import { sleeper } from "../../helpers/sleeper.js";
+import { decode } from 'html-entities';
+import { OzonItemMetaProcessor } from './item_meta_processor.js';
 
 const __dirname = import.meta.dirname;
 
@@ -28,7 +38,6 @@ const proxy: ProxyType = {
   auth: process.env.TEST_OZON_PROXY_AUTH ?? "",
 };
 
-console.log(proxy);
 const cookieLoader = async () => {
   const proxyUrl = proxyUrlFromType(proxy);
   const res = await renderer({
@@ -67,33 +76,127 @@ async function main(): Promise<sheets_v4.Sheets> {
     scopes: SCOPES,
   });
   const authClient = await auth.getClient();
+  // @ts-ignore
   const sheets = google.sheets({ version: "v4", auth: authClient });
 
   const processor = new OzonSellerCategoryProcessor({
     cookieLoader,
     fetcher: loader as Fetcher<CategoryResponseData>,
   });
-  const parsed = await processor.fetchCategory({
-    sellerId: "1456889",
-    categoryId: "maslyanye-filtry-8707",
-    page: 1,
-    // preloadedCookies: [],
-    proxy,
-  });
+
+  const itemMetaProcessor = new OzonItemMetaProcessor({
+    cookieLoader,
+    fetcher: loader
+  })
+
+  let parsed: ResponseOzonItem[] = [];
+
+  const recursive = async ({
+    page = 1,
+    categoryUrl,
+    cookies,
+  }: {
+    page?: number;
+    categoryUrl?: string;
+    cookies?: SimpleCookie[];
+  }) => {
+    console.log("fetching page: ", page);
+    const data = await processor.fetchCategory({
+      sellerId: "1456889",
+      categoryId: "maslyanye-filtry-8707",
+      categoryUrl,
+      page,
+      preloadedCookies: cookies,
+      proxy,
+    });
+    if (data.items) {
+      for (const item of data.items) {
+        console.log('fetching meta for: ', item.skuId)
+        const metaData = await itemMetaProcessor.fetchItem({
+          itemId: item.skuId,
+          preloadedCookies: data.cookies,
+          proxy,
+        })
+        if (metaData.characteristics) {
+          item.filters = metaData.characteristics
+        }
+        await sleeper(4000);
+      }
+      parsed.push(...data.items);
+    }
+    if (data.hasNextPage) {
+      await sleeper(4000);
+      await recursive({
+        page: page + 1,
+        categoryUrl: data.nextPage,
+        cookies: data.cookies,
+      });
+    }
+  };
+
+  const fpath = path.join(__dirname, "dump.json")
+  let fexists = false;
+  try {
+    await fs.stat(fpath)
+    fexists = true
+  }
+  catch (e) {
+    fexists = false
+  }
+  if (fexists) {
+    const fdata = await fs.readFile(fpath)
+    parsed = JSON.parse(fdata.toString()) as ResponseOzonItem[]
+  } else {
+    await recursive({});
+    fs.writeFile(fpath, JSON.stringify(parsed));
+  }
+
+  const filterValue = (filters: CharacteristicsOutput[]= [], key: string) => filters.find(f => f.key === key)?.text
 
   const result = await sheets.spreadsheets.values.append({
     spreadsheetId: "1WtCVeVS8WDVoW_uZKeTbjRdZhOQ4wwe0L9aQ89I5vHY",
     range: "Шаблон!A5",
     valueInputOption: "RAW",
     requestBody: {
-      values: parsed.items?.map((i, cnt) => [
-        cnt,
-        `art-${cnt}`,
-        i.title,
-        i.discountPrice,
-        i.regularPrice,
+      values: parsed.map((i, cnt) => [
+        cnt+1,
+        filterValue(i.filters, 'Type_0'),
+        decode(i.title),
+        i.discountPrice?.substring(0, i.discountPrice.indexOf("₽")-1),
+        i.regularPrice.substring(0, i.regularPrice.indexOf("₽")-1),
         undefined,
-        i.skuId,
+        undefined,
+        undefined,
+        undefined,
+        filterValue(i.filters, 'Width_0'),
+        filterValue(i.filters, 'Height_0'),
+        filterValue(i.filters, 'length_0'),
+        i.imageUrl,
+        undefined,
+        undefined,
+        undefined,
+        filterValue(i.filters, 'Brand_0'),
+        undefined,
+        filterValue(i.filters, 'QuantityUOM_0'),
+        filterValue(i.filters, 'Type_0'),
+        filterValue(i.filters, 'Код продавца'),
+        filterValue(i.filters, 'AltArticle_0'),
+        undefined,
+        undefined,
+        undefined,
+        filterValue(i.filters, 'OEMNum_0'),
+        filterValue(i.filters, 'AltArticle_0'),
+        filterValue(i.filters, 'FilterOpt_0'),
+        filterValue(i.filters, 'FilterForm_0'),
+        filterValue(i.filters, 'FilterBox_0'),
+        undefined,
+        filterValue(i.filters, 'Width_0'),
+        filterValue(i.filters, 'Height_0'),
+        filterValue(i.filters, 'length_0'),
+        filterValue(i.filters, 'Material_Auto_0'),
+        filterValue(i.filters, 'Diametr_0'),
+        filterValue(i.filters, 'VehicleKind_0'),
+        filterValue(i.filters, 'Country_0'),
       ]),
     },
   });

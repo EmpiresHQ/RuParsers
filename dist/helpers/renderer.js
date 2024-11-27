@@ -30,5 +30,6 @@ export const renderer = (params) => __awaiter(void 0, void 0, void 0, function* 
         body: JSON.stringify(params)
     });
     const res = yield data.json();
+    console.log('res: ', res);
     return res;
 });

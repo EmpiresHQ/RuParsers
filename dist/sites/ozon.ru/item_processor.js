@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { OzonBase } from "./base.js";
 export class OzonItemProcessor extends OzonBase {
     fetchItem(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ itemId, preloadedCookies, proxy }) {
+        return __awaiter(this, arguments, void 0, function* ({ itemId, preloadedCookies, proxy, }) {
             const cookies = yield this.getCookies({ preloadedCookies, proxy });
             if (!cookies) {
                 throw new Error("could not fetch cookies");

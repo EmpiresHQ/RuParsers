@@ -7,7 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { merge } from "lodash";
+// import { merge } from "lodash";
+import lodash from 'lodash';
+const { merge } = lodash;
 export class OzonBase {
     constructor({ fetcher, cookieLoader }) {
         this.endpoint = "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";

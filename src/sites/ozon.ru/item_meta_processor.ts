@@ -1,9 +1,13 @@
-import { OzonItemProcessor } from "./item_processor.js";
+import { FetchItemArgs, FetchItemResponse, OzonItemProcessor } from "./item_processor.js";
 import {
   CharacteristicsOutput,
   BaseResponseData,
   OzonItemMetaData,
 } from "./types.js";
+
+interface FetchItemMetaResponse extends Omit<FetchItemResponse, 'item'> {
+  characteristics?: CharacteristicsOutput[]
+}
 
 export class OzonItemMetaProcessor extends OzonItemProcessor {
   public getPath({ args }: { args: string[] }) {
@@ -12,10 +16,13 @@ export class OzonItemMetaProcessor extends OzonItemProcessor {
     );
   }
 
-  public process(data: BaseResponseData): {
-    err?: unknown;
-    characteristics?: CharacteristicsOutput[];
-  } {
+  public async fetchItem(args: FetchItemArgs) {
+    return super.fetchItem(args) as Promise<FetchItemMetaResponse>;
+  }
+
+  public process(
+    data: BaseResponseData
+  ): { characteristics?: CharacteristicsOutput[] } & FetchItemResponse {
     const errChecker = this.checkError(data);
     if (errChecker.err) {
       return { err: errChecker.err };

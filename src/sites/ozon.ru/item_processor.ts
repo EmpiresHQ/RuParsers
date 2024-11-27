@@ -5,13 +5,24 @@ import {
   ResponseOzonItem,
 } from "./types.js";
 import { BaseFetcherArgs, OzonBase } from "./base.js";
+import { SimpleCookie } from "../../types/base.js";
 
-interface FetchItemArgs extends BaseFetcherArgs {
+export interface FetchItemArgs extends BaseFetcherArgs {
   itemId: string;
 }
 
+export interface FetchItemResponse {
+  err?: string;
+  cookies?: SimpleCookie[];
+  item?: ResponseOzonItem;
+}
+
 export class OzonItemProcessor extends OzonBase {
-  async fetchItem({ itemId, preloadedCookies, proxy }: FetchItemArgs) {
+  public async fetchItem({
+    itemId,
+    preloadedCookies,
+    proxy,
+  }: FetchItemArgs): Promise<FetchItemResponse> {
     const cookies = await this.getCookies({ preloadedCookies, proxy });
     if (!cookies) {
       throw new Error("could not fetch cookies");
@@ -32,7 +43,7 @@ export class OzonItemProcessor extends OzonBase {
     return encodeURIComponent(`/product/${args[0]}`);
   }
 
-  public process(data: BaseResponseData): { err?: unknown; item?: unknown } {
+  public process(data: BaseResponseData): FetchItemResponse {
     const errChecker = this.checkError(data);
     if (errChecker.err) {
       return { err: errChecker.err };
