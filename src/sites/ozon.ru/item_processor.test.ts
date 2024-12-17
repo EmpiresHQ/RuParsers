@@ -5,11 +5,11 @@ import { OzonItemProcessor } from "./item_processor.js";
 import { BaseResponseData, CategoryResponseData } from "./types.js";
 import { ProxyType } from "../../types/settings.js";
 import { OzonItemMetaProcessor } from "./item_meta_processor.js";
-import { Fetcher } from "./base.js";
 import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
 import { OzonCategoryProcessor } from "./category_processor.js";
-import { SimpleCookie } from "../../types/index.js";
+import { BaseCookieResponse, Fetcher } from "../../types/index.js";
 import { OzonSellerCategoryProcessor } from "./seller_category_processor.js";
+
 dotenv.config();
 
 const proxy: ProxyType = {
@@ -31,7 +31,9 @@ const cookieLoader = async () => {
       url: proxyUrl,
     },
   });
-  return (res.cookies ?? []).map(({ name, value }) => ({ name, value }));
+  return {
+    cookies: (res.cookies ?? []).map(({ name, value }) => ({ name, value })),
+  };
 };
 
 const loader: Fetcher<BaseResponseData | CategoryResponseData> = async (
@@ -48,12 +50,12 @@ const loader: Fetcher<BaseResponseData | CategoryResponseData> = async (
   return data as BaseResponseData | CategoryResponseData;
 };
 
-let preloadedCookies: SimpleCookie[];
+let preloadedCookies: BaseCookieResponse;
 
 describe("OZON", () => {
   beforeAll(async () => {
     preloadedCookies = await cookieLoader();
-  });
+  }, 5000000);
   test("ozon:load item", async () => {
     const itemProcessor = new OzonItemProcessor({
       fetcher: loader,

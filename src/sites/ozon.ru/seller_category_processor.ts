@@ -1,5 +1,5 @@
 // import { flatten } from "lodash";
-import lodash from 'lodash';
+import lodash from "lodash";
 const { flatten } = lodash;
 import {
   FetchCategoryArgs,
@@ -8,7 +8,7 @@ import {
 } from "./category_processor.js";
 import { CategoryParsedData, CategoryResponseData } from "./types.js";
 import { sleeper } from "../../helpers/sleeper.js";
-import { SimpleCookie } from '../../types/base.js';
+import { BaseCategoryErrorResponse } from "../../types/index.js";
 
 export type CategoryNode = {
   url: string;
@@ -16,10 +16,6 @@ export type CategoryNode = {
   isRoot?: boolean;
   children?: CategoryNode[];
 };
-
-export interface FetchCategoryResponse extends ProcessCategoryResponse {
-  cookies: SimpleCookie[]
-} 
 
 interface FetchSellerCategoryArgs extends FetchCategoryArgs {
   sellerId: string;
@@ -38,15 +34,17 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     proxy,
     page = 1,
     sellerId,
-  }: FetchSellerCategoryArgs): Promise<FetchCategoryResponse> {
-    const cookies = await this.getCookies({ preloadedCookies, proxy });
+  }: FetchSellerCategoryArgs): Promise<
+    ProcessCategoryResponse | BaseCategoryErrorResponse
+  > {
+    const { cookies } = await this.getCookies({ preloadedCookies, proxy });
     // console.log('ccks:', cookies)
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
     const data = await this.request({
       opts: { proxy },
-      cookies,
+      cookiesHeaders: { cookies },
       pathLoader: () => ({
         args: [sellerId, categoryId, page.toString()],
         nextUrl: categoryUrl,
@@ -54,6 +52,11 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     });
     // console.log(data)
     const parsed = this.process(data);
+    if ("err" in parsed) {
+      return {
+        err: parsed.err,
+      };
+    }
     return {
       ...parsed,
       cookies,
@@ -67,14 +70,14 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     treeNode,
     categoryUrl,
   }: FetchSellerSubcategories) {
-    const cookies = await this.getCookies({ preloadedCookies, proxy });
+    const { cookies } = await this.getCookies({ preloadedCookies, proxy });
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
 
     const data = await this.request({
       opts: { proxy },
-      cookies,
+      cookiesHeaders: { cookies },
       pathLoader: () => ({
         args: [sellerId, categoryId],
         nextUrl: categoryUrl,
@@ -98,7 +101,7 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
       await sleeper(4000);
       await this.fetchSubcategories({
         categoryUrl: node.url,
-        preloadedCookies: cookies,
+        preloadedCookies: { cookies },
         proxy,
         treeNode: node,
         sellerId,

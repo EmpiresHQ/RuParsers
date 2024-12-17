@@ -1,4 +1,4 @@
-const API_HOST = "https://api.lemanapro.ru";
+export const API_HOST = "https://api.lemanapro.ru";
 export const HOST = "https://lemanapro.ru";
 export const API_SETTINGS = {
     antibotOpts: {

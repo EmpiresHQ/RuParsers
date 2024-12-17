@@ -1,19 +1,14 @@
 // import { merge } from "lodash";
-import lodash from 'lodash';
- const { merge } = lodash;
+import lodash from "lodash";
+const { merge } = lodash;
 import {
-  BaseRequestParameters,
+  BaseCookieResponse,
+  CookieLoader,
+  Fetcher,
   ProxyType,
-  SimpleCookie,
 } from "../../types/index.js";
 import { BaseResponseData } from "./types.js";
-
-export type Fetcher<T = BaseResponseData> = (
-  opts: Omit<BaseRequestParameters, "cookies"> & { cookies: SimpleCookie[] }
-) => Promise<T>;
-export type CookieLoader = (
-  proxy: ProxyType
-) => Promise<SimpleCookie[] | undefined>;
+import { RequestBase } from "../../base/request.js";
 
 export interface ItemProcessorOpts<T> {
   fetcher: Fetcher<T>;
@@ -21,26 +16,16 @@ export interface ItemProcessorOpts<T> {
 }
 
 export interface BaseFetcherArgs {
-  preloadedCookies?: SimpleCookie[];
+  preloadedCookies?: BaseCookieResponse;
   proxy: ProxyType;
 }
 
-export abstract class OzonBase<T = BaseResponseData> {
-  public fetcher: Fetcher<T>;
-  public cookieLoader: CookieLoader;
+export abstract class OzonBase<T = BaseResponseData> extends RequestBase<T> {
   public endpoint =
     "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
 
-  constructor({ fetcher, cookieLoader }: ItemProcessorOpts<T>) {
-    this.fetcher = fetcher;
-    this.cookieLoader = cookieLoader;
-  }
-
-  public async getCookies({ proxy, preloadedCookies }: BaseFetcherArgs) {
-    if (preloadedCookies) {
-      return preloadedCookies;
-    }
-    return this.cookieLoader(proxy);
+  constructor(args: ItemProcessorOpts<T>) {
+    super(args);
   }
 
   public checkError(data: BaseResponseData) {
@@ -97,18 +82,18 @@ export abstract class OzonBase<T = BaseResponseData> {
 
   public async request({
     opts: { proxy },
-    cookies,
+    cookiesHeaders: { cookies },
     pathLoader,
   }: {
     opts: Omit<BaseFetcherArgs, "preloadedCookies">;
-    cookies: SimpleCookie[];
+    cookiesHeaders: BaseCookieResponse;
     pathLoader: () => { args: string[]; nextUrl?: string };
   }): Promise<T> {
     const path = this.getPath(pathLoader());
     const data = await this.fetcher({
       method: "GET",
       proxy,
-      cookies,
+      cookies: cookies ? cookies : [],
       host: this.endpoint,
       urlPath: path,
     });

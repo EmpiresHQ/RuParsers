@@ -1,1 +1,1 @@
-{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/sites/lemanapro.ru/index.ts"],"names":[],"mappings":"AAIA,cAAc,sBAAsB,CAAC;AACrC,cAAc,YAAY,CAAC;AAE3B,eAAO,MAAM,UAAU;;;;;;;;CAMtB,CAAC;AACF,eAAO,MAAM,iBAAiB,QAAQ,CAAC;AACvC,eAAO,MAAM,cAAc,iCAAa,CAAC"}
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/sites/lemanapro.ru/index.ts"],"names":[],"mappings":"AAIA,cAAc,sBAAsB,CAAC;AACrC,cAAc,YAAY,CAAC;AAC3B,cAAc,kBAAkB,CAAC;AAEjC,eAAO,MAAM,UAAU;;;;;;;;CAMtB,CAAC;AACF,eAAO,MAAM,iBAAiB,QAAQ,CAAC;AACvC,eAAO,MAAM,cAAc,iCAAa,CAAC"}

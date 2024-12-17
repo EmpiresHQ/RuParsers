@@ -3,6 +3,7 @@ import { treeParser } from "./category_tree.js";
 import { API_SETTINGS, apiRequestOpts } from "./settings.js";
 export * from "./category_parser.js";
 export * from "./types.js";
+export * from './category_v2.js';
 export const strategies = {
     api: {
         parser: apiParser,

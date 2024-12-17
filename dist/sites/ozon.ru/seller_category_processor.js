@@ -8,21 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 // import { flatten } from "lodash";
-import lodash from 'lodash';
+import lodash from "lodash";
 const { flatten } = lodash;
 import { OzonCategoryProcessor, } from "./category_processor.js";
 import { sleeper } from "../../helpers/sleeper.js";
 export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     fetchCategory(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, categoryUrl, preloadedCookies, proxy, page = 1, sellerId, }) {
-            const cookies = yield this.getCookies({ preloadedCookies, proxy });
+            const { cookies } = yield this.getCookies({ preloadedCookies, proxy });
             // console.log('ccks:', cookies)
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
             const data = yield this.request({
                 opts: { proxy },
-                cookies,
+                cookiesHeaders: { cookies },
                 pathLoader: () => ({
                     args: [sellerId, categoryId, page.toString()],
                     nextUrl: categoryUrl,
@@ -30,19 +30,24 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
             });
             // console.log(data)
             const parsed = this.process(data);
+            if ("err" in parsed) {
+                return {
+                    err: parsed.err,
+                };
+            }
             return Object.assign(Object.assign({}, parsed), { cookies });
         });
     }
     fetchSubcategories(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, preloadedCookies, proxy, sellerId, treeNode, categoryUrl, }) {
             var _b, _c;
-            const cookies = yield this.getCookies({ preloadedCookies, proxy });
+            const { cookies } = yield this.getCookies({ preloadedCookies, proxy });
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
             const data = yield this.request({
                 opts: { proxy },
-                cookies,
+                cookiesHeaders: { cookies },
                 pathLoader: () => ({
                     args: [sellerId, categoryId],
                     nextUrl: categoryUrl,
@@ -66,7 +71,7 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
                 yield sleeper(4000);
                 yield this.fetchSubcategories({
                     categoryUrl: node.url,
-                    preloadedCookies: cookies,
+                    preloadedCookies: { cookies },
                     proxy,
                     treeNode: node,
                     sellerId,

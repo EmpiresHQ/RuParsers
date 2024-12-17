@@ -8,21 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 // import { merge } from "lodash";
-import lodash from 'lodash';
+import lodash from "lodash";
 const { merge } = lodash;
-export class OzonBase {
-    constructor({ fetcher, cookieLoader }) {
+import { RequestBase } from "../../base/request.js";
+export class OzonBase extends RequestBase {
+    constructor(args) {
+        super(args);
         this.endpoint = "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
-        this.fetcher = fetcher;
-        this.cookieLoader = cookieLoader;
-    }
-    getCookies(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ proxy, preloadedCookies }) {
-            if (preloadedCookies) {
-                return preloadedCookies;
-            }
-            return this.cookieLoader(proxy);
-        });
     }
     checkError(data) {
         var _a;
@@ -56,12 +48,12 @@ export class OzonBase {
         return parsed;
     }
     request(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ opts: { proxy }, cookies, pathLoader, }) {
+        return __awaiter(this, arguments, void 0, function* ({ opts: { proxy }, cookiesHeaders: { cookies }, pathLoader, }) {
             const path = this.getPath(pathLoader());
             const data = yield this.fetcher({
                 method: "GET",
                 proxy,
-                cookies,
+                cookies: cookies ? cookies : [],
                 host: this.endpoint,
                 urlPath: path,
             });

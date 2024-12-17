@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 import path from "path";
 import * as dotenv from "dotenv";
 import { sheets_v4 } from "googleapis/build/src/apis/sheets";
@@ -7,7 +7,6 @@ import { GoogleAuth } from "google-auth-library";
 import { google } from "googleapis";
 import { OzonSellerCategoryProcessor } from "./seller_category_processor.js";
 import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
-import { Fetcher } from "./base.js";
 import {
   BaseResponseData,
   CategoryResponseData,
@@ -15,10 +14,14 @@ import {
   ResponseOzonItem,
 } from "./types.js";
 import { curlFetch } from "../../helpers/curl.js";
-import { ProxyType, SimpleCookie } from "../../types/index.js";
+import {
+  BaseCookieResponse,
+  Fetcher,
+  ProxyType,
+} from "../../types/index.js";
 import { sleeper } from "../../helpers/sleeper.js";
-import { decode } from 'html-entities';
-import { OzonItemMetaProcessor } from './item_meta_processor.js';
+import { decode } from "html-entities";
+import { OzonItemMetaProcessor } from "./item_meta_processor.js";
 
 const __dirname = import.meta.dirname;
 
@@ -52,7 +55,9 @@ const cookieLoader = async () => {
       url: proxyUrl,
     },
   });
-  return (res.cookies ?? []).map(({ name, value }) => ({ name, value }));
+  return {
+    cookies: (res.cookies ?? []).map(({ name, value }) => ({ name, value })),
+  };
 };
 
 const loader: Fetcher<BaseResponseData | CategoryResponseData> = async (
@@ -86,19 +91,19 @@ async function main(): Promise<sheets_v4.Sheets> {
 
   const itemMetaProcessor = new OzonItemMetaProcessor({
     cookieLoader,
-    fetcher: loader
-  })
+    fetcher: loader,
+  });
 
   let parsed: ResponseOzonItem[] = [];
 
   const recursive = async ({
     page = 1,
     categoryUrl,
-    cookies,
+    cookiesHeaders: { cookies },
   }: {
     page?: number;
     categoryUrl?: string;
-    cookies?: SimpleCookie[];
+    cookiesHeaders: BaseCookieResponse;
   }) => {
     console.log("fetching page: ", page);
     const data = await processor.fetchCategory({
@@ -106,19 +111,22 @@ async function main(): Promise<sheets_v4.Sheets> {
       categoryId: "maslyanye-filtry-8707",
       categoryUrl,
       page,
-      preloadedCookies: cookies,
+      preloadedCookies: { cookies },
       proxy,
     });
+    if ("err" in data) {
+      throw new Error(JSON.stringify(data.err));
+    }
     if (data.items) {
       for (const item of data.items) {
-        console.log('fetching meta for: ', item.skuId)
+        console.log("fetching meta for: ", item.skuId);
         const metaData = await itemMetaProcessor.fetchItem({
           itemId: item.skuId,
-          preloadedCookies: data.cookies,
+          preloadedCookies: data.cookiesHeaders,
           proxy,
-        })
+        });
         if (metaData.characteristics) {
-          item.filters = metaData.characteristics
+          item.filters = metaData.characteristics;
         }
         await sleeper(4000);
       }
@@ -129,29 +137,29 @@ async function main(): Promise<sheets_v4.Sheets> {
       await recursive({
         page: page + 1,
         categoryUrl: data.nextPage,
-        cookies: data.cookies,
+        cookiesHeaders: data.cookiesHeaders ?? {},
       });
     }
   };
 
-  const fpath = path.join(__dirname, "dump.json")
+  const fpath = path.join(__dirname, "dump.json");
   let fexists = false;
   try {
-    await fs.stat(fpath)
-    fexists = true
-  }
-  catch (e) {
-    fexists = false
+    await fs.stat(fpath);
+    fexists = true;
+  } catch (e) {
+    fexists = false;
   }
   if (fexists) {
-    const fdata = await fs.readFile(fpath)
-    parsed = JSON.parse(fdata.toString()) as ResponseOzonItem[]
+    const fdata = await fs.readFile(fpath);
+    parsed = JSON.parse(fdata.toString()) as ResponseOzonItem[];
   } else {
-    await recursive({});
+    await recursive({cookiesHeaders: {}});
     fs.writeFile(fpath, JSON.stringify(parsed));
   }
 
-  const filterValue = (filters: CharacteristicsOutput[]= [], key: string) => filters.find(f => f.key === key)?.text
+  const filterValue = (filters: CharacteristicsOutput[] = [], key: string) =>
+    filters.find((f) => f.key === key)?.text;
 
   const result = await sheets.spreadsheets.values.append({
     spreadsheetId: "1WtCVeVS8WDVoW_uZKeTbjRdZhOQ4wwe0L9aQ89I5vHY",
@@ -159,44 +167,44 @@ async function main(): Promise<sheets_v4.Sheets> {
     valueInputOption: "RAW",
     requestBody: {
       values: parsed.map((i, cnt) => [
-        cnt+1,
-        filterValue(i.filters, 'Type_0'),
+        cnt + 1,
+        filterValue(i.filters, "Type_0"),
         decode(i.title),
-        i.discountPrice?.substring(0, i.discountPrice.indexOf("₽")-1),
-        i.regularPrice.substring(0, i.regularPrice.indexOf("₽")-1),
+        i.discountPrice?.substring(0, i.discountPrice.indexOf("₽") - 1),
+        i.regularPrice.substring(0, i.regularPrice.indexOf("₽") - 1),
         undefined,
         undefined,
         undefined,
         undefined,
-        filterValue(i.filters, 'Width_0'),
-        filterValue(i.filters, 'Height_0'),
-        filterValue(i.filters, 'length_0'),
+        filterValue(i.filters, "Width_0"),
+        filterValue(i.filters, "Height_0"),
+        filterValue(i.filters, "length_0"),
         i.imageUrl,
         undefined,
         undefined,
         undefined,
-        filterValue(i.filters, 'Brand_0'),
+        filterValue(i.filters, "Brand_0"),
         undefined,
-        filterValue(i.filters, 'QuantityUOM_0'),
-        filterValue(i.filters, 'Type_0'),
-        filterValue(i.filters, 'Код продавца'),
-        filterValue(i.filters, 'AltArticle_0'),
+        filterValue(i.filters, "QuantityUOM_0"),
+        filterValue(i.filters, "Type_0"),
+        filterValue(i.filters, "Код продавца"),
+        filterValue(i.filters, "AltArticle_0"),
         undefined,
         undefined,
         undefined,
-        filterValue(i.filters, 'OEMNum_0'),
-        filterValue(i.filters, 'AltArticle_0'),
-        filterValue(i.filters, 'FilterOpt_0'),
-        filterValue(i.filters, 'FilterForm_0'),
-        filterValue(i.filters, 'FilterBox_0'),
+        filterValue(i.filters, "OEMNum_0"),
+        filterValue(i.filters, "AltArticle_0"),
+        filterValue(i.filters, "FilterOpt_0"),
+        filterValue(i.filters, "FilterForm_0"),
+        filterValue(i.filters, "FilterBox_0"),
         undefined,
-        filterValue(i.filters, 'Width_0'),
-        filterValue(i.filters, 'Height_0'),
-        filterValue(i.filters, 'length_0'),
-        filterValue(i.filters, 'Material_Auto_0'),
-        filterValue(i.filters, 'Diametr_0'),
-        filterValue(i.filters, 'VehicleKind_0'),
-        filterValue(i.filters, 'Country_0'),
+        filterValue(i.filters, "Width_0"),
+        filterValue(i.filters, "Height_0"),
+        filterValue(i.filters, "length_0"),
+        filterValue(i.filters, "Material_Auto_0"),
+        filterValue(i.filters, "Diametr_0"),
+        filterValue(i.filters, "VehicleKind_0"),
+        filterValue(i.filters, "Country_0"),
       ]),
     },
   });

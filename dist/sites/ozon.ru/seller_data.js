@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a, _b;
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 import path from "path";
 import * as dotenv from "dotenv";
 import { GoogleAuth } from "google-auth-library";
@@ -18,8 +18,8 @@ import { OzonSellerCategoryProcessor } from "./seller_category_processor.js";
 import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
 import { curlFetch } from "../../helpers/curl.js";
 import { sleeper } from "../../helpers/sleeper.js";
-import { decode } from 'html-entities';
-import { OzonItemMetaProcessor } from './item_meta_processor.js';
+import { decode } from "html-entities";
+import { OzonItemMetaProcessor } from "./item_meta_processor.js";
 const __dirname = import.meta.dirname;
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 // const TOKEN_PATH = path.join(import.meta.dirname, "..", "..", "token.json");
@@ -44,7 +44,9 @@ const cookieLoader = () => __awaiter(void 0, void 0, void 0, function* () {
             url: proxyUrl,
         },
     });
-    return ((_a = res.cookies) !== null && _a !== void 0 ? _a : []).map(({ name, value }) => ({ name, value }));
+    return {
+        cookies: ((_a = res.cookies) !== null && _a !== void 0 ? _a : []).map(({ name, value }) => ({ name, value })),
+    };
 });
 const loader = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     opts.headers = [
@@ -73,25 +75,29 @@ function main() {
         });
         const itemMetaProcessor = new OzonItemMetaProcessor({
             cookieLoader,
-            fetcher: loader
+            fetcher: loader,
         });
         let parsed = [];
-        const recursive = (_a) => __awaiter(this, [_a], void 0, function* ({ page = 1, categoryUrl, cookies, }) {
+        const recursive = (_a) => __awaiter(this, [_a], void 0, function* ({ page = 1, categoryUrl, cookiesHeaders: { cookies }, }) {
+            var _b;
             console.log("fetching page: ", page);
             const data = yield processor.fetchCategory({
                 sellerId: "1456889",
                 categoryId: "maslyanye-filtry-8707",
                 categoryUrl,
                 page,
-                preloadedCookies: cookies,
+                preloadedCookies: { cookies },
                 proxy,
             });
+            if ("err" in data) {
+                throw new Error(JSON.stringify(data.err));
+            }
             if (data.items) {
                 for (const item of data.items) {
-                    console.log('fetching meta for: ', item.skuId);
+                    console.log("fetching meta for: ", item.skuId);
                     const metaData = yield itemMetaProcessor.fetchItem({
                         itemId: item.skuId,
-                        preloadedCookies: data.cookies,
+                        preloadedCookies: data.cookiesHeaders,
                         proxy,
                     });
                     if (metaData.characteristics) {
@@ -106,7 +112,7 @@ function main() {
                 yield recursive({
                     page: page + 1,
                     categoryUrl: data.nextPage,
-                    cookies: data.cookies,
+                    cookiesHeaders: (_b = data.cookiesHeaders) !== null && _b !== void 0 ? _b : {},
                 });
             }
         });
@@ -124,10 +130,10 @@ function main() {
             parsed = JSON.parse(fdata.toString());
         }
         else {
-            yield recursive({});
+            yield recursive({ cookiesHeaders: {} });
             fs.writeFile(fpath, JSON.stringify(parsed));
         }
-        const filterValue = (filters = [], key) => { var _a; return (_a = filters.find(f => f.key === key)) === null || _a === void 0 ? void 0 : _a.text; };
+        const filterValue = (filters = [], key) => { var _a; return (_a = filters.find((f) => f.key === key)) === null || _a === void 0 ? void 0 : _a.text; };
         const result = yield sheets.spreadsheets.values.append({
             spreadsheetId: "1WtCVeVS8WDVoW_uZKeTbjRdZhOQ4wwe0L9aQ89I5vHY",
             range: "Шаблон!A5",
@@ -137,7 +143,7 @@ function main() {
                     var _a;
                     return [
                         cnt + 1,
-                        filterValue(i.filters, 'Type_0'),
+                        filterValue(i.filters, "Type_0"),
                         decode(i.title),
                         (_a = i.discountPrice) === null || _a === void 0 ? void 0 : _a.substring(0, i.discountPrice.indexOf("₽") - 1),
                         i.regularPrice.substring(0, i.regularPrice.indexOf("₽") - 1),
@@ -145,35 +151,35 @@ function main() {
                         undefined,
                         undefined,
                         undefined,
-                        filterValue(i.filters, 'Width_0'),
-                        filterValue(i.filters, 'Height_0'),
-                        filterValue(i.filters, 'length_0'),
+                        filterValue(i.filters, "Width_0"),
+                        filterValue(i.filters, "Height_0"),
+                        filterValue(i.filters, "length_0"),
                         i.imageUrl,
                         undefined,
                         undefined,
                         undefined,
-                        filterValue(i.filters, 'Brand_0'),
+                        filterValue(i.filters, "Brand_0"),
                         undefined,
-                        filterValue(i.filters, 'QuantityUOM_0'),
-                        filterValue(i.filters, 'Type_0'),
-                        filterValue(i.filters, 'Код продавца'),
-                        filterValue(i.filters, 'AltArticle_0'),
+                        filterValue(i.filters, "QuantityUOM_0"),
+                        filterValue(i.filters, "Type_0"),
+                        filterValue(i.filters, "Код продавца"),
+                        filterValue(i.filters, "AltArticle_0"),
                         undefined,
                         undefined,
                         undefined,
-                        filterValue(i.filters, 'OEMNum_0'),
-                        filterValue(i.filters, 'AltArticle_0'),
-                        filterValue(i.filters, 'FilterOpt_0'),
-                        filterValue(i.filters, 'FilterForm_0'),
-                        filterValue(i.filters, 'FilterBox_0'),
+                        filterValue(i.filters, "OEMNum_0"),
+                        filterValue(i.filters, "AltArticle_0"),
+                        filterValue(i.filters, "FilterOpt_0"),
+                        filterValue(i.filters, "FilterForm_0"),
+                        filterValue(i.filters, "FilterBox_0"),
                         undefined,
-                        filterValue(i.filters, 'Width_0'),
-                        filterValue(i.filters, 'Height_0'),
-                        filterValue(i.filters, 'length_0'),
-                        filterValue(i.filters, 'Material_Auto_0'),
-                        filterValue(i.filters, 'Diametr_0'),
-                        filterValue(i.filters, 'VehicleKind_0'),
-                        filterValue(i.filters, 'Country_0'),
+                        filterValue(i.filters, "Width_0"),
+                        filterValue(i.filters, "Height_0"),
+                        filterValue(i.filters, "length_0"),
+                        filterValue(i.filters, "Material_Auto_0"),
+                        filterValue(i.filters, "Diametr_0"),
+                        filterValue(i.filters, "VehicleKind_0"),
+                        filterValue(i.filters, "Country_0"),
                     ];
                 }),
             },

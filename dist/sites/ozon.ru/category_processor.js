@@ -12,13 +12,13 @@ import { categoryItemsParser } from "./parsers/search_results_v2.js";
 export class OzonCategoryProcessor extends OzonBase {
     fetchCategory(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, categoryUrl, preloadedCookies, proxy, page = 1, }) {
-            const cookies = yield this.getCookies({ preloadedCookies, proxy });
+            const { cookies } = yield this.getCookies({ preloadedCookies, proxy });
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
             const data = yield this.request({
                 opts: { proxy },
-                cookies,
+                cookiesHeaders: { cookies },
                 pathLoader: () => ({
                     args: [categoryId, page.toString()],
                     nextUrl: categoryUrl,

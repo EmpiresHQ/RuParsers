@@ -36,7 +36,9 @@ const cookieLoader = () => __awaiter(void 0, void 0, void 0, function* () {
             url: proxyUrl,
         },
     });
-    return ((_a = res.cookies) !== null && _a !== void 0 ? _a : []).map(({ name, value }) => ({ name, value }));
+    return {
+        cookies: ((_a = res.cookies) !== null && _a !== void 0 ? _a : []).map(({ name, value }) => ({ name, value })),
+    };
 });
 const loader = (opts) => __awaiter(void 0, void 0, void 0, function* () {
     opts.headers = [
@@ -53,7 +55,7 @@ let preloadedCookies;
 describe("OZON", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         preloadedCookies = yield cookieLoader();
-    }));
+    }), 5000000);
     test("ozon:load item", () => __awaiter(void 0, void 0, void 0, function* () {
         const itemProcessor = new OzonItemProcessor({
             fetcher: loader,
