@@ -1,4 +1,5 @@
-import { FetchItemArgs, FetchItemResponse, OzonItemProcessor } from "./item_processor.js";
+import { BaseItemArgs } from "../../types/index.js";
+import { FetchItemResponse, OzonItemProcessor } from "./item_processor.js";
 import {
   CharacteristicsOutput,
   BaseResponseData,
@@ -16,7 +17,7 @@ export class OzonItemMetaProcessor extends OzonItemProcessor {
     );
   }
 
-  public async fetchItem(args: FetchItemArgs) {
+  public async fetchItem(args: BaseItemArgs) {
     return super.fetchItem(args) as Promise<FetchItemMetaResponse>;
   }
 

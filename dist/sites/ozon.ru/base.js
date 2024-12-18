@@ -16,6 +16,17 @@ export class OzonBase extends RequestBase {
         super(args);
         this.endpoint = "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
     }
+    getCookieLoaderParams() {
+        return {
+            url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/category/7000`)})`,
+            waitAfterLoad: 4000,
+            getDocumentBody: true,
+            fetchCookies: {
+                domains: ["https://www.ozon.ru"],
+                cookieNames: ["abt_data", "__Secure-ETC", "TS01*"],
+            },
+        };
+    }
     checkError(data) {
         var _a;
         if (!data ||
@@ -48,15 +59,29 @@ export class OzonBase extends RequestBase {
         return parsed;
     }
     request(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ opts: { proxy }, cookiesHeaders: { cookies }, pathLoader, }) {
+        return __awaiter(this, arguments, void 0, function* ({ opts: { proxy }, cookiesHeaders: { cookies }, pathLoader, cookieCallback, }) {
             const path = this.getPath(pathLoader());
-            const data = yield this.fetcher({
+            const { data, headers } = yield this.fetcher({
                 method: "GET",
                 proxy,
                 cookies: cookies ? cookies : [],
                 host: this.endpoint,
                 urlPath: path,
+                version: "V2Tls",
+                headers: [
+                    "Content-Type: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                    `Sec-Fetch-Dest: document`,
+                    "Sec-Fetch-Mode: navigate",
+                    "Sec-Fetch-Site: cross-site",
+                    `Sec-ch-ua-platform: "Linux"`,
+                ],
             });
+            if (headers) {
+                const readCookies = this.readCookies({ headers, existing: cookies });
+                if (readCookies && cookieCallback) {
+                    cookieCallback(readCookies);
+                }
+            }
             return data;
         });
     }

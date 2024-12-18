@@ -1,16 +1,12 @@
 import { BaseResponseData, OzonItemPrice, ResponseOzonItem } from "./types.js";
-import { BaseFetcherArgs, OzonBase } from "./base.js";
-import { BaseCookieResponse } from "../../types/index.js";
-export interface FetchItemArgs extends BaseFetcherArgs {
-    itemId: string;
-}
-export interface FetchItemResponse {
-    err?: string;
-    cookiesHeaders?: BaseCookieResponse;
+import { OzonBase } from "./base.js";
+import { BaseItemArgs, BaseItemResponse } from "../../types/index.js";
+import { ItemBase } from "../../base/index.js";
+export interface FetchItemResponse extends BaseItemResponse {
     item?: ResponseOzonItem;
 }
-export declare class OzonItemProcessor extends OzonBase {
-    fetchItem({ itemId, preloadedCookies, proxy, }: FetchItemArgs): Promise<FetchItemResponse>;
+export declare class OzonItemProcessor extends OzonBase implements ItemBase<BaseItemArgs, FetchItemResponse> {
+    fetchItem({ itemId, preloadedCookies, proxy, }: BaseItemArgs): Promise<FetchItemResponse>;
     getPath({ args }: {
         args: string[];
     }): string;

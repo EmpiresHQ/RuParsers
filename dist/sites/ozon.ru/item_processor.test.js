@@ -7,122 +7,102 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a, _b;
 import { beforeAll, describe, expect, test } from "vitest";
 import * as dotenv from "dotenv";
-import { curlFetch } from "../../helpers/curl.js";
-import { OzonItemProcessor } from "./item_processor.js";
-import { OzonItemMetaProcessor } from "./item_meta_processor.js";
-import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
-import { OzonCategoryProcessor } from "./category_processor.js";
-import { OzonSellerCategoryProcessor } from "./seller_category_processor.js";
+import { proxyUrlFromType } from "../../helpers/renderer.js";
+import { cookieLoader, loader, ozonProxy } from "../../base/index.js";
+import { AvailablePlatformsv2 } from "../../index.js";
 dotenv.config();
-const proxy = {
-    url: (_a = process.env.TEST_OZON_PROXY_URL) !== null && _a !== void 0 ? _a : "",
-    auth: (_b = process.env.TEST_OZON_PROXY_AUTH) !== null && _b !== void 0 ? _b : "",
-};
-const cookieLoader = () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const proxyUrl = proxyUrlFromType(proxy);
-    const res = yield renderer({
-        url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/product/1428983821`)})`,
-        waitAfterLoad: 4000,
-        getDocumentBody: true,
-        fetchCookies: {
-            domains: ["https://www.ozon.ru"],
-            cookieNames: ["abt_data", "__Secure-ETC"],
-        },
-        proxy: {
-            url: proxyUrl,
-        },
-    });
-    return {
-        cookies: ((_a = res.cookies) !== null && _a !== void 0 ? _a : []).map(({ name, value }) => ({ name, value })),
-    };
-});
-const loader = (opts) => __awaiter(void 0, void 0, void 0, function* () {
-    opts.headers = [
-        "Content-Type: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        `Sec-Fetch-Dest: document`,
-        "Sec-Fetch-Mode: navigate",
-        "Sec-Fetch-Site: cross-site",
-        `Sec-ch-ua-platform: "Linux"`,
-    ];
-    const data = yield curlFetch(Object.assign(Object.assign({}, opts), { version: "V2Tls" }), "json");
-    return data;
-});
 let preloadedCookies;
+let parser;
 describe("OZON", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-        preloadedCookies = yield cookieLoader();
+        preloadedCookies = yield cookieLoader({
+            url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/product/1428983821`)})`,
+            waitAfterLoad: 4000,
+            getDocumentBody: true,
+            fetchCookies: {
+                domains: ["https://www.ozon.ru"],
+                cookieNames: ["abt_data", "__Secure-ETC"],
+            },
+            proxy: {
+                url: proxyUrlFromType(ozonProxy),
+            },
+        });
+        parser = AvailablePlatformsv2("ozon.ru", {
+            fetcher: loader,
+            cookieLoader,
+        });
     }), 5000000);
     test("ozon:load item", () => __awaiter(void 0, void 0, void 0, function* () {
-        const itemProcessor = new OzonItemProcessor({
-            fetcher: loader,
-            cookieLoader,
-        });
-        const parsed = yield itemProcessor.fetchItem({
+        var _a;
+        const parsed = yield ((_a = parser === null || parser === void 0 ? void 0 : parser.itemLoader) === null || _a === void 0 ? void 0 : _a.fetchItem({
             itemId: "1428983821",
             preloadedCookies,
-            proxy,
-        });
+            proxy: ozonProxy,
+        }));
         console.log(parsed);
         expect(parsed).toBeDefined();
     }));
-    test("ozon:load meta item", () => __awaiter(void 0, void 0, void 0, function* () {
-        const itemProcessor = new OzonItemMetaProcessor({
-            fetcher: loader,
-            cookieLoader,
-        });
-        const parsed = yield itemProcessor.fetchItem({
-            itemId: "1428983821",
-            preloadedCookies,
-            proxy,
-        });
+    // test("ozon:load meta item", async () => {
+    //   const itemProcessor = new OzonItemMetaProcessor({
+    //     fetcher: loader,
+    //     cookieLoader,
+    //   });
+    //   const parsed = await itemProcessor.fetchItem({
+    //     itemId: "1428983821",
+    //     preloadedCookies,
+    //     proxy,
+    //   });
+    //   console.log(parsed);
+    //   expect(parsed).toBeDefined();
+    // });
+    test.only("ozon:load category", () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        const parsed = [];
+        for (const page of [1, 2]) {
+            const data = yield ((_a = parser === null || parser === void 0 ? void 0 : parser.categoryLoader) === null || _a === void 0 ? void 0 : _a.fetchCategory({
+                categoryId: "smartfony-15502",
+                page,
+                preloadedCookies,
+                proxy: ozonProxy,
+            }));
+            if (!data || "err" in data) {
+                throw new Error("parse failed");
+            }
+            preloadedCookies.cookies = (_b = data.cookiesHeaders) === null || _b === void 0 ? void 0 : _b.cookies;
+            parsed.push(data);
+        }
         console.log(parsed);
         expect(parsed).toBeDefined();
     }));
-    test("ozon:load category", () => __awaiter(void 0, void 0, void 0, function* () {
-        const itemProcessor = new OzonCategoryProcessor({
-            fetcher: loader,
-            cookieLoader,
-        });
-        const parsed = yield Promise.all([1, 2].map((i) => itemProcessor.fetchCategory({
-            categoryId: "smartfony-15502",
-            page: i,
-            preloadedCookies,
-            proxy,
-        })));
-        console.log(parsed);
-        expect(parsed).toBeDefined();
-    }));
-    test("ozon:seller category", () => __awaiter(void 0, void 0, void 0, function* () {
-        const itemProcessor = new OzonSellerCategoryProcessor({
-            fetcher: loader,
-            cookieLoader,
-        });
-        const parsed = yield itemProcessor.fetchCategory({
-            sellerId: "1456889",
-            categoryId: "",
-            page: 1,
-            preloadedCookies,
-            proxy,
-        });
-        console.log(parsed);
-        expect(parsed).toBeDefined();
-    }));
-    test.only("ozon:seller category subtree", () => __awaiter(void 0, void 0, void 0, function* () {
-        const itemProcessor = new OzonSellerCategoryProcessor({
-            fetcher: loader,
-            cookieLoader,
-        });
-        const parsed = yield itemProcessor.fetchSubcategories({
-            sellerId: "1456889",
-            categoryId: "",
-            preloadedCookies,
-            proxy,
-        });
-        console.log(parsed);
-        expect(parsed).toBeDefined();
-    }));
+    // test("ozon:seller category", async () => {
+    //   const itemProcessor = new OzonSellerCategoryProcessor({
+    //     fetcher: loader as Fetcher<CategoryResponseData>,
+    //     cookieLoader,
+    //   });
+    //   const parsed = await itemProcessor.fetchCategory({
+    //     sellerId: "1456889",
+    //     categoryId: "",
+    //     page: 1,
+    //     preloadedCookies,
+    //     proxy,
+    //   });
+    //   console.log(parsed);
+    //   expect(parsed).toBeDefined();
+    // });
+    // test.only("ozon:seller category subtree", async () => {
+    //   const itemProcessor = new OzonSellerCategoryProcessor({
+    //     fetcher: loader as Fetcher<CategoryResponseData>,
+    //     cookieLoader,
+    //   });
+    //   const parsed = await itemProcessor.fetchSubcategories({
+    //     sellerId: "1456889",
+    //     categoryId: "",
+    //     preloadedCookies,
+    //     proxy,
+    //   });
+    //   console.log(parsed);
+    //   expect(parsed).toBeDefined();
+    // });
 }, 5000000);

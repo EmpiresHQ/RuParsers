@@ -1,5 +1,6 @@
 import { BaseItem } from "../../types/index.js";
 
+
 export interface BaseResponseData {
   widgetStates: {
     [key in string]: string;

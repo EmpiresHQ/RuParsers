@@ -90,6 +90,7 @@ export interface BaseRequestParameters<T = unknown> {
   method: "GET" | "POST";
   urlPath?: string;
   host?: string;
+  version?: 'V2Tls'
   payload?: T;
   raw?: string;
   cookies?: string;

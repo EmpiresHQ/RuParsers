@@ -10,6 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { RequestBase, } from "../../base/index.js";
 import { API_HOST, API_SETTINGS, apiParser } from "./index.js";
 export class CategoryProcessor extends RequestBase {
+    getCookieLoaderParams() {
+        return Object.assign({}, API_SETTINGS.antibotOpts);
+    }
     fetchCategory(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, preloadedCookies, proxy, page = 1, }) {
             const { cookies, headers } = yield this.getCookies({
@@ -20,17 +23,14 @@ export class CategoryProcessor extends RequestBase {
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
-            const data = yield this.fetcher({
+            const { data } = yield this.fetcher({
                 urlPath: `/api/category/load?short=true`,
                 host: API_HOST,
                 method: "POST",
                 timeout: 15,
                 cookies,
                 proxy,
-                headers: [
-                    "Content-Type: application/json",
-                    `Token: ${acctoken === null || acctoken === void 0 ? void 0 : acctoken.value}`,
-                ],
+                headers: ["Content-Type: application/json", `Token: ${acctoken === null || acctoken === void 0 ? void 0 : acctoken.value}`],
                 payload: {
                     listingType: "category",
                     id: categoryId,

@@ -1,5 +1,4 @@
-import { BaseClass } from "./base/index.js";
-import { AvailablePlatforms, CookieLoader, Fetcher, StrategyHandler } from "./types/index.js";
+import { AvailablePlatforms, CookieLoader, Fetcher, PlatformProcesors, StrategyHandler } from "./types/index.js";
 export * from "./lib/index.js";
 export * from "./sites/index.js";
 export declare const availablePlatforms: {
@@ -13,7 +12,5 @@ export declare const availablePlatforms: {
 export declare const AvailablePlatformsv2: (platform: AvailablePlatforms, { fetcher, cookieLoader, }: {
     fetcher: Fetcher<unknown>;
     cookieLoader: CookieLoader;
-}) => {
-    categoryLoader: BaseClass;
-} | undefined;
+}) => PlatformProcesors | undefined;
 //# sourceMappingURL=index.d.ts.map

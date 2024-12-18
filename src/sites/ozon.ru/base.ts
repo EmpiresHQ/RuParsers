@@ -6,9 +6,11 @@ import {
   CookieLoader,
   Fetcher,
   ProxyType,
+  SimpleCookie,
 } from "../../types/index.js";
 import { BaseResponseData } from "./types.js";
 import { RequestBase } from "../../base/request.js";
+import { ProcessBodyParams } from "../../helpers/renderer.js";
 
 export interface ItemProcessorOpts<T> {
   fetcher: Fetcher<T>;
@@ -20,12 +22,27 @@ export interface BaseFetcherArgs {
   proxy: ProxyType;
 }
 
-export abstract class OzonBase<T = BaseResponseData> extends RequestBase<T> {
+export abstract class OzonBase<T = BaseResponseData>
+  extends RequestBase<T>
+  implements RequestBase<T>
+{
   public endpoint =
     "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
 
   constructor(args: ItemProcessorOpts<T>) {
     super(args);
+  }
+
+  public getCookieLoaderParams(): Omit<Partial<ProcessBodyParams>, "proxy"> {
+    return {
+      url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/category/7000`)})`,
+      waitAfterLoad: 4000,
+      getDocumentBody: true,
+      fetchCookies: {
+        domains: ["https://www.ozon.ru"],
+        cookieNames: ["abt_data", "__Secure-ETC", "TS01*"],
+      },
+    };
   }
 
   public checkError(data: BaseResponseData) {
@@ -84,19 +101,35 @@ export abstract class OzonBase<T = BaseResponseData> extends RequestBase<T> {
     opts: { proxy },
     cookiesHeaders: { cookies },
     pathLoader,
+    cookieCallback,
   }: {
     opts: Omit<BaseFetcherArgs, "preloadedCookies">;
     cookiesHeaders: BaseCookieResponse;
     pathLoader: () => { args: string[]; nextUrl?: string };
+    cookieCallback?: ( cookies: SimpleCookie[]) => void;
   }): Promise<T> {
     const path = this.getPath(pathLoader());
-    const data = await this.fetcher({
+    const { data, headers } = await this.fetcher({
       method: "GET",
       proxy,
       cookies: cookies ? cookies : [],
       host: this.endpoint,
       urlPath: path,
+      version: "V2Tls",
+      headers: [
+        "Content-Type: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        `Sec-Fetch-Dest: document`,
+        "Sec-Fetch-Mode: navigate",
+        "Sec-Fetch-Site: cross-site",
+        `Sec-ch-ua-platform: "Linux"`,
+      ],
     });
+    if (headers) {
+      const readCookies = this.readCookies({headers, existing: cookies})
+      if (readCookies && cookieCallback) {
+        cookieCallback(readCookies)
+      }
+    }
     return data as T;
   }
 }

@@ -8,10 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { RequestBase } from "./request.js";
-export class CategoryBase {
+export class ItemBase {
 }
 export class BaseClass extends RequestBase {
-    fetchCategory(
+    fetchItem(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _args) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,6 +21,14 @@ export class BaseClass extends RequestBase {
         });
     }
     getCookieLoaderParams() {
-        return {};
+        return {
+            url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/category/7000`)})`,
+            waitAfterLoad: 4000,
+            getDocumentBody: true,
+            fetchCookies: {
+                domains: ["https://www.ozon.ru"],
+                cookieNames: ["abt_data", "__Secure-ETC", "TS012*"],
+            },
+        };
     }
 }

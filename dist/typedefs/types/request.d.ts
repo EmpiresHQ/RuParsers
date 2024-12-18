@@ -1,5 +1,10 @@
 import { BaseFetcherArgs } from "../base/request.js";
-import { BaseItem, BaseRequestParameters, ProxyType, SimpleCookie } from "./index.js";
+import { CurlResponse } from "../helpers/curl.js";
+import { ProcessBodyParams } from "../helpers/renderer.js";
+import { BaseItem, BaseRequestParameters, SimpleCookie } from "./index.js";
+export interface BaseItemArgs extends BaseFetcherArgs {
+    itemId: string;
+}
 export interface BaseCategoryArgs extends BaseFetcherArgs {
     categoryId: string | number;
     categoryUrl?: string;
@@ -19,12 +24,17 @@ export interface BaseCategoryResponse<T extends Record<string, unknown> = Record
     hasNextPage?: boolean;
     nextPage?: string;
 }
+export interface BaseItemResponse<T extends Record<string, unknown> = Record<string, unknown>> {
+    err?: string;
+    cookiesHeaders?: BaseCookieResponse;
+    item?: BaseItem<T>;
+}
 export type BaseCookieResponse = {
     cookies?: SimpleCookie[];
     headers?: Record<string, string | undefined>;
 };
-export type Fetcher<T> = (opts: Omit<BaseRequestParameters, "cookies"> & {
+export type Fetcher<T = unknown> = (opts: Omit<BaseRequestParameters, "cookies"> & {
     cookies: SimpleCookie[];
-}) => Promise<T>;
-export type CookieLoader = (proxy: ProxyType) => Promise<BaseCookieResponse>;
+}) => Promise<CurlResponse<T>>;
+export type CookieLoader = (opts: Partial<ProcessBodyParams>) => Promise<BaseCookieResponse>;
 //# sourceMappingURL=request.d.ts.map

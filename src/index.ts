@@ -1,4 +1,3 @@
-import { BaseClass } from "./base/index.js";
 import {
   selver_ee,
   barbora_ee,
@@ -11,6 +10,7 @@ import {
   AvailablePlatforms,
   CookieLoader,
   Fetcher,
+  PlatformProcesors,
   StrategyHandler,
 } from "./types/index.js";
 
@@ -45,6 +45,8 @@ export const availablePlatforms: {
   },
 };
 
+
+
 export const AvailablePlatformsv2 = (
   platform: AvailablePlatforms,
   {
@@ -55,14 +57,16 @@ export const AvailablePlatformsv2 = (
     cookieLoader: CookieLoader;
   }
 ) => {
-  const platforms: Record<string, {
-    categoryLoader: BaseClass
-  }> = {
+  const platforms: Record<string, PlatformProcesors> = {
     ["ozon.ru"]: {
       categoryLoader: new ozon_ru.OzonCategoryProcessor({
         fetcher: fetcher as Fetcher<ozon_ru.CategoryResponseData>,
         cookieLoader,
       }),
+      itemLoader: new ozon_ru.OzonItemProcessor({
+        fetcher: fetcher as Fetcher<ozon_ru.BaseResponseData>,
+        cookieLoader,
+      })
     },
     ["lemanapro.ru"]: {
       categoryLoader: new lemanapro_ru.CategoryProcessor({

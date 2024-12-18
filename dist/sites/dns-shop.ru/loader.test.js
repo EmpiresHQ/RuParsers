@@ -27,7 +27,7 @@ describe("DNS", () => {
             }),
             loader: (rp, cookies) => __awaiter(void 0, void 0, void 0, function* () {
                 const data = yield curlFetch(Object.assign(Object.assign({}, rp), { cookies }));
-                return data;
+                return data.data;
             }),
         });
         console.log(cats);

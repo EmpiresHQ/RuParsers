@@ -34,7 +34,7 @@ describe("Barbora.ee", () => {
     );
     expect(reply).toBeDefined();
     console.log(JSON.stringify(reply, null, 2));
-    const parsed = await jsParser({ html: Buffer.from(reply as ArrayBuffer) });
+    const parsed = await jsParser({ html: Buffer.from(reply.data as ArrayBuffer) });
     expect(parsed).toBeDefined();
     console.log(JSON.stringify(parsed, null, 2));
   });
@@ -50,7 +50,7 @@ describe("Barbora.ee", () => {
         },
       }, 'json');
       console.log(data)
-      return data as Category[];
+      return data.data as Category[];
     };
 
     const categories = await treeParser({ loader });

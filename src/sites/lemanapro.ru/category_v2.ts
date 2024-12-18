@@ -1,12 +1,14 @@
-import { BaseFetcherArgs, CategoriesBase } from "../../base/index.js";
+import { BaseFetcherArgs, CategoryBase } from "../../base/index.js";
 import { RequestBase } from "../../base/index.js";
+import { ProcessBodyParams } from "../../helpers/renderer.js";
 import {
   BaseCategoryErrorResponse,
   BaseCategoryResponse,
+  SimpleCookie,
 } from "../../types/index.js";
 import { apiParser } from "./category_parser.js";
 import { Page } from "./index.js";
-import { API_HOST } from "./settings.js";
+import { API_HOST, API_SETTINGS } from "./settings.js";
 
 export interface FetchCategoryArgs extends BaseFetcherArgs {
   categoryId: string;
@@ -16,23 +18,33 @@ export interface FetchCategoryArgs extends BaseFetcherArgs {
 
 export class CategoryProcessor
   extends RequestBase<Page>
-  implements CategoriesBase<FetchCategoryArgs, BaseCategoryResponse>
+  implements CategoryBase<FetchCategoryArgs, BaseCategoryResponse>
 {
+  public getCookieLoaderParams(): Omit<Partial<ProcessBodyParams>, "proxy"> {
+    return {
+      ...API_SETTINGS.antibotOpts,
+    };
+  }
   async fetchCategory({
     categoryId,
     preloadedCookies,
     proxy,
     page = 1,
-  }: FetchCategoryArgs): Promise<BaseCategoryResponse | BaseCategoryErrorResponse> {
-    const { cookies, headers } = await this.getCookies({
+  }: FetchCategoryArgs): Promise<
+    BaseCategoryResponse | BaseCategoryErrorResponse
+  > {
+    // eslint-disable-next-line prefer-const
+    let { cookies, headers } = await this.getCookies({
       preloadedCookies,
       proxy,
     });
+    headers ??= {};
+    headers.token = "Yeg8l3zQDwpVNBDTP3q6jM4lQVLW5TTv";
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
 
-    const data = await this.fetcher({
+    const { data, headers: rcvHeaders } = await this.fetcher({
       method: "POST",
       host: API_HOST,
       urlPath: `/hybrid/v1/getProducts?lang=ru`,
@@ -50,14 +62,19 @@ export class CategoryProcessor
         offset: page * 30,
       },
     });
+    let newCookies: SimpleCookie[] | undefined
+    if (rcvHeaders) {
+      newCookies = this.readCookies({headers: rcvHeaders, existing: cookies})
+    }
+    
     if (data) {
       const parsed = await apiParser({ json: data });
       if (parsed && parsed.items) {
         return {
           items: parsed.items,
-          cookiesHeaders: { cookies, headers},
+          cookiesHeaders: { cookies: newCookies ?? cookies, headers },
           hasNextPage: parsed.hasNextPage,
-        }
+        };
       }
     }
 

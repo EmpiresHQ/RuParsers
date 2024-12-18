@@ -1,70 +1,44 @@
-import { beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import * as dotenv from "dotenv";
-import { curlFetch } from "../../helpers/curl.js";
-import { proxyUrlFromType, renderer } from "../../helpers/renderer.js";
-import { BaseCookieResponse, Fetcher, ProxyType } from "../../types/index.js";
-import { Page } from "./types.js";
-import { API_SETTINGS } from "./settings.js";
-import { CategoryProcessor } from "./category_v2.js";
+import { AvailablePlatformsv2 } from "../../index.js";
+import { cookieLoader, loader, proxy } from "../../base/index.js";
+import { BaseCategoryResponse, BaseCookieResponse } from "../../types/request.js";
 
 dotenv.config();
 
-const proxy: ProxyType = {
-  url: process.env.TEST_PROXY_URL ?? "",
-  auth: process.env.TEST_PROXY_AUTH ?? "",
-};
-
-const cookieLoader = async () => {
-  const proxyUrl = proxyUrlFromType(proxy);
-  const res = await renderer({
-    ...API_SETTINGS.antibotOpts,
-    proxy: {
-      url: proxyUrl,
-    },
-  });
-  const cookies = (res.cookies ?? []).map(({ name, value }) => ({ name, value }));
-  // const token = cookies && cookies.find( ({name}) => name == '_ym_uid')
-  return {
-    cookies,
-    headers: {token: "Yeg8l3zQDwpVNBDTP3q6jM4lQVLW5TTv"}
-  };
-};
-
-const loader: Fetcher<Page> = async (opts) => {
-  opts.headers = [
-    "Content-Type: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    `Sec-Fetch-Dest: document`,
-    "Sec-Fetch-Mode: navigate",
-    "Sec-Fetch-Site: cross-site",
-    `Sec-ch-ua-platform: "Linux"`,
-    ...opts.headers ?? [],
-  ];
-  const data = await curlFetch({ ...opts, version: "V2Tls" }, "json");
-  return data as Page;
-};
-
-let preloadedCookies: BaseCookieResponse;
+let preloadedCookies: BaseCookieResponse | undefined = undefined;
 
 describe("Lemana", () => {
-  beforeAll(async () => {
-    preloadedCookies = await cookieLoader();
-  }, 5000000);
+  // beforeAll(async () => {
+  //   preloadedCookies = await cookieLoader();
+  // }, 5000000);
   test("lemana:load category", async () => {
-    const categoryProcessor = new CategoryProcessor({
+    const parser = AvailablePlatformsv2("lemanapro.ru", {
       fetcher: loader,
       cookieLoader,
     });
-
-    const parsed = await categoryProcessor.fetchCategory({
-      categoryId: "a58305a0-03a1-11ef-9a30-ddd1cb673d49",
-      preloadedCookies,
-      proxy,
-    });
-    console.log(parsed);
-    if ('err' in parsed) {
-      throw new Error(JSON.stringify(parsed.err))
+    if (!parser) {
+      throw new Error("VI parser not found");
     }
-    expect(parsed.items[0].skuId).toBeDefined()
-    expect(parsed).toBeDefined();
+    const categoryProcessor = parser.categoryLoader;
+    const data: BaseCategoryResponse[] = []
+    for (const page of [1, 2]) {
+      const parsed = await categoryProcessor.fetchCategory({
+        categoryId: "a58305a0-03a1-11ef-9a30-ddd1cb673d49",
+        page,
+        preloadedCookies,
+        proxy,
+      });
+      if (!parsed || 'err' in parsed) {
+        throw new Error('lemana parse failed')
+      }
+      if (parsed.cookiesHeaders) {
+        preloadedCookies = parsed.cookiesHeaders
+      }
+      data.push(parsed)
+    }
+    expect(data.length).toBe(2)
+    expect(data[0].items[0].skuId).toBeDefined();
+    expect(data).toBeDefined();
   }, 5000000);
 });

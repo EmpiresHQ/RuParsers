@@ -20,6 +20,13 @@ type CurlFetchParams = {
     timeout?: number;
     verbose?: boolean;
 };
-export declare const curlFetch: <T>(params: CurlFetchParams, load?: "json" | "text" | "buffer") => Promise<T>;
+export type CookieHeaders = Array<{
+    ["Set-Cookie"]: string[];
+}>;
+export type CurlResponse<T> = {
+    data: T;
+    headers?: CookieHeaders;
+};
+export declare const curlFetch: <T>(params: CurlFetchParams, load?: "json" | "text" | "buffer") => Promise<CurlResponse<T>>;
 export {};
 //# sourceMappingURL=curl.d.ts.map

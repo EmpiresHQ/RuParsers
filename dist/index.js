@@ -30,6 +30,10 @@ export const AvailablePlatformsv2 = (platform, { fetcher, cookieLoader, }) => {
                 fetcher: fetcher,
                 cookieLoader,
             }),
+            itemLoader: new ozon_ru.OzonItemProcessor({
+                fetcher: fetcher,
+                cookieLoader,
+            })
         },
         ["lemanapro.ru"]: {
             categoryLoader: new lemanapro_ru.CategoryProcessor({

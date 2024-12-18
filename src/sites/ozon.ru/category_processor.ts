@@ -1,4 +1,4 @@
-import { CategoriesBase } from "../../base/categories.js";
+import { CategoryBase } from "../../base/index.js";
 import {
   BaseCategoryErrorResponse,
   BaseCategoryResponse,
@@ -22,7 +22,7 @@ export interface ProcessCategoryResponse
 
 export class OzonCategoryProcessor
   extends OzonBase<CategoryResponseData>
-  implements CategoriesBase<FetchCategoryArgs, ProcessCategoryResponse>
+  implements CategoryBase<FetchCategoryArgs, ProcessCategoryResponse>
 {
   async fetchCategory({
     categoryId,
@@ -33,7 +33,8 @@ export class OzonCategoryProcessor
   }: FetchCategoryArgs): Promise<
     ProcessCategoryResponse | BaseCategoryErrorResponse
   > {
-    const { cookies } = await this.getCookies({ preloadedCookies, proxy });
+    // eslint-disable-next-line prefer-const
+    let { cookies, headers } = await this.getCookies({ preloadedCookies, proxy });
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
@@ -44,11 +45,17 @@ export class OzonCategoryProcessor
         args: [categoryId, page.toString()],
         nextUrl: categoryUrl,
       }),
+      cookieCallback: (ccks => {
+        cookies = ccks;
+      })
     });
     const parsed = this.process(data);
     return {
       ...parsed,
-      cookies,
+      cookiesHeaders: {
+        cookies,
+        headers
+      },
     };
   }
 

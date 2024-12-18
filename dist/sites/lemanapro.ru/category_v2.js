@@ -9,18 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { RequestBase } from "../../base/index.js";
 import { apiParser } from "./category_parser.js";
-import { API_HOST } from "./settings.js";
+import { API_HOST, API_SETTINGS } from "./settings.js";
 export class CategoryProcessor extends RequestBase {
+    getCookieLoaderParams() {
+        return Object.assign({}, API_SETTINGS.antibotOpts);
+    }
     fetchCategory(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, preloadedCookies, proxy, page = 1, }) {
-            const { cookies, headers } = yield this.getCookies({
+            // eslint-disable-next-line prefer-const
+            let { cookies, headers } = yield this.getCookies({
                 preloadedCookies,
                 proxy,
             });
+            headers !== null && headers !== void 0 ? headers : (headers = {});
+            headers.token = "Yeg8l3zQDwpVNBDTP3q6jM4lQVLW5TTv";
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
-            const data = yield this.fetcher({
+            const { data, headers: rcvHeaders } = yield this.fetcher({
                 method: "POST",
                 host: API_HOST,
                 urlPath: `/hybrid/v1/getProducts?lang=ru`,
@@ -38,12 +44,16 @@ export class CategoryProcessor extends RequestBase {
                     offset: page * 30,
                 },
             });
+            let newCookies;
+            if (rcvHeaders) {
+                newCookies = this.readCookies({ headers: rcvHeaders, existing: cookies });
+            }
             if (data) {
                 const parsed = yield apiParser({ json: data });
                 if (parsed && parsed.items) {
                     return {
                         items: parsed.items,
-                        cookiesHeaders: { cookies, headers },
+                        cookiesHeaders: { cookies: newCookies !== null && newCookies !== void 0 ? newCookies : cookies, headers },
                         hasNextPage: parsed.hasNextPage,
                     };
                 }

@@ -1,8 +1,9 @@
 import {
   BaseFetcherArgs,
-  CategoriesBase,
+  CategoryBase,
   RequestBase,
 } from "../../base/index.js";
+import { ProcessBodyParams } from "../../helpers/renderer.js";
 import {
   BaseCategoryErrorResponse,
   BaseCategoryResponse,
@@ -17,8 +18,14 @@ export interface FetchCategoryArgs extends BaseFetcherArgs {
 
 export class CategoryProcessor
   extends RequestBase<Page>
-  implements CategoriesBase<FetchCategoryArgs, BaseCategoryResponse>
+  implements CategoryBase<FetchCategoryArgs, BaseCategoryResponse>
 {
+  public getCookieLoaderParams(): Omit<Partial<ProcessBodyParams>, "proxy"> {
+    return {
+      ...API_SETTINGS.antibotOpts,
+    };
+  }
+
   async fetchCategory({
     categoryId,
     preloadedCookies,
@@ -37,17 +44,14 @@ export class CategoryProcessor
       throw new Error("could not fetch cookies");
     }
 
-    const data = await this.fetcher({
+    const { data } = await this.fetcher({
       urlPath: `/api/category/load?short=true`,
       host: API_HOST,
       method: "POST",
       timeout: 15,
       cookies,
       proxy,
-      headers: [
-        "Content-Type: application/json",
-        `Token: ${acctoken?.value}`,
-      ],
+      headers: ["Content-Type: application/json", `Token: ${acctoken?.value}`],
       payload: {
         listingType: "category",
         id: categoryId,

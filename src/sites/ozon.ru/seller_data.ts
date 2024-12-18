@@ -14,14 +14,11 @@ import {
   ResponseOzonItem,
 } from "./types.js";
 import { curlFetch } from "../../helpers/curl.js";
-import {
-  BaseCookieResponse,
-  Fetcher,
-  ProxyType,
-} from "../../types/index.js";
+import { BaseCookieResponse, Fetcher, ProxyType } from "../../types/index.js";
 import { sleeper } from "../../helpers/sleeper.js";
 import { decode } from "html-entities";
 import { OzonItemMetaProcessor } from "./item_meta_processor.js";
+import { CurlResponse } from '../../helpers/curl.js';
 
 const __dirname = import.meta.dirname;
 
@@ -70,8 +67,8 @@ const loader: Fetcher<BaseResponseData | CategoryResponseData> = async (
     "Sec-Fetch-Site: cross-site",
     `Sec-ch-ua-platform: "Linux"`,
   ];
-  const data = await curlFetch({ ...opts, version: "V2Tls" }, "json");
-  return data as BaseResponseData | CategoryResponseData;
+  const { data } = await curlFetch({ ...opts, version: "V2Tls" }, "json");
+  return data as CurlResponse<BaseResponseData | CategoryResponseData>;
 };
 
 async function main(): Promise<sheets_v4.Sheets> {
@@ -154,7 +151,7 @@ async function main(): Promise<sheets_v4.Sheets> {
     const fdata = await fs.readFile(fpath);
     parsed = JSON.parse(fdata.toString()) as ResponseOzonItem[];
   } else {
-    await recursive({cookiesHeaders: {}});
+    await recursive({ cookiesHeaders: {} });
     fs.writeFile(fpath, JSON.stringify(parsed));
   }
 

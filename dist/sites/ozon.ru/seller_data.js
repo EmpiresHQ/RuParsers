@@ -56,7 +56,7 @@ const loader = (opts) => __awaiter(void 0, void 0, void 0, function* () {
         "Sec-Fetch-Site: cross-site",
         `Sec-ch-ua-platform: "Linux"`,
     ];
-    const data = yield curlFetch(Object.assign(Object.assign({}, opts), { version: "V2Tls" }), "json");
+    const { data } = yield curlFetch(Object.assign(Object.assign({}, opts), { version: "V2Tls" }), "json");
     return data;
 });
 function main() {
