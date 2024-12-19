@@ -1,5 +1,5 @@
 // import { flatten } from "lodash";
-import lodash from 'lodash';
+import lodash from "lodash";
 const { flatten } = lodash;
 import {
   FetchCategoryArgs,
@@ -8,7 +8,7 @@ import {
 } from "./category_processor.js";
 import { CategoryParsedData, CategoryResponseData } from "./types.js";
 import { sleeper } from "../../helpers/sleeper.js";
-import { SimpleCookie } from '../../types/base.js';
+import { SimpleCookie } from "../../types/base.js";
 
 export type CategoryNode = {
   url: string;
@@ -18,8 +18,8 @@ export type CategoryNode = {
 };
 
 export interface FetchCategoryResponse extends ProcessCategoryResponse {
-  cookies: SimpleCookie[]
-} 
+  cookies: SimpleCookie[];
+}
 
 interface FetchSellerCategoryArgs extends FetchCategoryArgs {
   sellerId: string;
@@ -38,9 +38,9 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     proxy,
     page = 1,
     sellerId,
-  }: FetchSellerCategoryArgs): Promise<FetchCategoryResponse> {
+  }: FetchSellerCategoryArgs): Promise<FetchCategoryResponse | undefined> {
     const cookies = await this.getCookies({ preloadedCookies, proxy });
-    // console.log('ccks:', cookies)
+    console.log("ccks:", cookies);
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
@@ -52,12 +52,13 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
         nextUrl: categoryUrl,
       }),
     });
-    // console.log(data)
-    const parsed = this.process(data);
-    return {
-      ...parsed,
-      cookies,
-    };
+    if (data) {
+      const parsed = this.process(data);
+      return {
+        ...parsed,
+        cookies,
+      };
+    }
   }
   async fetchSubcategories({
     categoryId,
@@ -88,23 +89,26 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
         isRoot: true,
       };
     }
-    const parsed = this.processSubcategories(data, treeNode.isRoot);
-    if (parsed.root) {
-      treeNode.title = parsed.root.title;
-      treeNode.url = parsed.root.url;
+    if (data) {
+      const parsed = this.processSubcategories(data, treeNode.isRoot);
+      if (parsed.root) {
+        treeNode.title = parsed.root.title;
+        treeNode.url = parsed.root.url;
+      }
+      for (const node of parsed.children ?? []) {
+        treeNode.children?.push(node);
+        await sleeper(4000);
+        await this.fetchSubcategories({
+          categoryUrl: node.url,
+          preloadedCookies: cookies,
+          proxy,
+          treeNode: node,
+          sellerId,
+          categoryId: "",
+        });
+      }
     }
-    for (const node of parsed.children ?? []) {
-      treeNode.children?.push(node);
-      await sleeper(4000);
-      await this.fetchSubcategories({
-        categoryUrl: node.url,
-        preloadedCookies: cookies,
-        proxy,
-        treeNode: node,
-        sellerId,
-        categoryId: "",
-      });
-    }
+    
     return treeNode;
   }
 
@@ -114,13 +118,15 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     }
     const pagePart = args[2]
       ? +args[2] > 1
-        ? `?layout_container=categorySearchMegapagination&layout_page_index=${args[1]}&page=${args[1]}`
+        ? `&layout_container=categorySearchMegapagination&layout_page_index=${args[1]}&page=${args[1]}`
         : ""
       : "";
     const categoryPart = args[1] ? `${args[1]}/` : "";
-    return encodeURIComponent(
-      `/seller/${args[0]}/${categoryPart}?miniapp=seller_${args[0]}${pagePart}`
+    const path = encodeURIComponent(
+      `/seller/${args[0]}/${categoryPart}?miniapp=seller_${args[0]}${pagePart}&sorting=price`
     );
+    console.log(decodeURIComponent(path));
+    return path;
   }
 
   public processSubcategories(

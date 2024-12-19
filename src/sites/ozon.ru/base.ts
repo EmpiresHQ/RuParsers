@@ -1,6 +1,6 @@
 // import { merge } from "lodash";
-import lodash from 'lodash';
- const { merge } = lodash;
+import lodash from "lodash";
+const { merge } = lodash;
 import {
   BaseRequestParameters,
   ProxyType,
@@ -9,7 +9,7 @@ import {
 import { BaseResponseData } from "./types.js";
 
 export type Fetcher<T = BaseResponseData> = (
-  opts: Omit<BaseRequestParameters, "cookies"> & { cookies: SimpleCookie[] }
+  opts: Omit<BaseRequestParameters, "cookies"> & { cookies?: SimpleCookie[] }
 ) => Promise<T>;
 export type CookieLoader = (
   proxy: ProxyType
@@ -28,6 +28,8 @@ export interface BaseFetcherArgs {
 export abstract class OzonBase<T = BaseResponseData> {
   public fetcher: Fetcher<T>;
   public cookieLoader: CookieLoader;
+  public cookies: SimpleCookie[] | undefined; // this is a protected field
+
   public endpoint =
     "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
 
@@ -37,10 +39,19 @@ export abstract class OzonBase<T = BaseResponseData> {
   }
 
   public async getCookies({ proxy, preloadedCookies }: BaseFetcherArgs) {
+    if (this.cookies) {
+      return this.cookies;
+    }
     if (preloadedCookies) {
       return preloadedCookies;
     }
-    return this.cookieLoader(proxy);
+    const loadedCookies = await this.cookieLoader(proxy);
+    if (loadedCookies) {
+      this.cookies = loadedCookies; // update the protected field
+      return this.cookies;
+    } else {
+      throw new Error("No cookies found");
+    }
   }
 
   public checkError(data: BaseResponseData) {
@@ -97,21 +108,38 @@ export abstract class OzonBase<T = BaseResponseData> {
 
   public async request({
     opts: { proxy },
-    cookies,
+    cookies = this.cookies,
     pathLoader,
+    retry = false,
   }: {
     opts: Omit<BaseFetcherArgs, "preloadedCookies">;
-    cookies: SimpleCookie[];
+    cookies: SimpleCookie[] | undefined;
     pathLoader: () => { args: string[]; nextUrl?: string };
-  }): Promise<T> {
-    const path = this.getPath(pathLoader());
-    const data = await this.fetcher({
-      method: "GET",
-      proxy,
-      cookies,
-      host: this.endpoint,
-      urlPath: path,
-    });
-    return data as T;
+    retry?: boolean;
+  }): Promise<T | undefined> {
+    try {
+      const path = this.getPath(pathLoader());
+      const data = await this.fetcher({
+        method: "GET",
+        proxy,
+        ...(cookies ? { cookies } : {}),
+        host: this.endpoint,
+        urlPath: path,
+      });
+      return data as T;
+    } catch (e) {
+      if (!retry) {
+        const reloaded_cookies = await this.cookieLoader(proxy);
+        const resp = await this.request({
+          opts: {
+            proxy,
+          },
+          cookies: reloaded_cookies,
+          pathLoader,
+          retry: true,
+        });
+        return resp as T
+      }
+    }
   }
 }

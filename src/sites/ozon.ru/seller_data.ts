@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 import path from "path";
 import * as dotenv from "dotenv";
 import { sheets_v4 } from "googleapis/build/src/apis/sheets";
@@ -17,8 +17,8 @@ import {
 import { curlFetch } from "../../helpers/curl.js";
 import { ProxyType, SimpleCookie } from "../../types/index.js";
 import { sleeper } from "../../helpers/sleeper.js";
-import { decode } from 'html-entities';
-import { OzonItemMetaProcessor } from './item_meta_processor.js';
+import { decode } from "html-entities";
+import { OzonItemMetaProcessor } from "./item_meta_processor.js";
 
 const __dirname = import.meta.dirname;
 
@@ -29,7 +29,7 @@ const CREDENTIALS_PATH = path.join(
   "..",
   "..",
   "..",
-  "credentials2.json"
+  "credentials.json"
 );
 dotenv.config();
 
@@ -42,11 +42,20 @@ const cookieLoader = async () => {
   const proxyUrl = proxyUrlFromType(proxy);
   const res = await renderer({
     url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/product/1428983821`)})`,
-    waitAfterLoad: 4000,
+    waitAfterLoad: 7000,
     getDocumentBody: true,
     fetchCookies: {
       domains: ["https://www.ozon.ru"],
-      cookieNames: ["abt_data", "__Secure-ETC"],
+      cookieNames: [
+        "abt_data",
+        "xcid",
+        "rfuid",
+        "__Secure-ETC",
+        "__Secure-access-token",
+        "__Secure-refresh-token",
+        "__Secure-ext_xcid",
+        "TS0*"
+      ],
     },
     proxy: {
       url: proxyUrl,
@@ -86,121 +95,150 @@ async function main(): Promise<sheets_v4.Sheets> {
 
   const itemMetaProcessor = new OzonItemMetaProcessor({
     cookieLoader,
-    fetcher: loader
-  })
+    fetcher: loader,
+  });
 
   let parsed: ResponseOzonItem[] = [];
+  const fpath = path.join(__dirname, "dump.json");
+  let fexists = false;
+  try {
+    await fs.stat(fpath);
+    fexists = true;
+  } catch (e) {
+    fexists = false;
+  }
+  const articleMap: { [key in string]: boolean } = {};
+  let cookies: SimpleCookie[] | undefined;
 
   const recursive = async ({
     page = 1,
     categoryUrl,
     cookies,
+    // fh
   }: {
     page?: number;
     categoryUrl?: string;
     cookies?: SimpleCookie[];
+    // fh: fs.FileHandle;
   }) => {
     console.log("fetching page: ", page);
     const data = await processor.fetchCategory({
-      sellerId: "1456889",
+      sellerId: "123719",
       categoryId: "maslyanye-filtry-8707",
       categoryUrl,
       page,
       preloadedCookies: cookies,
       proxy,
     });
-    if (data.items) {
-      for (const item of data.items) {
-        console.log('fetching meta for: ', item.skuId)
-        const metaData = await itemMetaProcessor.fetchItem({
-          itemId: item.skuId,
-          preloadedCookies: data.cookies,
-          proxy,
-        })
-        if (metaData.characteristics) {
-          item.filters = metaData.characteristics
+    if (data) {
+      if (data.items) {
+        for (const item of data.items) {
+          if (articleMap[item.skuId]) {
+            console.log("skipping: ", item.skuId);
+            continue;
+          }
+          console.log("item: ", item.skuId, "price: ", item.discountPrice);
+          articleMap[item.skuId] = true;
+          parsed.push(item);
         }
-        await sleeper(4000);
+        // fh.
       }
-      parsed.push(...data.items);
+      if (data.hasNextPage) {
+        await sleeper(4000);
+        console.log("next: ", data.nextPage);
+        await recursive({
+          // fh,
+          page: page + 1,
+          categoryUrl: data.nextPage,
+          cookies: data.cookies,
+        });
+      }
+      cookies = data.cookies;
     }
-    if (data.hasNextPage) {
-      await sleeper(4000);
-      await recursive({
-        page: page + 1,
-        categoryUrl: data.nextPage,
-        cookies: data.cookies,
-      });
-    }
+    
   };
 
-  const fpath = path.join(__dirname, "dump.json")
-  let fexists = false;
-  try {
-    await fs.stat(fpath)
-    fexists = true
-  }
-  catch (e) {
-    fexists = false
-  }
   if (fexists) {
-    const fdata = await fs.readFile(fpath)
-    parsed = JSON.parse(fdata.toString()) as ResponseOzonItem[]
+    const fdata = await fs.readFile(fpath);
+    parsed = JSON.parse(fdata.toString()) as ResponseOzonItem[];
   } else {
+    // const fh = await fs.open(fpath)
     await recursive({});
-    fs.writeFile(fpath, JSON.stringify(parsed));
+    await fs.writeFile(fpath, JSON.stringify(parsed));
+  }
+  console.log("items: ", parsed.length);
+  for (const item of parsed) {
+    console.log("fetching meta for: ", item.skuId);
+    if (item.filters && item.filters.length > 0) {
+      console.log('skip fetching: ', item.skuId)
+      continue
+    }
+    const metaData = await itemMetaProcessor.fetchItem({
+      itemId: item.skuId,
+      preloadedCookies: cookies,
+      proxy,
+    });
+    if (metaData.cookies){
+      cookies = metaData.cookies
+    }
+    if (metaData.characteristics) {
+      item.filters = metaData.characteristics;
+    }
+    await fs.writeFile(fpath, JSON.stringify(parsed));
+    await sleeper(4000);
   }
 
-  const filterValue = (filters: CharacteristicsOutput[]= [], key: string) => filters.find(f => f.key === key)?.text
+  const filterValue = (filters: CharacteristicsOutput[] = [], key: string) =>
+    filters.find((f) => f.key === key)?.text;
 
-  const result = await sheets.spreadsheets.values.append({
-    spreadsheetId: "1WtCVeVS8WDVoW_uZKeTbjRdZhOQ4wwe0L9aQ89I5vHY",
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: "...",
     range: "Шаблон!A5",
     valueInputOption: "RAW",
     requestBody: {
       values: parsed.map((i, cnt) => [
-        cnt+1,
-        filterValue(i.filters, 'Type_0'),
+        cnt + 1,
+        filterValue(i.filters, "Type_0"),
         decode(i.title),
-        i.discountPrice?.substring(0, i.discountPrice.indexOf("₽")-1),
-        i.regularPrice.substring(0, i.regularPrice.indexOf("₽")-1),
+        i.discountPrice?.substring(0, i.discountPrice.indexOf("₽") - 1),
+        i.regularPrice.substring(0, i.regularPrice.indexOf("₽") - 1),
         undefined,
         undefined,
         undefined,
         undefined,
-        filterValue(i.filters, 'Width_0'),
-        filterValue(i.filters, 'Height_0'),
-        filterValue(i.filters, 'length_0'),
+        filterValue(i.filters, "Width_0"),
+        filterValue(i.filters, "Height_0"),
+        filterValue(i.filters, "length_0"),
         i.imageUrl,
         undefined,
         undefined,
         undefined,
-        filterValue(i.filters, 'Brand_0'),
+        filterValue(i.filters, "Brand_0"),
         undefined,
-        filterValue(i.filters, 'QuantityUOM_0'),
-        filterValue(i.filters, 'Type_0'),
-        filterValue(i.filters, 'Код продавца'),
-        filterValue(i.filters, 'AltArticle_0'),
+        filterValue(i.filters, "QuantityUOM_0"),
+        filterValue(i.filters, "Type_0"),
+        filterValue(i.filters, "Код продавца"),
+        filterValue(i.filters, "AltArticle_0"),
         undefined,
         undefined,
         undefined,
-        filterValue(i.filters, 'OEMNum_0'),
-        filterValue(i.filters, 'AltArticle_0'),
-        filterValue(i.filters, 'FilterOpt_0'),
-        filterValue(i.filters, 'FilterForm_0'),
-        filterValue(i.filters, 'FilterBox_0'),
+        filterValue(i.filters, "OEMNum_0"),
+        filterValue(i.filters, "AltArticle_0"),
+        filterValue(i.filters, "FilterOpt_0"),
+        filterValue(i.filters, "FilterForm_0"),
+        filterValue(i.filters, "FilterBox_0"),
         undefined,
-        filterValue(i.filters, 'Width_0'),
-        filterValue(i.filters, 'Height_0'),
-        filterValue(i.filters, 'length_0'),
-        filterValue(i.filters, 'Material_Auto_0'),
-        filterValue(i.filters, 'Diametr_0'),
-        filterValue(i.filters, 'VehicleKind_0'),
-        filterValue(i.filters, 'Country_0'),
+        filterValue(i.filters, "Width_0"),
+        filterValue(i.filters, "Height_0"),
+        filterValue(i.filters, "length_0"),
+        filterValue(i.filters, "Material_Auto_0"),
+        filterValue(i.filters, "Diametr_0"),
+        filterValue(i.filters, "VehicleKind_0"),
+        filterValue(i.filters, "Country_0"),
       ]),
     },
   });
-  console.log(result);
+  // console.log(result);
   return sheets;
 }
 

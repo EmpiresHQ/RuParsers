@@ -39,11 +39,14 @@ export class OzonCategoryProcessor extends OzonBase<CategoryResponseData> {
         nextUrl: categoryUrl,
       }),
     });
-    const parsed = this.process(data);
-    return {
-      ...parsed,
-      cookies,
-    };
+    if (data) {
+      const parsed = this.process(data);
+      return {
+        ...parsed,
+        cookies,
+      };
+    }
+    
   }
 
   public getPath({ args, nextUrl }: { args: string[]; nextUrl?: string }) {
