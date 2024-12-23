@@ -77,7 +77,6 @@ export const categoryProcessor = (data) => {
     }));
     return {
         items,
-        err: undefined,
         hasNextPage: true,
     };
 };

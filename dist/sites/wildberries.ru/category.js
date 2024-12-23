@@ -26,6 +26,8 @@ export class CategoryProcessor extends RequestBase {
             //   throw new Error("could not fetch cookies");
             // }
             const { data } = yield this.fetcher({
+                host: "https://catalog.wb.ru",
+                version: "V2Tls",
                 urlPath: page > 1
                     ? `/catalog/${shard}/catalog?ab_testing=false&appType=64&${key}=${categoryId}&curr=rub&dest=-1255563&lang=ru&locale=ru&spp=30&page=${page}`
                     : `/catalog/${shard}/catalog?ab_testing=false&appType=64&${key}=${categoryId}&curr=rub&dest=-1255563&lang=ru&locale=ru&spp=30`,

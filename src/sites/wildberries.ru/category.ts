@@ -47,6 +47,8 @@ export class CategoryProcessor
     // }
 
     const { data } = await this.fetcher({
+      host: "https://catalog.wb.ru",
+      version: "V2Tls",
       urlPath:
         page > 1
           ? `/catalog/${
