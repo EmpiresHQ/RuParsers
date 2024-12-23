@@ -47,6 +47,12 @@ export const AvailablePlatformsv2 = (platform, { fetcher, cookieLoader, }) => {
                 cookieLoader,
             }),
         },
+        ["dns-shop.ru"]: {
+            categoryLoader: new dns_shop_ru.CategoryProcessor({
+                fetcher: fetcher,
+                cookieLoader,
+            }),
+        }
     };
     if (platform in platforms) {
         return platforms[platform];

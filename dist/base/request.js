@@ -12,6 +12,11 @@ export class RequestBase {
         this.fetcher = fetcher;
         this.cookieLoader = cookieLoader;
     }
+    untypedFetcher(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.fetcher(opts);
+        });
+    }
     readCookies({ headers, existing, merge = true, }) {
         const found = headers.find((chunk) => !!chunk["Set-Cookie"]);
         if (found) {

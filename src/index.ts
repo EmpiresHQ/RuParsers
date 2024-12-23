@@ -80,6 +80,12 @@ export const AvailablePlatformsv2 = (
         cookieLoader,
       }),
     },
+    ["dns-shop.ru"]: {
+      categoryLoader: new dns_shop_ru.CategoryProcessor({
+        fetcher: fetcher as Fetcher<dns_shop_ru.CategoryResponse>,
+        cookieLoader,
+      }),
+    }
   };
   if (platform in platforms) {
     return platforms[platform];

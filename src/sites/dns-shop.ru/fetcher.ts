@@ -24,6 +24,7 @@ export const fetcher = async (
     };
   }
   const data = (await loader(requestParams)) as CategoryResponse;
+  
   console.log('data: ', data);
   if (typeof data !== 'object' || !data.assets || !data.assets.inlineJs) {
     return {
