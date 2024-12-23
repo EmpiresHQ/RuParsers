@@ -17,7 +17,7 @@ describe("DNS", () => {
             fetcher: loader,
             cookieLoader,
         });
-        if (!parser) {
+        if (!parser || parser.name !== "dns-shop.ru") {
             throw new Error('VI parser not found');
         }
         const data = [];

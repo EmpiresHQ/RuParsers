@@ -17,7 +17,7 @@ describe("Lemana", () => {
       fetcher: loader,
       cookieLoader,
     });
-    if (!parser) {
+    if (!parser || parser.name !== "lemanapro.ru") {
       throw new Error("VI parser not found");
     }
     const categoryProcessor = parser.categoryLoader;

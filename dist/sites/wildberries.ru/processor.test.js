@@ -13,37 +13,40 @@ import { AvailablePlatformsv2 } from "../../index.js";
 import { cookieLoader, loader, proxy } from "../../base/index.js";
 dotenv.config();
 let preloadedCookies = undefined;
-describe("Lemana", () => {
+describe("WB", () => {
     // beforeAll(async () => {
     //   preloadedCookies = await cookieLoader();
     // }, 5000000);
-    test("lemana:load category", () => __awaiter(void 0, void 0, void 0, function* () {
-        const parser = AvailablePlatformsv2("lemanapro.ru", {
+    test("WB:load category", () => __awaiter(void 0, void 0, void 0, function* () {
+        const parser = AvailablePlatformsv2("wildberries.ru", {
             fetcher: loader,
             cookieLoader,
         });
-        if (!parser || parser.name !== "lemanapro.ru") {
+        if (!parser) {
             throw new Error("VI parser not found");
         }
-        const categoryProcessor = parser.categoryLoader;
-        const data = [];
-        for (const page of [1, 2]) {
-            const parsed = yield categoryProcessor.fetchCategory({
-                categoryId: "a58305a0-03a1-11ef-9a30-ddd1cb673d49",
-                page,
-                preloadedCookies,
-                proxy,
-            });
-            if (!parsed || 'err' in parsed) {
-                throw new Error('lemana parse failed');
+        if (parser.name == "wildberries.ru") {
+            const categoryProcessor = parser.categoryLoader;
+            const data = [];
+            for (const page of [1, 2]) {
+                const parsed = yield categoryProcessor.fetchCategory({
+                    categoryId: "130611",
+                    shard: "gift12",
+                    page,
+                    preloadedCookies,
+                    proxy,
+                });
+                if (!parsed || "err" in parsed) {
+                    throw new Error("lemana parse failed");
+                }
+                if (parsed.cookiesHeaders) {
+                    preloadedCookies = parsed.cookiesHeaders;
+                }
+                data.push(parsed);
             }
-            if (parsed.cookiesHeaders) {
-                preloadedCookies = parsed.cookiesHeaders;
-            }
-            data.push(parsed);
+            expect(data.length).toBe(2);
+            expect(data[0].items[0].skuId).toBeDefined();
+            expect(data).toBeDefined();
         }
-        expect(data.length).toBe(2);
-        expect(data[0].items[0].skuId).toBeDefined();
-        expect(data).toBeDefined();
     }), 5000000);
 });

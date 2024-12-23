@@ -4,14 +4,18 @@ import { proxyUrlFromType } from "../../helpers/renderer.js";
 import {
   BaseCategoryResponse,
   BaseCookieResponse,
-  PlatformProcesors,
 } from "../../types/index.js";
 import { cookieLoader, loader, ozonProxy } from "../../base/index.js";
 import { AvailablePlatformsv2 } from "../../index.js";
+import { OzonCategoryProcessor, OzonItemProcessor } from "./index.js";
 dotenv.config();
 
 let preloadedCookies: BaseCookieResponse;
-let parser: PlatformProcesors | undefined;
+let parser: {
+      name: "ozon.ru";
+      categoryLoader: OzonCategoryProcessor;
+      itemLoader: OzonItemProcessor;
+    } | undefined = undefined;
 
 describe("OZON", () => {
   beforeAll(async () => {
@@ -27,10 +31,13 @@ describe("OZON", () => {
         url: proxyUrlFromType(ozonProxy),
       },
     });
-    parser = AvailablePlatformsv2("ozon.ru", {
+    const ps = AvailablePlatformsv2("ozon.ru", {
       fetcher: loader,
       cookieLoader,
     });
+    if (ps.name == "ozon.ru") {
+      parser = ps;
+    }
   }, 5000000);
   test("ozon:load item", async () => {
     const parsed = await parser?.itemLoader?.fetchItem({

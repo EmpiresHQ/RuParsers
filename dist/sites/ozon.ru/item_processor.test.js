@@ -14,7 +14,7 @@ import { cookieLoader, loader, ozonProxy } from "../../base/index.js";
 import { AvailablePlatformsv2 } from "../../index.js";
 dotenv.config();
 let preloadedCookies;
-let parser;
+let parser = undefined;
 describe("OZON", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         preloadedCookies = yield cookieLoader({
@@ -29,10 +29,13 @@ describe("OZON", () => {
                 url: proxyUrlFromType(ozonProxy),
             },
         });
-        parser = AvailablePlatformsv2("ozon.ru", {
+        const ps = AvailablePlatformsv2("ozon.ru", {
             fetcher: loader,
             cookieLoader,
         });
+        if (ps.name == "ozon.ru") {
+            parser = ps;
+        }
     }), 5000000);
     test("ozon:load item", () => __awaiter(void 0, void 0, void 0, function* () {
         var _a;

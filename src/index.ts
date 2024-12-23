@@ -5,6 +5,7 @@ import {
   vseinstrumenti_ru,
   dns_shop_ru,
   ozon_ru,
+  wildberries_ru,
 } from "./sites/index.js";
 import {
   AvailablePlatforms,
@@ -23,6 +24,14 @@ export const availablePlatforms: {
     preferredStrategy: "api" | "js";
   };
 } = {
+  "wildberries.ru": {
+    strategies: {},
+    preferredStrategy: "api",
+  },
+  "ozon.ru": {
+    strategies: {},
+    preferredStrategy: "api",
+  },
   "vseinstrumenti.ru": {
     strategies: vseinstrumenti_ru.strategies,
     preferredStrategy: vseinstrumenti_ru.preferredStrategy,
@@ -45,8 +54,6 @@ export const availablePlatforms: {
   },
 };
 
-
-
 export const AvailablePlatformsv2 = (
   platform: AvailablePlatforms,
   {
@@ -56,38 +63,57 @@ export const AvailablePlatformsv2 = (
     fetcher: Fetcher<unknown>;
     cookieLoader: CookieLoader;
   }
-) => {
-  const platforms: Record<string, PlatformProcesors> = {
-    ["ozon.ru"]: {
-      categoryLoader: new ozon_ru.OzonCategoryProcessor({
-        fetcher: fetcher as Fetcher<ozon_ru.CategoryResponseData>,
-        cookieLoader,
-      }),
-      itemLoader: new ozon_ru.OzonItemProcessor({
-        fetcher: fetcher as Fetcher<ozon_ru.BaseResponseData>,
-        cookieLoader,
-      })
-    },
-    ["lemanapro.ru"]: {
-      categoryLoader: new lemanapro_ru.CategoryProcessor({
-        fetcher: fetcher as Fetcher<lemanapro_ru.Page>,
-        cookieLoader,
-      }),
-    },
-    ["vseinstrumenti.ru"]: {
-      categoryLoader: new vseinstrumenti_ru.CategoryProcessor({
-        fetcher: fetcher as Fetcher<vseinstrumenti_ru.Page>,
-        cookieLoader,
-      }),
-    },
-    ["dns-shop.ru"]: {
-      categoryLoader: new dns_shop_ru.CategoryProcessor({
-        fetcher: fetcher as Fetcher<dns_shop_ru.CategoryResponse>,
-        cookieLoader,
-      }),
-    }
-  };
-  if (platform in platforms) {
-    return platforms[platform];
+): PlatformProcesors => {
+  switch (platform) {
+    case "wildberries.ru":
+      return {
+        name: "wildberries.ru",
+        categoryLoader: new wildberries_ru.CategoryProcessor({
+          fetcher: fetcher as Fetcher<wildberries_ru.ResponseWbCategory>,
+          cookieLoader,
+        }),
+      };
+    case "ozon.ru":
+      return {
+        name: "ozon.ru",
+        categoryLoader: new ozon_ru.OzonCategoryProcessor({
+          fetcher: fetcher as Fetcher<ozon_ru.CategoryResponseData>,
+          cookieLoader,
+        }),
+        itemLoader: new ozon_ru.OzonItemProcessor({
+          fetcher: fetcher as Fetcher<ozon_ru.BaseResponseData>,
+          cookieLoader,
+        }),
+      };
+    case "lemanapro.ru":
+      return {
+        name: "lemanapro.ru",
+        categoryLoader: new lemanapro_ru.CategoryProcessor({
+          fetcher: fetcher as Fetcher<lemanapro_ru.Page>,
+          cookieLoader,
+        }),
+      };
+    case "vseinstrumenti.ru":
+      return {
+        name: "vseinstrumenti.ru",
+        categoryLoader: new vseinstrumenti_ru.CategoryProcessor({
+          fetcher: fetcher as Fetcher<vseinstrumenti_ru.Page>,
+          cookieLoader,
+        }),
+      };
+    case "dns-shop.ru":
+      return {
+        name: "dns-shop.ru",
+        categoryLoader: new dns_shop_ru.CategoryProcessor({
+          fetcher: fetcher as Fetcher<dns_shop_ru.CategoryResponse>,
+          cookieLoader,
+        }),
+      };
+    case "selver.ee":
+      return {
+        name: "selver.ee",
+      }
+    case "barbora.ee":
+      return {name: 'barbora.ee'}
   }
 };
