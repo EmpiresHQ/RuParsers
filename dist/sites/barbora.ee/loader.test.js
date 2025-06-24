@@ -30,7 +30,7 @@ describe("Barbora.ee", () => {
             } }), "text");
         expect(reply).toBeDefined();
         console.log(JSON.stringify(reply, null, 2));
-        const parsed = yield jsParser({ html: Buffer.from(reply) });
+        const parsed = yield jsParser({ html: Buffer.from(reply.data) });
         expect(parsed).toBeDefined();
         console.log(JSON.stringify(parsed, null, 2));
     }));
@@ -47,7 +47,7 @@ describe("Barbora.ee", () => {
                 },
             }, 'json');
             console.log(data);
-            return data;
+            return data.data;
         });
         const categories = yield treeParser({ loader });
         console.log(categories);

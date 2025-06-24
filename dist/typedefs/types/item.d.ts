@@ -1,4 +1,4 @@
-export interface BaseItem {
+export type BaseItem<T extends Record<string, unknown> = Record<string, unknown>> = {
     skuId: string;
     title?: string;
     description?: string;
@@ -7,5 +7,5 @@ export interface BaseItem {
     stock?: number;
     imageUrl?: string;
     isAvailable?: boolean;
-}
+} & T;
 //# sourceMappingURL=item.d.ts.map

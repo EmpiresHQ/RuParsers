@@ -6,7 +6,7 @@ import {
 } from "../../types/index.js";
 import { ApiPayload, PLPModel } from "./index.js";
 
-const API_HOST = "https://api.lemanapro.ru";
+export const API_HOST = "https://api.lemanapro.ru";
 export const HOST = "https://lemanapro.ru"
 
 export const API_SETTINGS: InitialSettings = {

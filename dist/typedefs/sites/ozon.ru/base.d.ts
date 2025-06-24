@@ -1,23 +1,19 @@
-import { BaseRequestParameters, ProxyType, SimpleCookie } from "../../types/index.js";
+import { BaseCookieResponse, CookieLoader, Fetcher, ProxyType, SimpleCookie } from "../../types/index.js";
 import { BaseResponseData } from "./types.js";
-export type Fetcher<T = BaseResponseData> = (opts: Omit<BaseRequestParameters, "cookies"> & {
-    cookies: SimpleCookie[];
-}) => Promise<T>;
-export type CookieLoader = (proxy: ProxyType) => Promise<SimpleCookie[] | undefined>;
+import { RequestBase } from "../../base/request.js";
+import { ProcessBodyParams } from "../../helpers/renderer.js";
 export interface ItemProcessorOpts<T> {
     fetcher: Fetcher<T>;
     cookieLoader: CookieLoader;
 }
 export interface BaseFetcherArgs {
-    preloadedCookies?: SimpleCookie[];
+    preloadedCookies?: BaseCookieResponse;
     proxy: ProxyType;
 }
-export declare abstract class OzonBase<T = BaseResponseData> {
-    fetcher: Fetcher<T>;
-    cookieLoader: CookieLoader;
+export declare abstract class OzonBase<T = BaseResponseData> extends RequestBase<T> implements RequestBase<T> {
     endpoint: string;
-    constructor({ fetcher, cookieLoader }: ItemProcessorOpts<T>);
-    getCookies({ proxy, preloadedCookies }: BaseFetcherArgs): Promise<SimpleCookie[] | undefined>;
+    constructor(args: ItemProcessorOpts<T>);
+    getCookieLoaderParams(): Omit<Partial<ProcessBodyParams>, "proxy">;
     checkError(data: BaseResponseData): {
         err: string;
         ok?: undefined;
@@ -33,13 +29,14 @@ export declare abstract class OzonBase<T = BaseResponseData> {
         nextUrl?: string;
     }): string;
     abstract filterStates(): string[];
-    request({ opts: { proxy }, cookies, pathLoader, }: {
+    request({ opts: { proxy }, cookiesHeaders: { cookies }, pathLoader, cookieCallback, }: {
         opts: Omit<BaseFetcherArgs, "preloadedCookies">;
-        cookies: SimpleCookie[];
+        cookiesHeaders: BaseCookieResponse;
         pathLoader: () => {
             args: string[];
             nextUrl?: string;
         };
+        cookieCallback?: (cookies: SimpleCookie[]) => void;
     }): Promise<T>;
 }
 //# sourceMappingURL=base.d.ts.map

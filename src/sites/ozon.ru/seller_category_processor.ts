@@ -8,7 +8,7 @@ import {
 } from "./category_processor.js";
 import { CategoryParsedData, CategoryResponseData } from "./types.js";
 import { sleeper } from "../../helpers/sleeper.js";
-import { SimpleCookie } from "../../types/base.js";
+import { BaseCategoryErrorResponse } from "../../types/index.js";
 
 export type CategoryNode = {
   url: string;
@@ -16,10 +16,6 @@ export type CategoryNode = {
   isRoot?: boolean;
   children?: CategoryNode[];
 };
-
-export interface FetchCategoryResponse extends ProcessCategoryResponse {
-  cookies: SimpleCookie[];
-}
 
 interface FetchSellerCategoryArgs extends FetchCategoryArgs {
   sellerId: string;
@@ -38,27 +34,33 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     proxy,
     page = 1,
     sellerId,
-  }: FetchSellerCategoryArgs): Promise<FetchCategoryResponse | undefined> {
-    const cookies = await this.getCookies({ preloadedCookies, proxy });
-    console.log("ccks:", cookies);
+  }: FetchSellerCategoryArgs): Promise<
+    ProcessCategoryResponse | BaseCategoryErrorResponse
+  > {
+    const { cookies } = await this.getCookies({ preloadedCookies, proxy });
+    // console.log('ccks:', cookies)
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
     const data = await this.request({
       opts: { proxy },
-      cookies,
+      cookiesHeaders: { cookies },
       pathLoader: () => ({
         args: [sellerId, categoryId, page.toString()],
         nextUrl: categoryUrl,
       }),
     });
-    if (data) {
-      const parsed = this.process(data);
+    // console.log(data)
+    const parsed = this.process(data);
+    if ("err" in parsed) {
       return {
-        ...parsed,
-        cookies,
+        err: parsed.err,
       };
     }
+    return {
+      ...parsed,
+      cookies,
+    };
   }
   async fetchSubcategories({
     categoryId,
@@ -68,14 +70,14 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     treeNode,
     categoryUrl,
   }: FetchSellerSubcategories) {
-    const cookies = await this.getCookies({ preloadedCookies, proxy });
+    const { cookies } = await this.getCookies({ preloadedCookies, proxy });
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
 
     const data = await this.request({
       opts: { proxy },
-      cookies,
+      cookiesHeaders: { cookies },
       pathLoader: () => ({
         args: [sellerId, categoryId],
         nextUrl: categoryUrl,
@@ -89,26 +91,23 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
         isRoot: true,
       };
     }
-    if (data) {
-      const parsed = this.processSubcategories(data, treeNode.isRoot);
-      if (parsed.root) {
-        treeNode.title = parsed.root.title;
-        treeNode.url = parsed.root.url;
-      }
-      for (const node of parsed.children ?? []) {
-        treeNode.children?.push(node);
-        await sleeper(4000);
-        await this.fetchSubcategories({
-          categoryUrl: node.url,
-          preloadedCookies: cookies,
-          proxy,
-          treeNode: node,
-          sellerId,
-          categoryId: "",
-        });
-      }
+    const parsed = this.processSubcategories(data, treeNode.isRoot);
+    if (parsed.root) {
+      treeNode.title = parsed.root.title;
+      treeNode.url = parsed.root.url;
     }
-    
+    for (const node of parsed.children ?? []) {
+      treeNode.children?.push(node);
+      await sleeper(4000);
+      await this.fetchSubcategories({
+        categoryUrl: node.url,
+        preloadedCookies: { cookies },
+        proxy,
+        treeNode: node,
+        sellerId,
+        categoryId: "",
+      });
+    }
     return treeNode;
   }
 
@@ -118,15 +117,13 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     }
     const pagePart = args[2]
       ? +args[2] > 1
-        ? `&layout_container=categorySearchMegapagination&layout_page_index=${args[1]}&page=${args[1]}`
+        ? `?layout_container=categorySearchMegapagination&layout_page_index=${args[1]}&page=${args[1]}`
         : ""
       : "";
     const categoryPart = args[1] ? `${args[1]}/` : "";
-    const path = encodeURIComponent(
-      `/seller/${args[0]}/${categoryPart}?miniapp=seller_${args[0]}${pagePart}&sorting=price`
+    return encodeURIComponent(
+      `/seller/${args[0]}/${categoryPart}?miniapp=seller_${args[0]}${pagePart}`
     );
-    console.log(decodeURIComponent(path));
-    return path;
   }
 
   public processSubcategories(
@@ -173,3 +170,4 @@ export class OzonSellerCategoryProcessor extends OzonCategoryProcessor {
     return { children: [] };
   }
 }
+

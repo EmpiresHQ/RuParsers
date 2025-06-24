@@ -7,22 +7,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// import { merge } from "lodash"
 // import { merge } from "lodash";
-import lodash from 'lodash';
+import lodash from "lodash";
 const { merge } = lodash;
-export class OzonBase {
-    constructor({ fetcher, cookieLoader }) {
+import { RequestBase } from "../../base/request.js";
+export class OzonBase extends RequestBase {
+    constructor(args) {
+        super(args);
         this.endpoint = "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
-        this.fetcher = fetcher;
-        this.cookieLoader = cookieLoader;
     }
-    getCookies(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ proxy, preloadedCookies }) {
-            if (preloadedCookies) {
-                return preloadedCookies;
-            }
-            return this.cookieLoader(proxy);
-        });
+    getCookieLoaderParams() {
+        return {
+            url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/category/7000`)})`,
+            waitAfterLoad: 4000,
+            getDocumentBody: true,
+            fetchCookies: {
+                domains: ["https://www.ozon.ru"],
+                cookieNames: ["abt_data", "__Secure-ETC", "TS01*"],
+            },
+        };
     }
     checkError(data) {
         var _a;
@@ -56,15 +60,29 @@ export class OzonBase {
         return parsed;
     }
     request(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ opts: { proxy }, cookies, pathLoader, }) {
+        return __awaiter(this, arguments, void 0, function* ({ opts: { proxy }, cookiesHeaders: { cookies }, pathLoader, cookieCallback, }) {
             const path = this.getPath(pathLoader());
-            const data = yield this.fetcher({
+            const { data, headers } = yield this.fetcher({
                 method: "GET",
                 proxy,
-                cookies,
+                cookies: cookies ? cookies : [],
                 host: this.endpoint,
                 urlPath: path,
+                version: "V2Tls",
+                headers: [
+                    "Content-Type: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                    `Sec-Fetch-Dest: document`,
+                    "Sec-Fetch-Mode: navigate",
+                    "Sec-Fetch-Site: cross-site",
+                    `Sec-ch-ua-platform: "Linux"`,
+                ],
             });
+            if (headers) {
+                const readCookies = this.readCookies({ headers, existing: cookies });
+                if (readCookies && cookieCallback) {
+                    cookieCallback(readCookies);
+                }
+            }
             return data;
         });
     }

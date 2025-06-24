@@ -11,7 +11,7 @@ export interface RenderResult {
     documentBody?: string;
 }
 export type ProcessBodyParams = {
-    url: string | string[];
+    url?: string | string[];
     fetchCookies?: {
         domains: string[];
         cookieNames?: string[];

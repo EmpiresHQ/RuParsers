@@ -1,19 +1,17 @@
+// import { merge } from "lodash"
 // import { merge } from "lodash";
 import lodash from "lodash";
 const { merge } = lodash;
 import {
-  BaseRequestParameters,
+  BaseCookieResponse,
+  CookieLoader,
+  Fetcher,
   ProxyType,
   SimpleCookie,
 } from "../../types/index.js";
 import { BaseResponseData } from "./types.js";
-
-export type Fetcher<T = BaseResponseData> = (
-  opts: Omit<BaseRequestParameters, "cookies"> & { cookies?: SimpleCookie[] }
-) => Promise<T>;
-export type CookieLoader = (
-  proxy: ProxyType
-) => Promise<SimpleCookie[] | undefined>;
+import { RequestBase } from "../../base/request.js";
+import { ProcessBodyParams } from "../../helpers/renderer.js";
 
 export interface ItemProcessorOpts<T> {
   fetcher: Fetcher<T>;
@@ -21,37 +19,31 @@ export interface ItemProcessorOpts<T> {
 }
 
 export interface BaseFetcherArgs {
-  preloadedCookies?: SimpleCookie[];
+  preloadedCookies?: BaseCookieResponse;
   proxy: ProxyType;
 }
 
-export abstract class OzonBase<T = BaseResponseData> {
-  public fetcher: Fetcher<T>;
-  public cookieLoader: CookieLoader;
-  public cookies: SimpleCookie[] | undefined; // this is a protected field
-
+export abstract class OzonBase<T = BaseResponseData>
+  extends RequestBase<T>
+  implements RequestBase<T>
+{
   public endpoint =
     "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=";
 
-  constructor({ fetcher, cookieLoader }: ItemProcessorOpts<T>) {
-    this.fetcher = fetcher;
-    this.cookieLoader = cookieLoader;
+  constructor(args: ItemProcessorOpts<T>) {
+    super(args);
   }
 
-  public async getCookies({ proxy, preloadedCookies }: BaseFetcherArgs) {
-    if (this.cookies) {
-      return this.cookies;
-    }
-    if (preloadedCookies) {
-      return preloadedCookies;
-    }
-    const loadedCookies = await this.cookieLoader(proxy);
-    if (loadedCookies) {
-      this.cookies = loadedCookies; // update the protected field
-      return this.cookies;
-    } else {
-      throw new Error("No cookies found");
-    }
+  public getCookieLoaderParams(): Omit<Partial<ProcessBodyParams>, "proxy"> {
+    return {
+      url: `https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=${encodeURIComponent(`/category/7000`)})`,
+      waitAfterLoad: 4000,
+      getDocumentBody: true,
+      fetchCookies: {
+        domains: ["https://www.ozon.ru"],
+        cookieNames: ["abt_data", "__Secure-ETC", "TS01*"],
+      },
+    };
   }
 
   public checkError(data: BaseResponseData) {
@@ -108,38 +100,38 @@ export abstract class OzonBase<T = BaseResponseData> {
 
   public async request({
     opts: { proxy },
-    cookies = this.cookies,
+    cookiesHeaders: { cookies },
     pathLoader,
-    retry = false,
+    cookieCallback,
   }: {
     opts: Omit<BaseFetcherArgs, "preloadedCookies">;
-    cookies: SimpleCookie[] | undefined;
+    cookiesHeaders: BaseCookieResponse;
     pathLoader: () => { args: string[]; nextUrl?: string };
-    retry?: boolean;
-  }): Promise<T | undefined> {
-    try {
-      const path = this.getPath(pathLoader());
-      const data = await this.fetcher({
-        method: "GET",
-        proxy,
-        ...(cookies ? { cookies } : {}),
-        host: this.endpoint,
-        urlPath: path,
-      });
-      return data as T;
-    } catch (e) {
-      if (!retry) {
-        const reloaded_cookies = await this.cookieLoader(proxy);
-        const resp = await this.request({
-          opts: {
-            proxy,
-          },
-          cookies: reloaded_cookies,
-          pathLoader,
-          retry: true,
-        });
-        return resp as T
+    cookieCallback?: ( cookies: SimpleCookie[]) => void;
+  }): Promise<T> {
+    const path = this.getPath(pathLoader());
+    const { data, headers } = await this.fetcher({
+      method: "GET",
+      proxy,
+      cookies: cookies ? cookies : [],
+      host: this.endpoint,
+      urlPath: path,
+      version: "V2Tls",
+      headers: [
+        "Content-Type: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        `Sec-Fetch-Dest: document`,
+        "Sec-Fetch-Mode: navigate",
+        "Sec-Fetch-Site: cross-site",
+        `Sec-ch-ua-platform: "Linux"`,
+      ],
+    });
+    if (headers) {
+      const readCookies = this.readCookies({headers, existing: cookies})
+      if (readCookies && cookieCallback) {
+        cookieCallback(readCookies)
       }
     }
+    return data as T;
   }
 }
+

@@ -1,5 +1,6 @@
 export * from "./category_parser.js";
 export * from "./types.js";
+export * from './category_v2.js';
 export declare const strategies: {
     api: {
         parser: import("../../types/index.js").CategoryParser<import("./types.js").Page>;

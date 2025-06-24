@@ -11,17 +11,17 @@ import { OzonBase } from "./base.js";
 export class OzonItemProcessor extends OzonBase {
     fetchItem(_a) {
         return __awaiter(this, arguments, void 0, function* ({ itemId, preloadedCookies, proxy, }) {
-            const cookies = yield this.getCookies({ preloadedCookies, proxy });
+            const { cookies } = yield this.getCookies({ preloadedCookies, proxy });
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
             const data = yield this.request({
                 opts: { proxy },
-                cookies,
+                cookiesHeaders: { cookies },
                 pathLoader: () => ({ args: [itemId] }),
             });
             const parsed = this.process(data);
-            return Object.assign(Object.assign({}, parsed), { cookies });
+            return Object.assign(Object.assign({}, parsed), { cookiesHeaders: { cookies } });
         });
     }
     getPath({ args }) {

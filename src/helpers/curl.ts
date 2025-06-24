@@ -18,10 +18,17 @@ type CurlFetchParams = {
   verbose?: boolean;
 };
 
+
+export type CookieHeaders = Array<{ ["Set-Cookie"]: string[] }>
+
+export type CurlResponse<T> = {
+  data: T, headers?: CookieHeaders;
+}
+
 export const curlFetch = async <T>(
   params: CurlFetchParams,
   load: "json" | "text" | "buffer" = "json"
-): Promise<T> => {
+): Promise<CurlResponse<T>> => {
   if (!process.env.CURL_URL) {
     throw new Error("not curl url");
   }
@@ -33,6 +40,7 @@ export const curlFetch = async <T>(
   if (!params.url) {
     throw new Error('no URL')
   }
+  params.verbose = true
   // console.log('sending: ', JSON.stringify(params, null ,2))
   // console.log('sending: ', params)
   const data = await fetch(process.env.CURL_URL, {
@@ -45,11 +53,11 @@ export const curlFetch = async <T>(
   // console.log('resp: ', await data.text())
   switch (load) {
     case 'text':
-      return data.text() as T
+      return data.text() as unknown as CurlResponse<T>
     case 'json':
-      return data.json() as T
+      return data.json() as unknown as CurlResponse<T>
     default:
-      return data.arrayBuffer() as T
+      return data.arrayBuffer() as unknown as CurlResponse<T>
   }
   
 };

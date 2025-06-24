@@ -4,38 +4,33 @@ import {
   OzonItemPrice,
   ResponseOzonItem,
 } from "./types.js";
-import { BaseFetcherArgs, OzonBase } from "./base.js";
-import { SimpleCookie } from "../../types/base.js";
+import {  OzonBase } from "./base.js";
+import { BaseItemArgs, BaseItemResponse } from "../../types/index.js";
+import { ItemBase } from "../../base/index.js";
 
-export interface FetchItemArgs extends BaseFetcherArgs {
-  itemId: string;
-}
-
-export interface FetchItemResponse {
-  err?: string;
-  cookies?: SimpleCookie[];
+export interface FetchItemResponse extends BaseItemResponse {
   item?: ResponseOzonItem;
 }
 
-export class OzonItemProcessor extends OzonBase {
+export class OzonItemProcessor extends OzonBase implements ItemBase<BaseItemArgs, FetchItemResponse> {
   public async fetchItem({
     itemId,
     preloadedCookies,
     proxy,
-  }: FetchItemArgs): Promise<FetchItemResponse> {
-    const cookies = await this.getCookies({ preloadedCookies, proxy });
+  }: BaseItemArgs): Promise<FetchItemResponse> {
+    const { cookies } = await this.getCookies({ preloadedCookies, proxy });
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
     const data = await this.request({
       opts: { proxy },
-      cookies,
+      cookiesHeaders: { cookies },
       pathLoader: () => ({ args: [itemId] }),
     });
     const parsed = this.process(data);
     return {
       ...parsed,
-      cookies,
+      cookiesHeaders: { cookies },
     };
   }
 

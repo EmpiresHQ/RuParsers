@@ -1,4 +1,11 @@
-export type AvailablePlatforms = "vseinstrumenti.ru" | string;
+export type AvailablePlatforms =
+  | "vseinstrumenti.ru"
+  | "lemanapro.ru"
+  | "barbora.ee"
+  | "selver.ee"
+  | "dns-shop.ru"
+  | "wildberries.ru"
+  | "ozon.ru";
 import type { Merge } from "type-fest";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,6 +97,7 @@ export interface BaseRequestParameters<T = unknown> {
   method: "GET" | "POST";
   urlPath?: string;
   host?: string;
+  version?: "V2Tls";
   payload?: T;
   raw?: string;
   cookies?: string;
