@@ -12,5 +12,5 @@ export declare const availablePlatforms: {
 export declare const AvailablePlatformsv2: (platform: AvailablePlatforms, { fetcher, cookieLoader, }: {
     fetcher: Fetcher<unknown>;
     cookieLoader: CookieLoader;
-}) => PlatformProcesors | undefined;
+}) => PlatformProcesors;
 //# sourceMappingURL=index.d.ts.map

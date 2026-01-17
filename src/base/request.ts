@@ -1,7 +1,9 @@
 import { CookieHeaders } from "../helpers/curl.js";
 import { ProcessBodyParams } from "../helpers/renderer.js";
+import { CurlResponse } from '../helpers/curl.js';
 import {
   BaseCookieResponse,
+  BaseRequestParameters,
   CookieLoader,
   Fetcher,
   ProxyType,
@@ -33,6 +35,10 @@ export abstract class RequestBase<T = unknown> {
   constructor({ fetcher, cookieLoader }: RequestBaseProcessorOpts<T>) {
     this.fetcher = fetcher;
     this.cookieLoader = cookieLoader;
+  }
+
+  public async untypedFetcher<C extends object = object>(opts: Omit<BaseRequestParameters, "cookies"> & { cookies: SimpleCookie[] }) {
+   return this.fetcher(opts) as unknown as CurlResponse<C>;
   }
 
   public abstract getCookieLoaderParams(): Omit<

@@ -13,7 +13,10 @@ export class OzonCategoryProcessor extends OzonBase {
     fetchCategory(_a) {
         return __awaiter(this, arguments, void 0, function* ({ categoryId, categoryUrl, preloadedCookies, proxy, page = 1, }) {
             // eslint-disable-next-line prefer-const
-            let { cookies, headers } = yield this.getCookies({ preloadedCookies, proxy });
+            let { cookies, headers } = yield this.getCookies({
+                preloadedCookies,
+                proxy,
+            });
             if (!cookies) {
                 throw new Error("could not fetch cookies");
             }
@@ -24,14 +27,14 @@ export class OzonCategoryProcessor extends OzonBase {
                     args: [categoryId, page.toString()],
                     nextUrl: categoryUrl,
                 }),
-                cookieCallback: (ccks => {
+                cookieCallback: (ccks) => {
                     cookies = ccks;
-                })
+                },
             });
             const parsed = this.process(data);
             return Object.assign(Object.assign({}, parsed), { cookiesHeaders: {
                     cookies,
-                    headers
+                    headers,
                 } });
         });
     }

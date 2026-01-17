@@ -34,7 +34,10 @@ export class OzonCategoryProcessor
     ProcessCategoryResponse | BaseCategoryErrorResponse
   > {
     // eslint-disable-next-line prefer-const
-    let { cookies, headers } = await this.getCookies({ preloadedCookies, proxy });
+    let { cookies, headers } = await this.getCookies({
+      preloadedCookies,
+      proxy,
+    });
     if (!cookies) {
       throw new Error("could not fetch cookies");
     }
@@ -45,16 +48,16 @@ export class OzonCategoryProcessor
         args: [categoryId, page.toString()],
         nextUrl: categoryUrl,
       }),
-      cookieCallback: (ccks => {
+      cookieCallback: (ccks) => {
         cookies = ccks;
-      })
+      },
     });
     const parsed = this.process(data);
     return {
       ...parsed,
       cookiesHeaders: {
         cookies,
-        headers
+        headers,
       },
     };
   }
@@ -70,7 +73,7 @@ export class OzonCategoryProcessor
     return encodeURIComponent(`/category/${args[0]}/${pagePart}`);
   }
   public process(
-    data: CategoryResponseData
+    data: CategoryResponseData,
   ): ProcessCategoryResponse | BaseCategoryErrorResponse {
     const errChecker = this.checkError(data);
     if (errChecker.err) {

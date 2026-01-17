@@ -10,30 +10,31 @@ describe("VI", () => {
     const parser = AvailablePlatformsv2("vseinstrumenti.ru", {
       fetcher: loader,
       cookieLoader,
-    })
+    });
     if (!parser) {
-      throw new Error('VI parser not found')
+      throw new Error("VI parser not found");
     }
-    const categoryProcessor = parser.categoryLoader;
-    const data: BaseCategoryResponse[] = []
-    for (const page of [1, 2]) {
-      const parsed = await categoryProcessor.fetchCategory({
-        categoryId: 15,
-        proxy,
-        page,
-        preloadedCookies,
-      });
-      if (!parsed || 'err' in parsed) {
-        throw new Error('not parsed')
+    if (parser.name == "vseinstrumenti.ru") {
+      const categoryProcessor = parser.categoryLoader;
+      const data: BaseCategoryResponse[] = [];
+      for (const page of [1, 2]) {
+        const parsed = await categoryProcessor.fetchCategory({
+          categoryId: 15,
+          proxy,
+          page,
+          preloadedCookies,
+        });
+        if (!parsed || "err" in parsed) {
+          throw new Error("not parsed");
+        }
+        if (parsed.cookiesHeaders) {
+          preloadedCookies = parsed.cookiesHeaders;
+        }
+        data.push(parsed);
       }
-      if (parsed.cookiesHeaders) {
-        preloadedCookies = parsed.cookiesHeaders
-      }
-      data.push(parsed)
+
+      console.log(data);
+      expect(data[0].items).toBeDefined();
     }
-    
-    console.log(data);
-    expect(data[0].items).toBeDefined();
-    
   }, 5000000);
 });

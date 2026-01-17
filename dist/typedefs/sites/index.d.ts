@@ -4,4 +4,5 @@ export * as barbora_ee from "./barbora.ee/index.js";
 export * as selver_ee from "./selver.ee/index.js";
 export * as dns_shop_ru from "./dns-shop.ru/index.js";
 export * as ozon_ru from "./ozon.ru/index.js";
+export * as wildberries_ru from "./wildberries.ru/index.js";
 //# sourceMappingURL=index.d.ts.map

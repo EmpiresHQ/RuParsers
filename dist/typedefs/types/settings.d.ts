@@ -1,4 +1,4 @@
-export type AvailablePlatforms = "vseinstrumenti.ru" | string;
+export type AvailablePlatforms = "vseinstrumenti.ru" | "lemanapro.ru" | "barbora.ee" | "selver.ee" | "dns-shop.ru" | "wildberries.ru" | "ozon.ru";
 import type { Merge } from "type-fest";
 export interface RequestOpts<T = AntiBotKey> {
     data: {
@@ -79,7 +79,7 @@ export interface BaseRequestParameters<T = unknown> {
     method: "GET" | "POST";
     urlPath?: string;
     host?: string;
-    version?: 'V2Tls';
+    version?: "V2Tls";
     payload?: T;
     raw?: string;
     cookies?: string;

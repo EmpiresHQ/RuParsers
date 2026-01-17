@@ -8,6 +8,8 @@ import { DNSItem } from "./types.js";
 
 // export * from "./category_parser.js";
 export * from "./types.js";
+export * from "./settings.js"
+export * from "./category_v2.js";
 
 export const strategies: {
   // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
