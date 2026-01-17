@@ -16,7 +16,7 @@ export const ozonProxy: ProxyType = {
 };
 
 export const cookieLoader = async (opts: Partial<ProcessBodyParams> = {}) => {
-  const proxyUrl = proxyUrlFromType(proxy);
+  const proxyUrl = proxyUrlFromType(opts.proxy ?? proxy);
   const res = await renderer({
     ...opts,
     proxy: {

@@ -58,7 +58,7 @@ describe("OZON", () => {
   //   expect(parsed).toBeDefined();
   // });
 
-  test.only("ozon:load category", async () => {
+  test("ozon:load category", async () => {
     const parsed: BaseCategoryResponse[] = [];
     for (const page of [1, 2]) {
       const data = await parser?.categoryLoader?.fetchCategory({
